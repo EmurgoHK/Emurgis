@@ -12,7 +12,7 @@ import "/imports/ui/components/documents/edit/document-edit.js"
 
 // DOCUMENTS INDEX
 // -------------------------------------------------------
-FlowRouter.route("/documents", {
+FlowRouter.route("/", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
@@ -25,7 +25,7 @@ FlowRouter.route("/documents", {
 
 // DOCUMENT NEW
 // -------------------------------------------------------
-FlowRouter.route("/documents/new", {
+FlowRouter.route("/new", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
@@ -38,7 +38,7 @@ FlowRouter.route("/documents/new", {
 
 // DOCUMENT SHOW
 // -------------------------------------------------------
-FlowRouter.route("/documents/:documentId", {
+FlowRouter.route("/:documentId", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
@@ -51,7 +51,7 @@ FlowRouter.route("/documents/:documentId", {
 
 // DOCUMENT EDIT
 // -------------------------------------------------------
-FlowRouter.route("/documents/:documentId/edit", {
+FlowRouter.route("/:documentId/edit", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
