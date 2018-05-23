@@ -1,0 +1,139 @@
+<template name="about">
+
+  <div class="about">
+    <h1>Meteor-skeleton</h1>
+    <p>
+      A boilerplate for Meteor - giving you a simple and more organized way to create projects.
+    </p>
+    <p>
+      It comes with a complete collection sample including publications, subscriptions and CRUD functionality. Routes, views and some nice
+      helpers are also included.
+    </p>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h2>Usage</h2>
+            <ol>
+              <li>Clone it: <code>git clone https://github.com/kjetilhau/meteor-skeleton.git</code></li>
+              <li><code>cd meteor-skeleton</code></li>
+              <li>Remove the .git folder</li>
+              <li><code>git init</code></li>
+              <li><code>meteor npm install --save</code></li>
+              <li><code>meteor</code></li>
+            </ol>
+
+            <h2>Packages used</h2>
+
+            <h3>Atmosphere</h3>
+            <ul>
+              <li>blaze-html-templates</li>
+              <li>accounts-base</li>
+              <li>#alanning:roles</li>
+              <li>kadira:flow-router</li>
+              <li>kadira:blaze-layout</li>
+              <li>arillo:flow-router-helpers</li>
+              <li>zimme:active-route</li>
+              <li>aldeed:schema-deny</li>
+              <li>aldeed:collection2-core</li>
+              <li>aldeed:autoform</li>
+              <li>fourseven:scss</li>
+            </ul>
+
+            <h3>NPM</h3>
+            <ul>
+              <li>simpl-schema</li>
+              <li>bootstrap</li>
+              <li>moment</li>
+              <li>noty</li>
+            </ul>
+
+            <h2>Other great boilerplates</h2>
+            <a href="https://github.com/themeteorchef/base">base</a> The Meteor Chef<br>
+            <a href="https://github.com/matteodem/meteor-boilerplate">meteor-boilerplate</a> by matteodem<br>
+            <a href="https://github.com/BeDifferential/meteor-boilerplate">meteor-boilerplate</a> by Differential
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card bg-faded">
+          <div class="card-body">
+            <h2>Structure</h2>
+            <ul>
+              <li>client
+              </li>
+              <li>import
+                <ul>
+                  <li>api
+                    <ul>
+                      <li>documents
+                        <ul>
+                          <li>both
+                            <ul>
+                              <li>schemas</li>
+                            </ul>
+                          </li>
+                          <li>server</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>modules</li>
+                  <li>startup
+                    <ul>
+                      <li>both</li>
+                      <li>client
+                        <ul>
+                          <li>router</li>
+                        </ul>
+                      </li>
+                      <li>server</li>
+                    </ul>
+                  </li>
+                  <li>ui
+                    <ul>
+                      <li>components
+                        <ul>
+                          <li>documents
+                            <ul>
+                              <li>edit</li>
+                              <li>index
+                                <ul>
+                                  <li>documents-index-item</li>
+                                </ul>
+                              </li>
+                              <li>new</li>
+                              <li>show</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                      <li>helpers</li>
+                      <li>layouts</li>
+                      <li>pages</li>
+                      <li>shared</li>
+                      <li>stylesheets
+                        <ul>
+                          <li>theme</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>public
+                <ul>
+                  <li>img</li>
+                  <li>fonts</li>
+                </ul>
+              </li>
+              <li>server</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
