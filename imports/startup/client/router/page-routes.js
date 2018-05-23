@@ -10,16 +10,7 @@ import "/imports/ui/pages/about/about.js"
 
 // FRONTPAGE
 // -------------------------------------------------------
-FlowRouter.route("/", {
-  action: function() {
-    BlazeLayout.render("layout", {
-      header: "header",
-      main: "frontpage",
-      footer: "footer"
-    })
-  },
-  name: "frontpage"
-})
+
 
 // ABOUT
 // -------------------------------------------------------
