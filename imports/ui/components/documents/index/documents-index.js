@@ -6,7 +6,9 @@ import "./documents-index.html"
 import "./documents-index-item/documents-index-item.js"
 
 Template.documentsIndex.onCreated(function() {
-  this.subscribe("documents.all")
+  function bodyOnCreated() {
+      this.subscribe("problems")
+  }
 })
 
 Template.documentsIndex.onRendered(function() {})
@@ -14,8 +16,8 @@ Template.documentsIndex.onRendered(function() {})
 Template.documentsIndex.onDestroyed(function() {})
 
 Template.documentsIndex.helpers({
-  documents() {
-    return Documents.find({}, { sort: { createdAt: -1 } })
+  problems() {
+    return Problems.find({}, { sort: { createdAt: -1 } })
   }
 })
 
