@@ -4,14 +4,21 @@
     <div class="card">
       <div class="card-body">
         <h2>Add a new problem</h2>
-
-        {{#autoForm schema=createDocumentSchema id="documentNewForm" type="method" meteormethod="documents.create" }}
-          <fieldset>
-            {{> afQuickField name='title'}} {{> afQuickField name='content' rows=6}}
-          </fieldset>
-          <button type="submit" class="btn btn-primary">Create</button>
-          <a class="btn btn-link" role="button" href="{{pathFor 'documentsIndex'}}">Back</a>
-        {{/autoForm}}
+        <form>
+          <div class="input-group">
+              <textarea class="form-control" id="problemDescription" rows="6" placeholder="Carefully describe the problem you have observed"></textarea>
+          </div>
+<div class="input-group" style="padding-top:6px;">
+    <div class="input-group-prepend">
+        <div class="input-group-text">Problem:</div>
+    </div>
+    <input type="text" class="form-control" id="problemSummary" placeholder="summarize the problem in 60 characters or less">
+</div>
+<div class="input-group" style="padding-top:6px;padding-bottom:6px;">
+    <textarea class="form-control" id="solution" rows="6" placeholder="This is optional. If you have some ideas of what the simplest possible solution to this problem is, you can explain it here."></textarea>
+</div>
+<button type="submit" class="btn btn-primary float-right newproblem">Submit</button>
+</form>
       </div>
     </div>
   </div>

@@ -5,10 +5,13 @@ import { ValidatedMethod } from "meteor/mdg:validated-method"
 import { Documents } from "./document-collection.js"
 import CreateDocumentSchema from "./schemas/create-document-schema.js"
 import UpdateDocumentSchema from "./schemas/update-document-schema.js"
+import Problems from "./problemCollection.js"
 
 // ***************************************************************
 // METHODS (related to the documents collection)
 // ***************************************************************
+
+
 
 export const createDocument = new ValidatedMethod({
   name: "documents.create",

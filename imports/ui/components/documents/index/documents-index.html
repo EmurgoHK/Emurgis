@@ -7,7 +7,7 @@
         <a class="btn btn-primary" href="{{pathFor 'documentNew'}}" role="button">New Problem</a>
 
         {{#if Template.subscriptionsReady}}
-          {{#if documents.count}}
+          {{#if problems.count}}
             <table class="table table-hover mt-3">
               <thead>
                 <tr>
@@ -19,7 +19,7 @@
                 </tr>
               </thead>
               <tbody>
-                {{#each document in documents}}
+                {{#each document in problems}}
                   {{> documentsIndexItem document=document}}
                 {{/each}}
               </tbody>
