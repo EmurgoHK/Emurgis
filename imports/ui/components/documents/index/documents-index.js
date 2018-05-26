@@ -1,6 +1,8 @@
 import { Template } from "meteor/templating"
 
 import { Documents } from "/imports/api/documents/both/document-collection.js"
+import { Problems } from "/imports/api/documents/both/problemCollection.js"
+
 
 import "./documents-index.html"
 import "./documents-index-item/documents-index-item.js"
