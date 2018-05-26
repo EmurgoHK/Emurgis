@@ -1,7 +1,7 @@
 import { Template } from "meteor/templating"
 
 import CreateDocumentSchema from "/imports/api/documents/both/schemas/create-document-schema.js"
-import addProblem from "/imports/api/documents/both/problemMethods.js"
+import { addProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./document-new.html"
 import "./document-new-hooks.js"
@@ -25,7 +25,7 @@ Template.documentNew.events({
       description: event.target.problemDescription.value
     }, (err, res) => {
       if (err) {
-        console.log(err.error);
+        console.log(err);
       }
       console.log(res);
     }

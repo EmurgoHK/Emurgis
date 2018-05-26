@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor"
 import SimpleSchema from "simpl-schema"
 import { ValidatedMethod } from "meteor/mdg:validated-method"
-import Problems from "./problemCollection.js"
+import { Problems } from "./problemCollection.js"
 
 
 //Define a ValidatedMethod which can be called from both the client and server
@@ -18,16 +18,20 @@ export const addProblem = new ValidatedMethod({
         }).validator(),
     run({ summary,description }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
-        if (Meteor.userId()) {
+
+        //no auth right now so commenting out
+        // if (Meteor.userId()) {
                         Problems.insert({
                             'summary': summary,
                             'description': description || "",
                             'createdAt': new Date().getTime(),
-                            'createdBy': Meteor.userId()
+                            'createdBy': Meteor.userId() || ""
                         })
-                    } else {
-                        throw new Meteor.Error('Error.', 'You have to be logged in.')
-                      }}
+                    // } else {
+                    //     throw new Meteor.Error('Error.', 'You have to be logged in.')
+                    //   }
+                }
+
     });
 
 //end

@@ -4,3 +4,5 @@
 
 // Config
 import "./config.js"
+
+import '/imports/api/documents/both/problemMethods.js'
