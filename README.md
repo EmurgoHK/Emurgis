@@ -18,10 +18,10 @@ curl https://install.meteor.com/ | sh
 
 #### Clone repository    
 ```
-git clone https://github.com/Emurgo/emurgis.git
+git clone https://github.com/EmurgoHK/emurgis.git
 ```
 
-Note: if you want to edit things and send a pull request you should _fork_ this project on Github first and clone _your_ fork instead of https://github.com/Emurgo/emurgis.git.
+Note: if you want to edit things and send a pull request you should _fork_ this project on Github first and clone _your_ fork instead of https://github.com/EmurgoHK/emurgis.git.
 
 #### Install Dependencies   
 ```
@@ -88,7 +88,7 @@ If at some point you want to abandon the issue and let someone else have a go, c
 
 4. Add the Emurgis repository as an upstream source and pull any changes:    
 ```
-@: git remote add upstream git://github.com/emurgo/emurgis //only needs to be done once
+@: git remote add upstream git://github.com/EmurgoHK/emurgis //only needs to be done once
 @: git checkout master //just to make sure you're on the correct branch
 @: git pull upstream master //this grabs any code that has changed, you want to be working on the latest 'version'
 @: git push //update your remote fork with the changes you just pulled from upstream master
