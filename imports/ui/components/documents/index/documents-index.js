@@ -8,10 +8,10 @@ import "./documents-index.html"
 import "./documents-index-item/documents-index-item.js"
 
 Template.documentsIndex.onCreated(function() {
-  function bodyOnCreated() {
-      this.subscribe("problems")
-  }
-})
+  this.autorun(() => {
+    this.subscribe("problems")
+  });
+});
 
 Template.documentsIndex.onRendered(function() {})
 

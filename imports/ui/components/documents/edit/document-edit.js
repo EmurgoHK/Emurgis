@@ -1,7 +1,7 @@
 import { Template } from "meteor/templating"
 import { FlowRouter } from "meteor/kadira:flow-router"
 
-import { Documents } from "/imports/api/documents/both/document-collection.js"
+import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import UpdateDocumentSchema from "/imports/api/documents/both/schemas/update-document-schema.js"
 
 import "./document-edit.html"
@@ -11,7 +11,7 @@ Template.documentEdit.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
   this.autorun(() => {
-    this.subscribe("documents.single", this.getDocumentId())
+    this.subscribe("problems", this.getDocumentId())
   })
 })
 
