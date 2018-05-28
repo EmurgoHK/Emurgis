@@ -38,15 +38,3 @@ export const getProfileImage = image => {
     return image
   }
 }
-
-// Translates those bytes to something more readable (e.g. 1.2 MB)
-export const bytesToSize = bytes => {
-  if (!bytes) {
-    return ""
-  } else {
-    let sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-    if (bytes === 0) return "n/a"
-    let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-    return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i]
-  }
-}

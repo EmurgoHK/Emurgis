@@ -1,6 +1,5 @@
 import { Template } from "meteor/templating"
 
-import CreateDocumentSchema from "/imports/api/documents/both/schemas/create-document-schema.js"
 import { addProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./document-new.html"

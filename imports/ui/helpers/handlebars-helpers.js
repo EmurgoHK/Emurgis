@@ -36,7 +36,3 @@ Template.registerHelper("getProfileImage", image => {
   return helpers.getProfileImage(image)
 })
 
-// Translates those bytes to something more readable (e.g. 1.2 MB)
-Template.registerHelper("bytesToSize", bytes => {
-  return helpers.bytesToSize(bytes)
-})

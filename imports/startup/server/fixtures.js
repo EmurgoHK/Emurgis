@@ -1,25 +1,31 @@
 import { Meteor } from "meteor/meteor"
-import { Documents } from "/imports/api/documents/both/document-collection.js"
+import { Problems } from "/imports/api/documents/both/problemCollection.js"
 
 // ***************************************************************
-// Fixtures (generate dummy data for the Documents collection)
+// Fixtures (generate dummy data for the Problems collection)
 // ***************************************************************
 
 Meteor.startup(() => {
-  if (Documents.find().count() === 0) {
-    Documents.insert({
-      title: "Derp",
-      content: "Lorem ipsum, herp derp durr."
+  if (Problems.find().count() === 0) {
+    Problems.insert({
+      summary: "Derp",
+      description: "Lorem ipsum, herp derp durr.",
+      createdAt: new Date().getTime(),
+      createdBy: ''
     })
 
-    Documents.insert({
-      title: "Hurr",
-      content: "Lorem ipsum, herp derp durr."
+    Problems.insert({
+      summary: "Hurr",
+      description: "Lorem ipsum, herp derp durr.",
+      createdAt: new Date().getTime(),
+      createdBy: ''
     })
 
-    Documents.insert({
-      title: "Durr",
-      content: "Lorem ipsum, herp derp durr."
+    Problems.insert({
+      summary: "Durr",
+      description: "Lorem ipsum, herp derp durr.",
+      createdAt: new Date().getTime(),
+      createdBy: ''
     })
   }
 })

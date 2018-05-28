@@ -8,6 +8,7 @@
     "@babel/runtime": "^7.0.0-beta.38",
     "bcrypt": "^2.0.1",
     "bootstrap": "^4.0.0",
+    "core-js": "^2.5.7",
     "jquery": "^3.3.1",
     "meteor-node-stubs": "^0.2.11",
     "moment": "^2.20.1",

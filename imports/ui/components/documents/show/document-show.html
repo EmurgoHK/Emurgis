@@ -4,14 +4,14 @@
     <div class="card">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
-          <h2>{{document.title}}</h2>
-          <p>{{document.content}}</p>
+          <h2>{{problem.summary}}</h2>
+          <p>{{problem.description}}</p>
           <hr>
           <p class="text-muted">
-            {{#if document.updatedAt}}
-              Updated: {{showPrettyTimestamp document.updatedAt}}<br>
+            {{#if problem.updatedAt}}
+              Updated: {{showPrettyTimestamp problem.updatedAt}}<br>
             {{/if}}
-            Created: {{showPrettyTimestamp document.createdAt}}
+            Created: {{showPrettyTimestamp problem.createdAt}}
           </p>
           <a href="{{pathFor 'documentsIndex'}}" class="btn btn-link">Back</a>
         {{else}}
