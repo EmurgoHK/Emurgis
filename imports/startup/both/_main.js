@@ -6,3 +6,4 @@
 import "./config.js"
 
 import '/imports/api/documents/both/problemMethods.js'
+import '/imports/api/documents/both/problemCollection.js'
