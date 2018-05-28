@@ -4,6 +4,4 @@
 // as an API to the client.
 // ***************************************************************
 
-import "/imports/api/documents/both/document-methods.js"
-import "/imports/api/documents/server/document-publications.js"
 import "/imports/api/user/server/accounts-config.js"

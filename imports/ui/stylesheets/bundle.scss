@@ -14,14 +14,9 @@
 @import "{}/imports/ui/shared/empty-result/empty-result.scss";
 @import "{}/imports/ui/shared/loader/loader.scss";
 
-// Pages
-@import "{}/imports/ui/pages/frontpage/frontpage.scss";
-@import "{}/imports/ui/pages/about/about.scss";
-
 // Components
 @import "{}/imports/ui/components/documents/index/documents-index.scss";
 @import "{}/imports/ui/components/documents/show/document-show.scss";
-@import "{}/imports/ui/components/documents/edit/document-edit.scss";
 @import "{}/imports/ui/components/documents/new/document-new.scss";
 
 // Bootstrap SASS library
