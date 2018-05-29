@@ -34,5 +34,7 @@ aldeed:autoform
 aldeed:schema-deny
 fourseven:scss
 accounts-ui
-accounts-password
 msavin:mongol
+accounts-google
+service-configuration
+google-config-ui
