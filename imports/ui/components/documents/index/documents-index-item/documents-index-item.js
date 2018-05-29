@@ -14,7 +14,12 @@ Template.documentsIndexItem.onRendered(function() {})
 
 Template.documentsIndexItem.onDestroyed(function() {})
 
-Template.documentsIndexItem.helpers({})
+Template.documentsIndexItem.helpers({
+	isProblemOwner (ownerId) {
+		if (ownerId !== undefined && ownerId === Meteor.userId()) { return true }
+		return
+	}
+})
 
 Template.documentsIndexItem.events({
     "click .js-delete-document" (event, instance) {
