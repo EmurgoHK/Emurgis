@@ -9,7 +9,7 @@ import { notify } from "/imports/modules/notifier"
 
 // Simple redirect unless user is logged in
 const mustBeLoggedIn = (context, redirect, stop) => {
-  if (!Meteor.userId()) {
+  if (!Meteor.userId() && (!context.path.includes('/signin') && !context.path.includes('/signup'))) {
     redirect("documentsIndex")
     notify("Must be logged in!", "error")
   }
