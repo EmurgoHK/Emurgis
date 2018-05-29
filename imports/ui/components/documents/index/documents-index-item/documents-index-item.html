@@ -13,8 +13,10 @@
         Claim
       {{/if}}
       </a>
-      <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=document._id}}" role="button">Edit</a>
-      <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+	  {{#if isProblemOwner document.createdBy}}
+		<a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=document._id}}" role="button">Edit</a>
+		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+	  {{/if}}
     </td>
   </tr>
 

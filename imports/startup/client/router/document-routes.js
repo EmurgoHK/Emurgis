@@ -4,6 +4,7 @@ import { BlazeLayout } from "meteor/kadira:blaze-layout"
 import "/imports/ui/components/documents/index/documents-index.js"
 import "/imports/ui/components/documents/new/document-new.js"
 import "/imports/ui/components/documents/show/document-show.js"
+import "/imports/ui/components/documents/edit/document-edit.js"
 
 // ***************************************************************
 // Document routes
@@ -46,4 +47,17 @@ FlowRouter.route("/:documentId", {
     })
   },
   name: "documentShow"
+})
+
+// DOCUMENT EDIT
+// -------------------------------------------------------
+FlowRouter.route("/:documentId/edit", {
+  action: function() {
+    BlazeLayout.render("layout", {
+      header: "header",
+      main: "documentEdit",
+      footer: "footer"
+    })
+  },
+  name: "documentEdit"
 })
