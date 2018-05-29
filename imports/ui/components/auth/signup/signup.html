@@ -1,0 +1,24 @@
+<template name="signup">
+  <div class="card col-5" style="margin: 30px auto 0 auto">
+    <div class="card-body">
+      <h2>Create an Account</h2>
+      <form id="signup">
+        <div class="input-group" style="padding-top:8px;">
+            <input type="text" id="email" class="form-control" placeholder="Email ID" required >
+        </div>
+        <div class="input-group" style="padding-top:8px;">
+            <input type="password" id="password" class="form-control" placeholder="Password">
+        </div>
+        <div class="input-group" style="padding-top:8px;">
+            <input type="password" id="password-repeat" class="form-control" placeholder="Re-enter Password">
+        </div>
+        <div style="padding-top:8px;">
+          <button type="submit" class="btn btn-primary" style="padding-top:8px;">Login</button>
+        </div>
+      </form>
+      <div class="sign-up-link" style="padding-top:8px;">
+        Aready have an account? <a href="/signin">Sign In</a>.
+      </div>
+    </div>
+  </div>
+</template>

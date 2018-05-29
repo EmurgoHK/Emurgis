@@ -1,4 +1,6 @@
 import { Template } from "meteor/templating"
+import { FlowRouter } from "meteor/kadira:flow-router"
+
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 
@@ -22,4 +24,15 @@ Template.documentsIndex.helpers({
   }
 })
 
-Template.documentsIndex.events({})
+Template.documentsIndex.events({
+  'click #new-problem': function(event) {
+    event.preventDefault();
+
+    // make the check global later for checking if user is logged in
+    if (Meteor.userId()) {
+      FlowRouter.go('/new');
+    } else {
+      FlowRouter.go('/signin');
+    }
+  }
+})
