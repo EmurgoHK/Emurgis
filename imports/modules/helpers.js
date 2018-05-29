@@ -29,6 +29,11 @@ export const showPrettyTimestamp = date => {
   return !date ? "" : moment(date).format("MMMM Do YYYY, h:mm a")
 }
 
+// Outputs August 30th 2014, 5:33:46 pm
+export const showTimeAgoTimestamp = date => {
+  return !date ? "" : moment(date).fromNow()
+}
+
 // Get profile image or placeholder image
 export const getProfileImage = image => {
   let imagePlaceholder = "/img/profile_placeholder.png"
