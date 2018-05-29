@@ -65,7 +65,7 @@ export const claimProblem = new ValidatedMethod({
                     claimedBy: this.userId,
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
-                    claimedFullname: Meteor.user().name
+                    claimedFullname: Meteor.user().profile.name
                 }
             })
 

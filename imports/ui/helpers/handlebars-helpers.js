@@ -31,6 +31,11 @@ Template.registerHelper("showPrettyTimestamp", date => {
   return helpers.showPrettyTimestamp(date)
 })
 
+// Outputs August 30th 2014, 5:33:46 pm
+Template.registerHelper("showTimeAgoTimestamp", date => {
+  return helpers.showTimeAgoTimestamp(date)
+})
+
 // Get profile image or placeholder image
 Template.registerHelper("getProfileImage", image => {
   return helpers.getProfileImage(image)

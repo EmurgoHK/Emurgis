@@ -4,6 +4,9 @@
     <div class="card">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
+          {{#if problem.claimed}}
+          <span class="badge badge-success">CLAIMED</span>
+          {{/if}}
           <h2>{{problem.summary}}</h2>
           <p>{{problem.description}}</p>
           <hr>
@@ -11,7 +14,11 @@
             {{#if problem.updatedAt}}
               Updated: {{showPrettyTimestamp problem.updatedAt}}<br>
             {{/if}}
-            Created: {{showPrettyTimestamp problem.createdAt}}
+
+          {{#if problem.claimed}}
+          <strong>Claimed by {{problem.claimedFullname}} {{showTimeAgoTimestamp problem.claimedDateTime}}  ago</strong> <br /> 
+          {{/if}}
+          Created: {{showPrettyTimestamp problem.createdAt}}
           </p>
           <a href="{{pathFor 'documentsIndex'}}" class="btn btn-link">Back</a>
         {{else}}
