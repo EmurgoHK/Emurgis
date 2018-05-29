@@ -4,7 +4,9 @@ import SimpleSchema from "simpl-schema"
 const regex = /^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(emurgo)\.io$/
 
 Accounts.onCreateUser((options, user) => {
-	if(!regex.test(user.services.google.email)) {
+	var currentEnv = process.env.NODE_ENV
+	
+	if(!regex.test(user.services.google.email) && currentEnv !== 'development') {
 		throw new Error('Invalid login detaials');
 	}
 
