@@ -81,8 +81,10 @@ export const claimProblem = new ValidatedMethod({
         _id: { type: RegEx, optional: false },
     }).validator(),
     run({ _id }) {
-        //if authenticated, update the claimed attribute to the logged in user.
         if (Meteor.userId()) {
+
+            let getName = Meteor.users.findOne({_id: this.userId}).profile.name;
+
             Problems.update({
                 _id: _id
             }, {
@@ -90,7 +92,7 @@ export const claimProblem = new ValidatedMethod({
                     claimedBy: this.userId,
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
-                    claimedFullname: Meteor.user().name
+                    claimedFullname: getName
                 }
             })
         } else {
