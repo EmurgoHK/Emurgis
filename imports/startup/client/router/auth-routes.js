@@ -11,15 +11,8 @@ FlowRouter.route("/signin", {
       footer: "footer"
     })
   },
+  triggersEnter: [function(context, redirect, stop) {
+    if (Meteor.userId()) { stop() }
+  }],
   name: "signin"
-})
-
-FlowRouter.route("/signup", {
-  action: function() {
-    BlazeLayout.render("layout", {
-      main: "signup",
-      footer: "footer"
-    })
-  },
-  name: "signup"
 })
