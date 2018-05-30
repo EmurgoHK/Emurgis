@@ -1,0 +1,10 @@
+<template name="documentComments">
+    <div class="document-show my-2">
+        <div class="card">
+            <div class="card-body">
+               <strong>{{comment.createdByName}}</strong> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
+                {{comment.comment}}
+            </div>
+        </div>
+    </div>
+</template>

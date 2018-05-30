@@ -28,4 +28,18 @@
     </div>
   </div>
 
+{{#each comment in comments}}
+  {{> documentComments comment=comment}}
+{{/each}}
+
+      <div class="document-show pb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
+            </div>
+        </div>
+    </div>
 </template>
