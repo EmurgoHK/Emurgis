@@ -22,8 +22,18 @@
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/emurgohk/emurgis" target="_blank">Github</a>
           </li>
-          <li class="nav-item">
-            <a href="/signin" class="nav-link">Sign in</a>
+          <li class="nav-item dropdown">
+            {{#if currentUser}}
+              <a href="" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{currentUser.profile.name}}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="sign-out dropdown-item" style="cursor: pointer;">Sign out</a>
+              </div>
+        
+            {{else}}
+              <a href="/signin" class="nav-link">Sign in</a>
+            {{/if}}
           </li>
         </ul>
       </div>
