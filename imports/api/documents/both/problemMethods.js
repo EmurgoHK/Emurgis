@@ -47,6 +47,32 @@ export const addProblem = new ValidatedMethod({
 
 //end
 
+//allow a user to unclaim a problem
+export const unclaimProblem = new ValidatedMethod({
+    name: 'unclaimProblem',
+    //Define the validation rules which will be applied on both the client and server
+    validate: new SimpleSchema({
+        _id: { type: RegEx, optional: false },
+    }).validator(),
+    run({ _id }) {
+        //if authenticated, update the remove the claimed attribute to the logged in user.
+        if (Meteor.userId()) {
+            Problems.update({
+                _id: _id
+            }, {
+                $unset: {
+                    claimedBy: true,
+                    claimed: true,
+                    claimedFullname: true
+                }      
+
+            })
+        } else {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+    }
+});
+
 //allow a user to claim a problem
 export const claimProblem = new ValidatedMethod({
     name: 'claimProblem',
