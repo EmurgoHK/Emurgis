@@ -64,7 +64,7 @@ export const unclaimProblem = new ValidatedMethod({
                     claimedBy: true,
                     claimed: true,
                     claimedFullname: true
-                }      
+                }
 
             })
         } else {
@@ -91,7 +91,7 @@ export const claimProblem = new ValidatedMethod({
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
                     claimedFullname: Meteor.user().name
-                }	                 
+                }
             })
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -101,6 +101,7 @@ export const claimProblem = new ValidatedMethod({
 
 //end
 
+//allow a user to edit a problem
 export const editProblem = new ValidatedMethod({
 	name: 'editProblem',
 	validate: new SimpleSchema({
@@ -121,3 +122,20 @@ export const editProblem = new ValidatedMethod({
 		}})
 	}
 })
+// end
+
+// allow user to delete a problem
+export const deleteProblem = new ValidatedMethod({
+	name: 'deleteProblem',
+	validate: new SimpleSchema({
+		'id': { type: String, optional: false}
+	}).validator(),
+	run({ id }) {
+		if (!Meteor.userId()) {
+			throw new Meteor.Error('Error.', 'You have to be logged in.')
+		}
+
+		Problems.remove({'_id' : id})
+	}
+});
+//end
