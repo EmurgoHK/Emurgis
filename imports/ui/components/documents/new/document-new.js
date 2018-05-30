@@ -1,11 +1,36 @@
 import { Template } from "meteor/templating"
+import { FlowRouter } from "meteor/kadira:flow-router"
+import { Problems } from "/imports/api/documents/both/problemCollection.js"
+
 
 import { addProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./document-new.html"
 import "./document-new-hooks.js"
 
-Template.documentNew.onCreated(function() {})
+var formData = (eventTarget) => {
+  var data = {}
+
+  if (eventTarget.summary && eventTarget.summary.value !== '') {
+    data.summary = eventTarget.summary.value;
+  }
+
+  if (eventTarget.description && eventTarget.description.value !== '') {
+    data.description = eventTarget.description.value;
+  }
+
+  if (eventTarget.solution && eventTarget.solution.value !== '') {
+    data.solution = eventTarget.solution.value;
+  }
+  
+  return data;
+}
+
+Template.documentNew.onCreated(function() {
+  this.autorun(() => {
+    this.subscribe("problems")
+  })
+})
 
 Template.documentNew.onRendered(function() {})
 
@@ -18,16 +43,24 @@ Template.documentNew.helpers({
 Template.documentNew.events({
   'submit'(event){
     event.preventDefault();
-    console.log(event.target.problemDescription.value);
-    addProblem.call({
-      summary: event.target.problemSummary.value,
-      description: event.target.problemDescription.value,
-      solution: event.target.solution.value
-    }, (err, res) => {
-      if (err) {
-        console.log(err);
+    
+    var data = formData(event.target)
+    
+    addProblem.call(data, (err, res) => {
+      if (!err) { 
+        FlowRouter.go('/' + res); 
+        return;
       }
-      console.log(res);
+      var errResponse = JSON.parse(JSON.stringify(err))
+
+      if(errResponse.details && errResponse.details.length >= 1) {
+        console.log(errResponse.details);
+        errResponse.details.forEach(e => {
+          $('#' + e.name).addClass('is-invalid')
+          $('#' + e.name + 'Error').show()
+          $('#' + e.name + 'Error').text(e.message)
+        });
+      }
     }
   );
     event.preventDefault();
