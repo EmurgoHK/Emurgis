@@ -21,7 +21,8 @@ Template.documentNew.events({
     console.log(event.target.problemDescription.value);
     addProblem.call({
       summary: event.target.problemSummary.value,
-      description: event.target.problemDescription.value
+      description: event.target.problemDescription.value,
+      solution: event.target.solution.value
     }, (err, res) => {
       if (err) {
         console.log(err);

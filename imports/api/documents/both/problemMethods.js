@@ -38,25 +38,35 @@ export const addProblem = new ValidatedMethod({
 		Problems.insert({
 			'summary': summary,
 			'description': description || "",
-			'description': solution || "",
+			'solution': solution || "",
 			'createdAt': new Date().getTime(),
 			'createdBy': Meteor.userId() || ""
 		})
+    }
+});
 
+//end
+
+//allow a user to claim a problem
+export const claimProblem = new ValidatedMethod({
+    name: 'claimProblem',
+    //Define the validation rules which will be applied on both the client and server
+    validate: new SimpleSchema({
+        _id: { type: RegEx, optional: false },
+    }).validator(),
+    run({ _id }) {
         //if authenticated, update the claimed attribute to the logged in user.
         if (Meteor.userId()) {
-
             Problems.update({
-               _id: _id
+                _id: _id
             }, {
                 $set: {
                     claimedBy: this.userId,
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
-                    claimedFullname: Meteor.user().profile.name
-                }
+                    claimedFullname: Meteor.user().name
+                }	                 
             })
-
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
