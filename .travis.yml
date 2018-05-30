@@ -1,0 +1,24 @@
+sudo: required
+ 
+language: node_js
+
+node_js: 
+  - '8'
+ 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y g++ build-essential
+  - export LC_ALL=C
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH="$HOME/.meteor:$PATH"
+ 
+cache:
+  directories:
+    - node_modules
+    - .meteor
+ 
+before_script:
+  - meteor npm install
+ 
+script:
+  - meteor test --driver-package=meteortesting:mocha --once --port 5000 # unit tests
