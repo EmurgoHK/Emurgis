@@ -2,7 +2,7 @@ import { Template } from "meteor/templating"
 import SimpleSchema from "simpl-schema"
 
 import { notify } from "/imports/modules/notifier"
-import { claimProblem } from "/imports/api/documents/both/problemMethods.js"
+import { claimProblem, unclaimProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./documents-index-item.html"
 
@@ -18,7 +18,17 @@ Template.documentsIndexItem.helpers({
 	isProblemOwner (ownerId) {
 		if (ownerId !== undefined && ownerId === Meteor.userId()) { return true }
 		return
-	}
+	},
+    claimButton(val) {
+
+        if (this.document.claimed && this.document.claimedBy === Meteor.userId()) {
+            return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
+        } else if (this.document.claimed) {
+            return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
+        } else {
+            return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
+        }
+    }
 })
 
 Template.documentsIndexItem.events({
@@ -40,6 +50,31 @@ Template.documentsIndexItem.events({
                 let problemId = Template.instance().getDocumentId()
 
                 claimProblem.call({
+                    _id: problemId
+                }, (error, result) => {
+                    if (error) {
+                        if (error.details) {
+                            console.error(error.details)
+                        } else {
+                            console.error(error)
+                        }
+                    }
+                })
+
+            }
+        } else {
+            notify("Must be logged in!", "error")
+        }
+    },
+    "click .unclaimProblem" (event, instance) {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+
+            if (confirm("Are you sure you want to unclaim this problem?")) {
+                let problemId = Template.instance().getDocumentId()
+
+                unclaimProblem.call({
                     _id: problemId
                 }, (error, result) => {
                     if (error) {
