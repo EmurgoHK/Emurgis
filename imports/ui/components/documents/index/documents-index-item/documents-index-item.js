@@ -2,7 +2,7 @@ import { Template } from "meteor/templating"
 import SimpleSchema from "simpl-schema"
 
 import { notify } from "/imports/modules/notifier"
-import { claimProblem, unclaimProblem } from "/imports/api/documents/both/problemMethods.js"
+import { claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./documents-index-item.html"
 
@@ -35,10 +35,21 @@ Template.documentsIndexItem.events({
     "click .js-delete-document" (event, instance) {
         event.preventDefault()
 
-        if (confirm("Are you sure?")) {
-            let documentId = Template.instance().getDocumentId()
+        if (confirm("Are you sure you want to delete this problem?")) {
 
-            // problem deletion goes here
+            let problemId = Template.instance().getDocumentId()
+            if (Meteor.userId()) {
+
+             deleteProblem.call({ id: problemId }, (error, result) => {
+                 if (error) {
+                     if (error.details) {
+                         console.error(error.details)
+                     } else {
+                       notify('Problem deleted successfully', 'success');
+                     }
+                 }
+             })
+            }
         }
     },
     "click .claimProblem" (event, instance) {
@@ -56,7 +67,7 @@ Template.documentsIndexItem.events({
                         if (error.details) {
                             console.error(error.details)
                         } else {
-                            console.error(error)
+                            notify('Problem claimed successfully', 'success');
                         }
                     }
                 })
@@ -81,7 +92,7 @@ Template.documentsIndexItem.events({
                         if (error.details) {
                             console.error(error.details)
                         } else {
-                            console.error(error)
+                            notify('Problem unclaimed successfully', 'success');
                         }
                     }
                 })
