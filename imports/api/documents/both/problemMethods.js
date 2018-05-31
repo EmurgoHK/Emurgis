@@ -143,3 +143,25 @@ export const deleteProblem = new ValidatedMethod({
 	}
 });
 //end
+
+// allow users to change the problem status
+export const markAsResolved = new ValidatedMethod({
+    name: 'markAsResolved',
+    validate: new SimpleSchema({
+        problemId: { type: String, optional: false},
+        claimerId: { type: String, optional: false}
+    }).validator(),
+    run({ problemId, claimerId }) {
+
+        if (claimerId !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to resolve this problem')
+        }
+
+        Problems.update({ '_id' : problemId }, {
+            $set : { 'status' : 'ready for review' } 
+        });
+
+        return problemId;
+    }
+});
+// end

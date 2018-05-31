@@ -2,7 +2,7 @@ import { Template } from "meteor/templating"
 import { FlowRouter } from "meteor/kadira:flow-router"
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsResolved, claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -25,29 +25,41 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
-  problem() {
-    return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
-  },
-   comments() {
-    return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
-  },
-	isProblemOwner (ownerId) {
-		if (ownerId !== undefined && ownerId === Meteor.userId()) { return true }
-		return false
-	},
-  claimButton(problem) {
-      if (problem.claimed && problem.claimedBy === Meteor.userId()) {
-          return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
-      } else if (problem.claimed) {
-          return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
-      } else {
-          return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
-      }
-  }
+    problem() {
+        return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
+    },
+    comments() {
+        return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
+    },
+    claimButton(problem) {
+        if (problem.claimed && problem.claimedBy === Meteor.userId()) {
+            return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
+        } else if (problem.claimed) {
+            return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
+        } else {
+            return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
+        }
+    },
+    markAsResolved(problem) {
+        if (problem.status !== 'ready for review') {
+            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> mark resolved </a>'
+        }
+    }
 })
 
 Template.documentShow.events({
+    "click #resolveProblem" (event) {
+        let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
 
+        if (Meteor.userId()) {
+            markAsResolved.call({
+                problemId: problem._id,
+                claimerId: problem.claimedBy
+            }, (error, response) => {
+                if(error) { console.log(error.details) }
+            })
+        }
+    },
     "click .documentCommentBtn" (event, instance) {
         event.preventDefault()
 
