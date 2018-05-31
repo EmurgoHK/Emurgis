@@ -9,6 +9,7 @@ import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
 import "./document-show.html"
 import "./document-comments.html"
+import "/imports/ui/components/documents/shared/problem-helpers.js"
 
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
