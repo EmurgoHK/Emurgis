@@ -121,7 +121,9 @@ export const editProblem = new ValidatedMethod({
 			'summary': summary,
 			'description': description || "",
 			'solution': solution || ""
-		}})
+        }})
+        
+        return id;
 	}
 })
 // end
