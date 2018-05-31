@@ -7,7 +7,15 @@
           {{#if problem.claimed}}
           <span class="badge badge-success">CLAIMED</span>
           {{/if}}
-          <h2>{{problem.summary}}</h2>
+          
+
+          {{#if isProblemOwner problem.createdBy}}
+            <a class="btn btn-sm btn-secondary pull-right" href="/{{problem._id}}/edit">Edit</a>
+          {{/if}}
+          
+          <h2>
+            {{problem.summary}}
+          </h2>
           <p>{{problem.description}}</p>
           <hr>
           <p class="text-muted">
