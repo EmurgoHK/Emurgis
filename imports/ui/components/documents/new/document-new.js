@@ -7,6 +7,7 @@ import { addProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import "./document-new.html"
 import "./document-new-hooks.js"
+import "/imports/ui/components/documents/shared/problemForm.html"
 
 var formData = (eventTarget) => {
   var data = {}
@@ -37,7 +38,9 @@ Template.documentNew.onRendered(function() {})
 Template.documentNew.onDestroyed(function() {})
 
 Template.documentNew.helpers({
-
+  problem: () => {
+    return {}
+  }
 })
 
 Template.documentNew.events({
