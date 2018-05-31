@@ -4,17 +4,23 @@
     <div class="card">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
-          <div class="float-right">
+          <div class="pull-right">
             {{{claimButton problem}}}
+            {{#if problem.claimed}}
+              {{#if hasClaimedProblem problem.claimedBy}}
+                {{{ markAsResolved problem }}}
+              {{ else }}
+                <span class="badge badge-success">CLAIMED</span>
+              {{/if}}
+            {{/if}}
             {{#if isProblemOwner problem.createdBy}}
-        		<a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
+            <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
         		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
-        	  {{/if}}
+            {{/if}}
           </div>
-          {{#if problem.claimed}}
-          <span class="badge badge-success">CLAIMED</span>
-          {{/if}}
-          <h2>{{problem.summary}}</h2>
+
+          <h3>{{problem.summary}}</h3>
+          <span class="badge badge-secondary" style="margin-bottom: 20px;">{{problem.status}}</span><br>
           <p>{{problem.description}}</p>
           <hr>
           <p class="text-muted">

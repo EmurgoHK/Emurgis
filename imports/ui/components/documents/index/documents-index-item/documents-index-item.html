@@ -6,9 +6,7 @@
     <td>{{showTimeAgo document.updatedAt}}</td>
     <td>{{showPrettyTimestamp document.createdAt}}</td>
     <td class="text-right">
-	  {{#if isProblemOwner document.createdBy}}
-		<a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=document._id}}" role="button">Edit</a>
-	  {{/if}}
+	  
     </td>
   </tr>
 
