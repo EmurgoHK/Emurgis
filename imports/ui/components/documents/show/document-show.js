@@ -1,5 +1,6 @@
 import { Template } from "meteor/templating"
 import { FlowRouter } from "meteor/kadira:flow-router"
+import { notify } from "/imports/modules/notifier"
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
