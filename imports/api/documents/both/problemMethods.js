@@ -38,7 +38,8 @@ export const addProblem = new ValidatedMethod({
 		return Problems.insert({
 			'summary': summary,
 			'description': description || "",
-			'solution': solution || "",
+            'solution': solution || "",
+            'status': 'open', // we assign a default status of open
 			'createdAt': new Date().getTime(),
 			'createdBy': Meteor.userId() || ""
 		})
