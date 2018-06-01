@@ -16,13 +16,17 @@ Template.documentsIndexItem.onRendered(function() {})
 Template.documentsIndexItem.onDestroyed(function() {})
 
 Template.documentsIndexItem.helpers({
-    claimButton(val) {
-        if (this.document.claimed && this.document.claimedBy === Meteor.userId()) {
-            return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
-        } else if (this.document.claimed) {
-            return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
+    statusText(val) {
+        if (val && val === 'open') {
+            return '<span class="badge badge-success">Open</span>'
+        } else if (val && val === 'closed') {
+            return '<span class="badge badge-danger">Closed</span>'
+        } else if (val && val === 'in progress') {
+            return '<span class="badge badge-secondary">In progress</span>'
+        } else if (val && val === 'ready for review') {
+            return '<span class="badge badge-primary">Ready for review</span>'
         } else {
-            return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
+            return '-'
         }
     }
 })
