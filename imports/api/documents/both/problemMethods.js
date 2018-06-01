@@ -38,8 +38,7 @@ export const addProblem = new ValidatedMethod({
 		return Problems.insert({
 			'summary': summary,
 			'description': description || "",
-            'solution': solution || "",
-            'status': 'open', // we assign a default status of open
+			'solution': solution || "",
 			'createdAt': new Date().getTime(),
 			'createdBy': Meteor.userId() || ""
 		})
@@ -61,9 +60,6 @@ export const unclaimProblem = new ValidatedMethod({
             Problems.update({
                 _id: _id
             }, {
-                $set: {
-                    status: 'open'
-                },
                 $unset: {
                     claimedBy: true,
                     claimed: true,
@@ -71,8 +67,6 @@ export const unclaimProblem = new ValidatedMethod({
                 }
 
             })
-
-            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -95,15 +89,12 @@ export const claimProblem = new ValidatedMethod({
                 _id: _id
             }, {
                 $set: {
-                    status: 'in progress',
-                    claimedBy: Meteor.userId(),
+                    claimedBy: this.userId,
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
                     claimedFullname: getName
                 }
             })
-
-            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -131,7 +122,7 @@ export const editProblem = new ValidatedMethod({
 			'description': description || "",
 			'solution': solution || ""
         }})
-        
+
         return id;
 	}
 })
@@ -167,10 +158,34 @@ export const markAsResolved = new ValidatedMethod({
         }
 
         Problems.update({ '_id' : problemId }, {
-            $set : { 'status' : 'ready for review' } 
+            $set : { 'status' : 'ready for review' }
         });
 
         return problemId;
     }
 });
 // end
+
+// allow users to change the status of probltm to close
+export const updateStatus = new ValidatedMethod({
+    name: 'updateStatus',
+    validate: new SimpleSchema({
+        problemId: { type: String, optional: false},
+        status: { type: String, max: 60, optional: false}
+    }).validator(),
+    run({ problemId, status }) {
+
+        let problem = Problems.findOne({_id: problemId});
+
+        if (problem.createdBy !== Meteor.userId()) {
+          throw new Meteor.Error('Error.', 'You are not allowed to open or close this problem')
+        }
+
+        Problems.update({ '_id' : problemId }, {
+            $set : { 'status' : status }
+        });
+
+        return problemId;
+    }
+});
+//end
