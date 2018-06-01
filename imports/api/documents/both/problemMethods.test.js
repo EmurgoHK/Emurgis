@@ -24,6 +24,22 @@ describe('problem methods', () => {
         })
     })
 
+    it('can add new problem with a default status of open', () => {
+        let data = {}
+
+        data.summary = 'Test summary'
+        data.description = 'an awesome test description...'
+        data.solution = 'a very valid test solution for problem...'
+
+        return callWithPromise('addProblem', data)
+            .then(problemId => {
+                let problem = Problems.findOne({ _id : problemId})
+
+                assert(Problems.find({}).count() === 2)
+                assert(problem.status === 'open')
+            })
+    })
+
     it('can mark problem as resolved if current user is claimer', () => {
         let problem = Problems.findOne({})
         assert.ok(problem)
