@@ -25,7 +25,7 @@ export const addProblem = new ValidatedMethod({
         new SimpleSchema({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 500, optional: true},
-			solution: { type: String, max: 500, optional: true}
+			      solution: { type: String, max: 500, optional: true}
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
@@ -40,7 +40,8 @@ export const addProblem = new ValidatedMethod({
 			'description': description || "",
 			'solution': solution || "",
 			'createdAt': new Date().getTime(),
-			'createdBy': Meteor.userId() || ""
+			'createdBy': Meteor.userId() || "",
+      'status':'open'
 		})
     }
 });
@@ -57,16 +58,25 @@ export const unclaimProblem = new ValidatedMethod({
     run({ _id }) {
         //if authenticated, update the remove the claimed attribute to the logged in user.
         if (Meteor.userId()) {
-            Problems.update({
-                _id: _id
-            }, {
-                $unset: {
-                    claimedBy: true,
-                    claimed: true,
-                    claimedFullname: true
-                }
+          let problem = Problems.findOne({_id: _id});
 
-            })
+          if (problem.claimedBy ===  Meteor.userId()) {
+              Problems.update({
+                  _id: _id
+              }, {
+                  $unset: {
+                      claimedBy: true,
+                      claimed: true,
+                      claimedFullname: true
+                  }
+
+              })
+
+              return _id
+          } else {
+            throw new Meteor.Error('Error.', 'You cannot unclaim a problem that is not claimed by you')
+          }
+
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -82,19 +92,26 @@ export const claimProblem = new ValidatedMethod({
     }).validator(),
     run({ _id }) {
         if (Meteor.userId()) {
+            let problem = Problems.findOne({_id: _id});
 
-            let getName = Meteor.users.findOne({_id: this.userId}).profile.name;
+            if (problem.claimed === undefined || problem.claimed === false) {
+                let getName = Meteor.users.findOne({_id: Meteor.userId()}).name;
 
-            Problems.update({
-                _id: _id
-            }, {
-                $set: {
-                    claimedBy: this.userId,
-                    claimed: true,
-                    claimedDateTime: new Date().getTime(),
-                    claimedFullname: getName
-                }
-            })
+                Problems.update({
+                    _id: _id
+                }, {
+                    $set: {
+                        claimedBy: Meteor.userId(),
+                        claimed: true,
+                        claimedDateTime: new Date().getTime(),
+                        claimedFullname: getName
+                    }
+                })
+
+                return _id;
+            } else {
+                throw new Meteor.Error('Error.', 'You cannot claim a problem that is already claimed')
+            }
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -117,13 +134,18 @@ export const editProblem = new ValidatedMethod({
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
 
-		Problems.update({'_id' : id}, { $set : {
-			'summary': summary,
-			'description': description || "",
-			'solution': solution || ""
-        }})
+    let problem = Problems.findOne({_id: id});
 
-        return id;
+    if (problem.createdBy === Meteor.userId()) {
+        Problems.update({'_id' : id}, { $set : {
+          'summary': summary,
+          'description': description || "",
+          'solution': solution || ""
+            }})
+    } else {
+        throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')
+    }
+    return id;
 	}
 })
 // end
@@ -135,11 +157,17 @@ export const deleteProblem = new ValidatedMethod({
 		'id': { type: String, optional: false}
 	}).validator(),
 	run({ id }) {
-		if (!Meteor.userId()) {
-			throw new Meteor.Error('Error.', 'You have to be logged in.')
-		}
+      let problem = Problems.findOne({_id: id});
 
-		Problems.remove({'_id' : id})
+  		if (!Meteor.userId()) {
+  			   throw new Meteor.Error('Error.', 'You have to be logged in.')
+  		}
+
+      if (problem.createdBy === Meteor.userId()) {
+          Problems.remove({'_id' : id})
+      } else {
+          throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')
+      }
 	}
 });
 //end
