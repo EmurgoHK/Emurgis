@@ -2,7 +2,7 @@ import { Template } from "meteor/templating"
 import { FlowRouter } from "meteor/kadira:flow-router"
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsResolved, claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -32,6 +32,7 @@ Template.documentShow.helpers({
         return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
     },
     claimButton(problem) {
+      if (problem.status === 'open') {
         if (problem.claimed && problem.claimedBy === Meteor.userId()) {
             return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
         } else if (problem.claimed) {
@@ -39,15 +40,36 @@ Template.documentShow.helpers({
         } else {
             return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
         }
+      }
     },
     markAsResolved(problem) {
-        if (problem.status !== 'ready for review') {
-            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> mark resolved </a>'
+        if (problem.status !== 'ready for review' && problem.status !== 'closed') {
+            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> Mark resolved </a>'
+        }
+    },
+    statusButton(problem) {
+        if (problem.status === 'closed') {
+          return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
+        } else {
+          return '<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> Close </a>'
         }
     }
 })
 
 Template.documentShow.events({
+    "click .toggleProblem" (event) {
+        var status = event.target.id === 'closeProblem' ? 'closed' :  'open';
+        let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
+
+         if (Meteor.userId()) {
+             updateStatus.call({
+                 problemId: problem._id,
+                 status: status
+             }, (error, response) => {
+                 if (error) { console.log(error) }
+             })
+         }
+    },
     "click #resolveProblem" (event) {
         let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
 
