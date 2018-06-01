@@ -21,7 +21,10 @@
 
           <h3>{{problem.summary}}</h3>
           <span class="badge badge-secondary" style="margin-bottom: 20px;">{{problem.status}}</span><br>
-          <p>{{problem.description}}</p>
+          <p class="card-text">{{problem.description}}</p>
+
+          <h6 class="card-subtitle text-muted">Solution:</h6>
+          <p class="card-text">{{problem.solution}}</p>
           <hr>
           <p class="text-muted">
             {{#if problem.updatedAt}}
