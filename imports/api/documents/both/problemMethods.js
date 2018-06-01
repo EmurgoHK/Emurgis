@@ -61,6 +61,9 @@ export const unclaimProblem = new ValidatedMethod({
             Problems.update({
                 _id: _id
             }, {
+                $set: {
+                    status: 'open'
+                },
                 $unset: {
                     claimedBy: true,
                     claimed: true,
@@ -68,6 +71,8 @@ export const unclaimProblem = new ValidatedMethod({
                 }
 
             })
+
+            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -90,12 +95,15 @@ export const claimProblem = new ValidatedMethod({
                 _id: _id
             }, {
                 $set: {
-                    claimedBy: this.userId,
+                    status: 'in progress',
+                    claimedBy: Meteor.userId(),
                     claimed: true,
                     claimedDateTime: new Date().getTime(),
                     claimedFullname: getName
                 }
             })
+
+            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }

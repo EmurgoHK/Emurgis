@@ -6,12 +6,8 @@ import './problemMethods.js'
 
 
 Meteor.userId = () => 'test-user' // override the meteor userId, so we can test methods that require a user
-Meteor.users.findOne = () => ({
-    username: 'test'
-}) // stub user data as well
-Meteor.user = ()=> ({
-    username: 'test'
-})
+Meteor.users.findOne = () => ({ profile: { name: 'Test User'} }) // stub user data as well
+Meteor.user = () => ({ profile: { name: 'Test User'} })
 
 describe('problem methods', () => { 
     beforeEach(() => {
@@ -35,8 +31,34 @@ describe('problem methods', () => {
             .then(problemId => {
                 let problem = Problems.findOne({ _id : problemId})
 
-                assert(Problems.find({}).count() === 2)
-                assert(problem.status === 'open')
+                assert.equal(Problems.find({}).count(), 2)
+                assert.equal(problem.status, 'open')
+            })
+    })
+
+    it('can claim problem and assign status of \'in progress\'', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+        
+        return callWithPromise('claimProblem', { _id : problem._id })
+            .then(problemId => {
+                let problem = Problems.findOne({ _id : problemId })
+
+                assert.equal(problem.claimedBy, Meteor.userId())
+                assert.equal(problem.status, 'in progress')
+            })
+    })
+
+    it('can unclaim problem and re-assign status of \'open\'', () => {
+        let problem = Problems.findOne({ 'claimedBy' : Meteor.userId() })
+        assert.ok(problem)
+        
+        return callWithPromise('unclaimProblem', { _id : problem._id })
+            .then(problemId => {
+                let problem = Problems.findOne({ _id : problemId })
+
+                assert.isUndefined(problem.claimedBy)
+                assert.equal(problem.status, 'open')
             })
     })
 
@@ -53,7 +75,7 @@ describe('problem methods', () => {
             claimerId: Meteor.userId()
         }).then(problemId => {
             let problem = Problems.findOne({ _id : problemId})
-            assert(problem.status === 'ready for review')
+            assert.equal(problem.status, 'ready for review')
         })
 
     })
