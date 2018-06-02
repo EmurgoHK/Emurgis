@@ -18,6 +18,7 @@ Template.documentShow.onCreated(function() {
   this.autorun(() => {
     this.subscribe("problems", this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
+    this.subscribe('users')
   })
 })
 
@@ -61,11 +62,20 @@ Template.documentShow.events({
     "click .toggleProblem" (event) {
         var status = event.target.id === 'closeProblem' ? 'closed' :  'open';
         let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
+        let claimer = Meteor.users.findOne({
+            _id: problem.claimedBy
+        })
+        let info = ''
 
          if (Meteor.userId()) {
+            if (status === 'closed' && claimer && confirm(`Was this problem actually solved by ${(claimer.profile || {}).name}?`)) { // lazy eval ftw
+                info = 'actually-solved'
+            }
+
              updateStatus.call({
                  problemId: problem._id,
-                 status: status
+                 status: status,
+                 info: info
              }, (error, response) => {
                  if (error) { console.log(error) }
              })
