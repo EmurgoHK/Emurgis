@@ -64,6 +64,9 @@ export const unclaimProblem = new ValidatedMethod({
               Problems.update({
                   _id: _id
               }, {
+                  $set: {
+                    status: 'open',
+                  },
                   $unset: {
                       claimedBy: true,
                       claimed: true,
@@ -101,6 +104,7 @@ export const claimProblem = new ValidatedMethod({
                     _id: _id
                 }, {
                     $set: {
+                        status: 'in progress',
                         claimedBy: Meteor.userId(),
                         claimed: true,
                         claimedDateTime: new Date().getTime(),

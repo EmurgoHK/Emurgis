@@ -33,7 +33,7 @@ Template.documentShow.helpers({
         return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
     },
     claimButton(problem) {
-      if (problem.status === 'open') {
+      if (problem.status !== 'closed') {
         if (problem.claimed && problem.claimedBy === Meteor.userId()) {
             return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
         } else if (problem.claimed) {
