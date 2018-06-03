@@ -27,14 +27,14 @@
           <hr>
           <p class="text-muted">
             {{#if problem.updatedAt}}
-              Updated: {{showPrettyTimestamp problem.updatedAt}}<br>
+              Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
 
           {{#if problem.claimed}}
           <strong>Claimed by {{problem.claimedFullname}} {{showTimeAgoTimestamp problem.claimedDateTime}}</strong> <br />
           {{/if}}
           Created By: {{getNameById problem.createdBy}}<br />
-          Created: {{showPrettyTimestamp problem.createdAt}}
+          Created: {{showTimeAgoTimestamp problem.createdAt}}
           </p>
           <a href="{{pathFor 'documentsIndex'}}" class="btn btn-link">Back</a>
         {{else}}
