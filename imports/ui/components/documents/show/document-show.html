@@ -33,6 +33,9 @@
           {{#if problem.claimed}}
           <strong>Claimed by {{problem.claimedFullname}} {{showTimeAgoTimestamp problem.claimedDateTime}}</strong> <br />
           {{/if}}
+          {{#if problem.resolved}}
+            Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
+          {{/if}}
           Created By: {{getNameById problem.createdBy}}<br />
           Created: {{showTimeAgoTimestamp problem.createdAt}}
           </p>
