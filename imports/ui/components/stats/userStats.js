@@ -30,4 +30,3 @@ Template.userStats.helpers({
     fixed: val => parseInt(val) !== val ? val.toFixed(2) : val, // fix decimal points only if there are some to prevent 100.00,
     nullify: val => val || 0
 })
-
