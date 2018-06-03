@@ -55,6 +55,10 @@ Template.documentShow.helpers({
         } else {
           return '<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> Close </a>'
         }
+    },
+    resolvedByUser(problem) {
+        let user = Meteor.users.findOne({ _id : problem.resolvedBy })
+        return user.profile.name
     }
 })
 

@@ -9,8 +9,6 @@
             {{#if problem.claimed}}
               {{#if hasClaimedProblem problem.claimedBy}}
                 {{{ markAsResolved problem }}}
-              {{ else }}
-                <span class="badge badge-success">CLAIMED</span>
               {{/if}}
             {{/if}}
             {{#if isProblemOwner problem.createdBy}}
@@ -21,7 +19,7 @@
           </div>
 
           <h3>{{problem.summary}}</h3>
-          <span class="badge badge-secondary" style="margin-bottom: 20px;">{{problem.status}}</span><br>
+          {{{statusText problem.status}}}
           <p class="card-text">{{problem.description}}</p>
 
           <h6 class="card-subtitle text-muted">Solution:</h6>
@@ -29,13 +27,17 @@
           <hr>
           <p class="text-muted">
             {{#if problem.updatedAt}}
-              Updated: {{showPrettyTimestamp problem.updatedAt}}<br>
+              Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
 
           {{#if problem.claimed}}
           <strong>Claimed by {{problem.claimedFullname}} {{showTimeAgoTimestamp problem.claimedDateTime}}</strong> <br />
           {{/if}}
-          Created: {{showPrettyTimestamp problem.createdAt}}
+          {{#if problem.resolved}}
+            Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
+          {{/if}}
+          Created By: {{getNameById problem.createdBy}}<br />
+          Created: {{showTimeAgoTimestamp problem.createdAt}}
           </p>
           <a href="{{pathFor 'documentsIndex'}}" class="btn btn-link">Back</a>
         {{else}}
