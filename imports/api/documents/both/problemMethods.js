@@ -246,9 +246,18 @@ export const updateStatus = new ValidatedMethod({
           throw new Meteor.Error('Error.', 'You are not allowed to open or close this problem')
         }
 
-        Problems.update({ '_id' : problemId }, {
-            $set : { 'status' : status }
-        })
+        let updateData = {}
+        updateData.status = status
+
+        // if problem is being marked as close and its current is `ready for review`
+        // we want to update it with th resolver id and resolved time
+        if (status === 'closed' && problem.status === 'ready for review') {
+            updateData.resolved = true
+            updateData.resolvedBy = problem.claimedBy
+            updateData.resolvedDateTime = new Date().getTime()
+        }
+
+        Problems.update({ '_id' : problemId }, { $set : updateData })
 
         if (status === 'closed' && info === 'actually-solved') {
             Stats.upsert({
