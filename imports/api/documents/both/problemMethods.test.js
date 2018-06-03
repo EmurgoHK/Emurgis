@@ -6,8 +6,8 @@ import './problemMethods.js'
 
 
 Meteor.userId = () => 'test-user' // override the meteor userId, so we can test methods that require a user
-Meteor.users.findOne = () => ({ username: 'test' }) // stub user data as well
-Meteor.user = ()=> ({ username: 'test' })
+Meteor.users.findOne = () => ({ profile: { name: 'Test User'} }) // stub user data as well
+Meteor.user = () => ({ profile: { name: 'Test User'} })
 
 describe('problem methods', () => {
     beforeEach(() => {
