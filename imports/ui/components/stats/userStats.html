@@ -1,0 +1,35 @@
+<template name="userStats">
+  <div class="stats-index">
+    <div class="card">
+      <div class="card-body">
+        <h1>{{username}}'s stats</h1>
+
+        {{#if Template.subscriptionsReady}}
+            <table class="table table-hover mt-3">
+              <thead>
+                <tr>
+                  <th>Logged problems</th>
+                  <th>Claimed problems</th>
+                  <th>Abandoned problems</th>
+                  <th>Completed problems</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#with stats}}
+                <tr class="stats-item">
+                  <td scope="row">{{nullify loggedProblems.length}}</td>
+                  <td>{{nullify claimedProblems.length}}</td>
+                  <td>{{nullify unclaimedProblems.length}} ({{fixed unclaimedPercentage}}%)</td>
+                  <td>{{nullify completedProblems.length}} ({{fixed completedPercentage}}%)</td>
+                </tr>
+                {{/with}}
+              </tbody>
+            </table>
+        {{else}}
+          {{> loader}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+</template>

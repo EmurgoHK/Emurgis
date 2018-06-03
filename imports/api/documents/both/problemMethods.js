@@ -3,6 +3,8 @@ import SimpleSchema from "simpl-schema"
 import { ValidatedMethod } from "meteor/mdg:validated-method"
 import { Problems } from "./problemCollection.js"
 
+import { Stats } from '../../stats/both/statsCollection'
+
 
 //we need to move this to a global file and manage once
 const {
@@ -35,15 +37,25 @@ export const addProblem = new ValidatedMethod({
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
 
-		return Problems.insert({
-			'summary': summary,
-			'description': description || "",
-			'solution': solution || "",
-			'createdAt': new Date().getTime(),
-			'createdBy': Meteor.userId() || "",
+    let pId = Problems.insert({
+      'summary': summary,
+      'description': description || "",
+      'solution': solution || "",
+      'createdAt': new Date().getTime(),
+      'createdBy': Meteor.userId() || "",
       'status':'open'
-		})
-    }
+    })
+
+    Stats.upsert({
+      userId: Meteor.userId()
+    }, {
+      $addToSet: {
+        loggedProblems: pId
+      }
+    })
+
+		return pId
+  }
 });
 
 //end
@@ -73,6 +85,14 @@ export const unclaimProblem = new ValidatedMethod({
                       claimedFullname: true
                   }
 
+              })
+
+              Stats.upsert({
+                  userId: Meteor.userId()
+              }, {
+                  $addToSet: {
+                      unclaimedProblems: _id // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
+                  }
               })
 
               return _id
@@ -109,6 +129,17 @@ export const claimProblem = new ValidatedMethod({
                         claimed: true,
                         claimedDateTime: new Date().getTime(),
                         claimedFullname: getName
+                    }
+                })
+
+                Stats.upsert({
+                    userId: Meteor.userId()
+                }, {
+                    $addToSet: {
+                        claimedProblems: _id
+                    },
+                    $pull: {
+                        unclaimedProblems: _id
                     }
                 })
 
@@ -202,10 +233,11 @@ export const markAsResolved = new ValidatedMethod({
 export const updateStatus = new ValidatedMethod({
     name: 'updateStatus',
     validate: new SimpleSchema({
-        problemId: { type: String, optional: false},
-        status: { type: String, max: 60, optional: false}
+        problemId: { type: String, optional: false },
+        status: { type: String, max: 60, optional: false },
+        info: { type: String, optional: true }
     }).validator(),
-    run({ problemId, status }) {
+    run({ problemId, status, info }) {
 
         let problem = Problems.findOne({_id: problemId});
 
@@ -215,7 +247,25 @@ export const updateStatus = new ValidatedMethod({
 
         Problems.update({ '_id' : problemId }, {
             $set : { 'status' : status }
-        });
+        })
+
+        if (status === 'closed' && info === 'actually-solved') {
+            Stats.upsert({
+                userId: Meteor.userId()
+            }, {
+                $addToSet: {
+                    completedProblems: problemId
+                }
+            })
+        } else {
+          Stats.upsert({
+              userId: Meteor.userId()
+          }, {
+              $pull: {
+                  completedProblems: problemId
+              }
+          })
+        }
 
         return problemId;
     }
