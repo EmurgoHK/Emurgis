@@ -9,8 +9,6 @@
             {{#if problem.claimed}}
               {{#if hasClaimedProblem problem.claimedBy}}
                 {{{ markAsResolved problem }}}
-              {{ else }}
-                <span class="badge badge-success">CLAIMED</span>
               {{/if}}
             {{/if}}
             {{#if isProblemOwner problem.createdBy}}
