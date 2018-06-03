@@ -18,6 +18,9 @@ import "/imports/ui/shared/header/header.js"
 import "/imports/ui/shared/empty-result/empty-result.js"
 import "/imports/ui/shared/loader/loader.js"
 
+// Shared Component Templates
+import "/imports/ui/components/documents/shared/problemForm.js"
+
 // Blaze helpers
 import "/imports/ui/helpers/handlebars-helpers.js"
 import "/imports/ui/helpers/handlebars-lists.js"
