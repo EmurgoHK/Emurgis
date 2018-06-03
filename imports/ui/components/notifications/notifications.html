@@ -1,0 +1,33 @@
+<template name="notifications">
+  <div class="notifications-index">
+    <div class="card">
+      <div class="card-body">
+        <h1>My notifications</h1>
+
+        {{#if Template.subscriptionsReady}}
+          {{#if notifications.count}}
+            <table class="table table-hover mt-3">
+              <tbody>
+                {{#each notifications}}
+                  <tr class="stats-item">
+                    <a style="text-decoration: none;" href="{{href}}">
+                    <td scope="row" style="width: 85%">{{message}}</td>
+                    <td>{{from}}</td>
+                    <td style="width: 20%">{{showTimeAgoTimestamp createdAt}}</td>
+                    </a>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{else}}
+            <div class="mt-3">
+              {{> emptyResult text="No notifications yet" description="" icon=""}}
+            </div>
+          {{/if}}
+        {{else}}
+          {{> loader}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>

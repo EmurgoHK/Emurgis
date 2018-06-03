@@ -227,7 +227,36 @@ describe('problem methods', () => {
               assert.include(err.message, 'You cannot delete the problems you did not create')
           })
         })
-    it ()
+    it ('users can subscribe to a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      callWithPromise('watchProblem', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.notEqual(p.subscribers.indexOf(Meteor.userId()), -1)
+      })
+    })
+
+    it ('users can unsubscribe from a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      callWithPromise('unwatchProblem', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.equal(p.subscribers.indexOf(Meteor.userId()), -1)
+      })
+    })
+
     after(function() {
         Problems.remove({})
     })

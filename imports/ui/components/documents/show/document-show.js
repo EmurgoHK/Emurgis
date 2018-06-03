@@ -3,7 +3,7 @@ import { FlowRouter } from "meteor/kadira:flow-router"
 import { notify } from "/imports/modules/notifier"
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -42,6 +42,13 @@ Template.documentShow.helpers({
         } else {
             return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
         }
+      }
+    },
+    watchButton(problem) {
+      if (~(problem.subscribers || []).indexOf(Meteor.userId())) {
+        return '<a class="btn btn-sm btn-primary unwatchProblem" href="#" role="button">Unwatch</a>'
+      } else {
+        return '<a class="btn btn-sm btn-primary watchProblem" href="#" role="button">Watch</a>'
       }
     },
     markAsResolved(problem) {
@@ -95,6 +102,44 @@ Template.documentShow.events({
             }, (error, response) => {
                 if(error) { console.log(error.details) }
             })
+        }
+    },
+    "click .unwatchProblem" (event, instance) {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            unwatchProblem.call({
+                _id: Template.instance().getDocumentId(),
+            }, (error, result) => {
+                if (error) {
+                    if (error.details) {
+                        console.error(error.details)
+                   } else {
+                        console.error(error)
+                    }
+                }
+            })
+        } else {
+            notify('Must be logged in!', 'error')
+        }
+    },
+    "click .watchProblem" (event, instance) {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            watchProblem.call({
+                _id: Template.instance().getDocumentId(),
+            }, (error, result) => {
+                if (error) {
+                    if (error.details) {
+                        console.error(error.details)
+                   } else {
+                        console.error(error)
+                    }
+                }
+            })
+        } else {
+            notify('Must be logged in!', 'error')
         }
     },
     "click .documentCommentBtn" (event, instance) {
