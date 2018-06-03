@@ -118,7 +118,8 @@ export const claimProblem = new ValidatedMethod({
             let problem = Problems.findOne({_id: _id});
 
             if (problem.claimed === undefined || problem.claimed === false) {
-                let getName = Meteor.users.findOne({_id: Meteor.userId()}).name;
+
+                let getName = Meteor.users.findOne({_id: Meteor.userId()}).profile.name;
 
                 Problems.update({
                     _id: _id
