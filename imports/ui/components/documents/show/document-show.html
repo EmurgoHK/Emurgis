@@ -6,6 +6,7 @@
         {{#if Template.subscriptionsReady}}
           <div class="float-right">
             {{{claimButton problem}}}
+            {{{watchButton problem}}}
             {{#if problem.claimed}}
               {{#if hasClaimedProblem problem.claimedBy}}
                 {{{ markAsResolved problem }}}

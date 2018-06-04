@@ -5,6 +5,8 @@ import { Problems } from "./problemCollection.js"
 
 import { Stats } from '../../stats/both/statsCollection'
 
+import { sendNotification } from '/imports/api/notifications/both/notificationsMethods'
+
 
 //we need to move this to a global file and manage once
 const {
@@ -17,6 +19,30 @@ const {
     Id,
     Domain
 } = RegEx
+
+export const addToSubscribers = (problemId, userId) => {
+  Problems.update({
+    _id: problemId
+  }, {
+    $addToSet: {
+      subscribers: userId
+    }
+  })
+}
+
+export const sendToSubscribers = (problemId, authorId, message) => {
+  let problem = Problems.findOne({
+    _id: problemId
+  })
+
+  if (problem && problem.subscribers && problem.subscribers.length) {
+    problem.subscribers.forEach(i => {
+      if (i !== authorId) { // don't notify yourself
+        sendNotification(i, message, 'System', `/${problem._id}`)
+      }
+    })
+  }
+}
 
 //Define a ValidatedMethod which can be called from both the client and server
 //to validate data submitted on the problem form.
@@ -43,7 +69,8 @@ export const addProblem = new ValidatedMethod({
       'solution': solution || "",
       'createdAt': new Date().getTime(),
       'createdBy': Meteor.userId() || "",
-      'status':'open'
+      'status':'open',
+      subscribers: [Meteor.userId()]
     })
 
     Stats.upsert({
@@ -59,6 +86,44 @@ export const addProblem = new ValidatedMethod({
 });
 
 //end
+
+export const watchProblem = new ValidatedMethod({
+  name: 'watchProblem',
+  validate: new SimpleSchema({
+    _id: { type: RegEx, optional: false },
+  }).validator({
+    clean: true
+  }),
+  run({ _id }) {
+    if (!Meteor.userId()) {
+      throw new Meteor.Error('Error.', 'You have to be logged in.')
+    }
+
+    addToSubscribers(_id, Meteor.userId())
+  }
+})
+
+export const unwatchProblem = new ValidatedMethod({
+  name: 'unwatchProblem',
+  validate: new SimpleSchema({
+    _id: { type: RegEx, optional: false },
+  }).validator({
+    clean: true
+  }),
+  run({ _id }) {
+    if (!Meteor.userId()) {
+      throw new Meteor.Error('Error.', 'You have to be logged in.')
+    }
+
+    Problems.update({
+      _id: _id
+    }, {
+      $pull: {
+        subscribers: Meteor.userId()
+      }
+    })
+  }
+})
 
 //allow a user to unclaim a problem
 export const unclaimProblem = new ValidatedMethod({
@@ -94,6 +159,9 @@ export const unclaimProblem = new ValidatedMethod({
                       unclaimedProblems: _id // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
                   }
               })
+
+              sendToSubscribers(_id, Meteor.userId(), `${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} unclaimed a problem you\'re watching.`)
+              addToSubscribers(_id, Meteor.userId())
 
               return _id
           } else {
@@ -144,6 +212,9 @@ export const claimProblem = new ValidatedMethod({
                         unclaimedProblems: _id
                     }
                 })
+
+                sendToSubscribers(_id, Meteor.userId(), `${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} claimed a problem you\'re watching.`)
+                addToSubscribers(_id, Meteor.userId())
 
                 return _id;
             } else {
@@ -277,6 +348,8 @@ export const updateStatus = new ValidatedMethod({
               }
           })
         }
+
+        sendToSubscribers(problemId, Meteor.userId(), `${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} ${status === 'open' ? 'reopened' : 'closed'} a problem you\'re watching.`)
 
         return problemId;
     }

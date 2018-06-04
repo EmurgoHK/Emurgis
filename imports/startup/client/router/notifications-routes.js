@@ -1,12 +1,12 @@
 import { FlowRouter } from 'meteor/kadira:flow-router'
 import { BlazeLayout } from 'meteor/kadira:blaze-layout'
 
-import '/imports/ui/components/stats/userStats'
+import '/imports/ui/components/notifications/notifications'
 
-FlowRouter.route('/stats/:userId?', {
+FlowRouter.route('/notifications', {
     action: () => {
         BlazeLayout.render('layout', {
-          main: 'userStats',
+          main: 'notifications',
           footer: 'footer',
           header: 'header'
         })
