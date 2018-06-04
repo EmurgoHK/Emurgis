@@ -17,9 +17,9 @@ Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
   this.autorun(() => {
+    this.subscribe('users')
     this.subscribe("problems", this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
-    this.subscribe('users')
   })
 
   this.commentInvalidMessage = new ReactiveVar("")
@@ -63,7 +63,15 @@ Template.documentShow.helpers({
         if (problem.status === 'closed') {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
         } else {
-          return '<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> This is fixed/solved </a>'
+            if (problem.status === 'ready for review') {
+                let claimer = Meteor.users.findOne({
+                    _id: problem.claimedBy
+                }) || {}
+                
+                return `<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> ${(claimer.profile || {}).name} has solved this issue</a>`
+            }
+
+            return ''
         }
     },
     resolvedByUser(problem) {
@@ -81,7 +89,7 @@ Template.documentShow.events({
         let problem = Problems.findOne({ _id: Template.instance().getDocumentId() })
         let claimer = Meteor.users.findOne({
             _id: problem.claimedBy
-        })
+        }) || {}
         let info = ''
 
         if (Meteor.userId()) {
@@ -92,17 +100,16 @@ Template.documentShow.events({
                 })
                 .then(confirmed => {
                     if (status === 'closed' && claimer && confirmed) {
-
                         info = 'actually-solved'
-
-                        updateStatus.call({
-                            problemId: problem._id,
-                            status: status,
-                            info: info
-                        }, (error, response) => {
-                            if (error) { console.log(error) }
-                        })
                     }
+                    
+                    updateStatus.call({
+                        problemId: problem._id,
+                        status: status,
+                        info: info
+                    }, (error, response) => {
+                        if (error) { console.log(error) }
+                    })
                 });
 
 
