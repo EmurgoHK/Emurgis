@@ -22,6 +22,9 @@
           <h3>{{problem.summary}}</h3>
           <div class="card-subtitle">
             {{{statusText problem.status}}}
+            {{#if isProblemOwner problem.createdBy}}
+            <span class="badge badge-success">My problem</span>
+            {{/if}}
           </div>
           <br/>
           <h5 class="card-subtitle">Problem</h5>

@@ -11,7 +11,7 @@ import "./documents-index-item/documents-index-item.js"
 Template.documentsIndex.onCreated(function() {
 
     //Reactive Vars
-    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open'])
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my'])
     this.filter = new ReactiveVar({})
 
     this.autorun(() => {
@@ -24,6 +24,14 @@ Template.documentsIndex.onCreated(function() {
             status: {
                 $in: projectStatusTypes
             }
+        }
+
+        if (!~projectStatusTypes.indexOf('my')) {
+          query = _.extend(query, {
+            createdBy: {
+              $ne: Meteor.userId()
+            }
+          })
         }
 
         this.filter.set(query)
