@@ -22,7 +22,7 @@ Template.registerHelper('statusText', status => {
     if (status && status === 'open') {
         return '<span class="badge badge-success">Open</span>'
     } else if (status && status === 'closed') {
-        return '<span class="badge badge-danger">Closed</span>'
+        return '<span class="badge badge-danger">This is fixed/solved</span>'
     } else if (status && status === 'in progress') {
         return '<span class="badge badge-secondary">In progress</span>'
     } else if (status && status === 'ready for review') {
