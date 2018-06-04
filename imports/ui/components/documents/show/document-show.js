@@ -1,6 +1,7 @@
 import { Template } from "meteor/templating"
 import { FlowRouter } from "meteor/kadira:flow-router"
 import { notify } from "/imports/modules/notifier"
+import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem } from "/imports/api/documents/both/problemMethods.js"
@@ -71,26 +72,36 @@ Template.documentShow.helpers({
 
 Template.documentShow.events({
     "click .toggleProblem" (event) {
-        var status = event.target.id === 'closeProblem' ? 'closed' :  'open';
-        let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
+        var status = event.target.id === 'closeProblem' ? 'closed' : 'open';
+        let problem = Problems.findOne({ _id: Template.instance().getDocumentId() })
         let claimer = Meteor.users.findOne({
             _id: problem.claimedBy
         })
         let info = ''
 
-         if (Meteor.userId()) {
-            if (status === 'closed' && claimer && confirm(`Was this problem actually solved by ${(claimer.profile || {}).name}?`)) { // lazy eval ftw
-                info = 'actually-solved'
-            }
+        if (Meteor.userId()) {
+            swal({
+                    text: `Was this problem actually solved by ${(claimer.profile || {}).name}?`,
+                    icon: "warning",
+                    dangerMode: true,
+                })
+                .then(confirmed => {
+                    if (status === 'closed' && claimer && confirmed) {
 
-             updateStatus.call({
-                 problemId: problem._id,
-                 status: status,
-                 info: info
-             }, (error, response) => {
-                 if (error) { console.log(error) }
-             })
-         }
+                        info = 'actually-solved'
+
+                        updateStatus.call({
+                            problemId: problem._id,
+                            status: status,
+                            info: info
+                        }, (error, response) => {
+                            if (error) { console.log(error) }
+                        })
+                    }
+                });
+
+
+        }
     },
     "click #resolveProblem" (event) {
         let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
@@ -171,46 +182,61 @@ Template.documentShow.events({
 
     "click .js-delete-document" (event, instance) {
         event.preventDefault()
+        let problemId = Template.instance().getDocumentId()
 
-        if (confirm("Are you sure you want to delete this problem?")) {
+        swal({
+                text: "Are you sure you want to delete this problem?",
+                icon: "warning",
+                dangerMode: true,
+            })
+            .then(confirmed => {
+                if (confirmed) {
+                    
+                    if (Meteor.userId()) {
 
-            let problemId = Template.instance().getDocumentId()
-            if (Meteor.userId()) {
-
-             deleteProblem.call({ id: problemId }, (error, result) => {
-                 if (error) {
-                     if (error.details) {
-                         console.error(error.details)
-                     }
-                 } else {
-                   FlowRouter.go('/');
-                 }
-             })
-            }
-        }
+                        deleteProblem.call({ id: problemId }, (error, result) => {
+                            if (error) {
+                                if (error.details) {
+                                    console.error(error.details)
+                                }
+                            } else {
+                                FlowRouter.go('/');
+                            }
+                        })
+                    }
+                }
+            });
     },
 
     "click .claimProblem" (event, instance) {
         event.preventDefault()
 
         if (Meteor.userId()) {
+            let problemId = Template.instance().getDocumentId()
+            swal({
+                    text: "Are you sure you want to claim this problem?",
+                    icon: "success",
+                    dangerMode: true,
+                })
+                .then(confirmed => {
+                    if (confirmed) {
 
-            if (confirm("Are you sure you want to claim this problem?")) {
-                let problemId = Template.instance().getDocumentId()
+                        if (Meteor.userId()) {
 
-                claimProblem.call({
-                    _id: problemId
-                }, (error, result) => {
-                    if (error) {
-                        if (error.details) {
-                            console.error(error.details)
-                        } else {
-                            notify('Problem claimed successfully', 'success');
+                            claimProblem.call({
+                                _id: problemId
+                            }, (error, result) => {
+                                if (error) {
+                                    if (error.details) {
+                                        console.error(error.details)
+                                    } else {
+                                        notify('Problem claimed successfully', 'success');
+                                    }
+                                }
+                            })
                         }
                     }
-                })
-
-            }
+                });
         } else {
             notify("Must be logged in!", "error")
         }
@@ -220,23 +246,31 @@ Template.documentShow.events({
         event.preventDefault()
 
         if (Meteor.userId()) {
+            let problemId = Template.instance().getDocumentId()
+            swal({
+                    text: "Are you sure you want to unclaim this problem?",
+                    icon: "warning",
+                    dangerMode: true,
+                })
+                .then(confirmed => {
+                    if (confirmed) {
 
-            if (confirm("Are you sure you want to unclaim this problem?")) {
-                let problemId = Template.instance().getDocumentId()
+                        if (Meteor.userId()) {
 
-                unclaimProblem.call({
-                    _id: problemId
-                }, (error, result) => {
-                    if (error) {
-                        if (error.details) {
-                            console.error(error.details)
-                        } else {
-                            notify('Problem unclaimed successfully', 'success');
+                            unclaimProblem.call({
+                                _id: problemId
+                            }, (error, result) => {
+                                if (error) {
+                                    if (error.details) {
+                                        console.error(error.details)
+                                    } else {
+                                        notify('Problem unclaimed successfully', 'success');
+                                    }
+                                }
+                            })
                         }
                     }
-                })
-
-            }
+                });
         } else {
             notify("Must be logged in!", "error")
         }
