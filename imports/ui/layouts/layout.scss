@@ -1,4 +1,24 @@
 /* Layouts - Layout
 -------------------------------------------------- */
 
-.layout {}
+.layout {
+    .app-body {
+        margin-top: 0 !important;
+    }
+
+    .sidebar, .main {
+        margin-top: 55px;
+    }
+
+    .app-header {
+        border-bottom: none !important;
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+        color: #fff;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
