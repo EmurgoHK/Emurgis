@@ -53,14 +53,14 @@ Template.documentShow.helpers({
     },
     markAsResolved(problem) {
         if (problem.status !== 'ready for review' && problem.status !== 'closed') {
-            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> Mark resolved </a>'
+            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> I have solved this problem </a>'
         }
     },
     statusButton(problem) {
         if (problem.status === 'closed') {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
         } else {
-          return '<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> Close </a>'
+          return '<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> This is fixed/solved </a>'
         }
     },
     resolvedByUser(problem) {
