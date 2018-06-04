@@ -60,7 +60,52 @@ describe('comment methods', () => {
         })
     })
 
-	
+    it('can edit a comment if user is owner', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        let commentId = Comments.insert({
+            'problemId': problem._id,
+            'comment': 'Lorem ipsum something something ...',
+            'createdBy': Meteor.userId()
+        })
+
+        return callWithPromise('editComment', {
+            commentId: commentId,
+            comment: 'Test 123'
+        }).then(data => {
+            let comment = Comments.findOne({
+                _id: commentId
+            })
+
+            assert.equal(comment.comment, 'Test 123')
+        })
+    })
+
+    it('cannot edit a comment if user is not owner', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        let commentId = Comments.insert({
+            'problemId': problem._id,
+            'comment': 'Lorem ipsum something something ...',
+            'createdBy': 'another-user'
+        })
+
+        return callWithPromise('editComment', {
+            commentId: commentId,
+            comment: 'Test 123'
+        }).then(data => {
+            // we are expecting an error to occure
+        }).catch((err) => {
+            assert.include(err.message, 'You are not allowed to edit this comment')
+
+            let comment = Comments.findOne({
+                _id : commentId
+            })
+            assert.equal(comment.comment, 'Lorem ipsum something something ...')
+        })
+    })	
 
     after(function() {
         Problems.remove({})
