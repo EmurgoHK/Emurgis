@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-body">
                <strong>{{comment.createdByName}}</strong> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
-                {{comment.comment}}
+                <span class="markdown">{{{md comment.comment}}}</span>
             </div>
         </div>
     </div>
