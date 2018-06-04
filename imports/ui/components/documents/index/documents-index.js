@@ -9,9 +9,27 @@ import "./documents-index.html"
 import "./documents-index-item/documents-index-item.js"
 
 Template.documentsIndex.onCreated(function() {
-  this.autorun(() => {
-    this.subscribe("problems")
-  });
+
+    //Reactive Vars
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open'])
+    this.filter = new ReactiveVar({})
+
+    this.autorun(() => {
+        this.subscribe("problems");
+
+        //reactive variable to query mongoDB based on the status type
+        let projectStatusTypes = Template.instance().projectStatusTypes.get();
+
+        let query = {
+            status: {
+                $in: projectStatusTypes
+            }
+        }
+
+        this.filter.set(query)
+
+
+    });
 });
 
 Template.documentsIndex.onRendered(function() {})
@@ -20,7 +38,8 @@ Template.documentsIndex.onDestroyed(function() {})
 
 Template.documentsIndex.helpers({
   problems() {
-    return Problems.find({}, { sort: { createdAt: -1 } })
+    let filter = Template.instance().filter.get();
+    return Problems.find(filter, { sort: { createdAt: -1 } })
   }
 })
 
@@ -34,5 +53,15 @@ Template.documentsIndex.events({
     } else {
       FlowRouter.go('/signin');
     }
+  },
+  'click .projectFiltersPanel': function (event, template) {
+
+    // build array from the checkboxes selected
+    var projectStatusTypes = template.$('.projectFiltersPanel input:checked').map(function () {
+      return $(this).val();
+    });
+    var whatIsChecked = $.makeArray(projectStatusTypes);
+    console.log(whatIsChecked)
+    template.projectStatusTypes.set(whatIsChecked);
   }
 })
