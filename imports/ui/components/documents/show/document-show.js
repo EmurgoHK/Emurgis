@@ -20,6 +20,8 @@ Template.documentShow.onCreated(function() {
     this.subscribe("comments", this.getDocumentId())
     this.subscribe('users')
   })
+
+  this.commentInvalidMessage = new ReactiveVar("")
 })
 
 Template.documentShow.onRendered(function() {})
@@ -66,6 +68,9 @@ Template.documentShow.helpers({
     resolvedByUser(problem) {
         let user = Meteor.users.findOne({ _id : problem.resolvedBy })
         return user.profile.name
+    },
+    commentInvalidMessage() {
+        return Template.instance().commentInvalidMessage.get()
     }
 })
 
@@ -149,21 +154,30 @@ Template.documentShow.events({
                 let problemId = Template.instance().getDocumentId()
                 var commentValue = $('#comments').val();
 
-                postComment.call({
-                    problemId: problemId,
-                    comment: commentValue
-                }, (error, result) => {
-                    if (error) {
-                        if (error.details) {
-                            console.error(error.details)
-                        } else {
-                            console.error(error)
-                        }
-                    }else{
-                    	$('#comments').val("");
-                    }
-                })
+                if (commentValue.length == 0) {
+                    Template.instance().commentInvalidMessage.set("Please type something before posting")
+                } else if (commentValue.length <= 3) {
+                    Template.instance().commentInvalidMessage.set("The comment is too small")
+                } else if (commentValue.length > 250) {
+                    Template.instance().commentInvalidMessage.set("The comment is too long")
+                } else {
+                    Template.instance().commentInvalidMessage.set("")
 
+                    postComment.call({
+                        problemId: problemId,
+                        comment: commentValue
+                    }, (error, result) => {
+                        if (error) {
+                            if (error.details) {
+                                console.error(error.details)
+                            } else {
+                                console.error(error)
+                            }
+                        }else{
+                            $('#comments').val("");
+                        }
+                    })
+                }
             } else {
                 notify("Must be logged in!", "error")
             }
