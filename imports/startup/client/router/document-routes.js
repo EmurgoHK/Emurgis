@@ -5,6 +5,7 @@ import { appRoutes } from './group-config'
 import "/imports/ui/components/documents/index/documents-index.js"
 import "/imports/ui/components/documents/new/document-new.js"
 import "/imports/ui/components/documents/show/document-show.js"
+import "/imports/ui/components/documents/show/document-comments.js"
 import "/imports/ui/components/documents/edit/document-edit.js"
 
 // ***************************************************************

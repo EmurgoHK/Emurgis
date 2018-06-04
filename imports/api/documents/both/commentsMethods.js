@@ -45,3 +45,23 @@ export const postComment = new ValidatedMethod({
                 addToSubscribers(problemId, this.userId)
             }
 })
+
+export const deleteComment = new ValidatedMethod({
+    name: 'deleteComment',
+    validate: new SimpleSchema({
+        commentId: { type: String, optional: false}
+    }).validator(),
+    run({ commentId }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        let comment = Comments.findOne({ _id : commentId }) 
+
+        if (comment.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to delete this comment.')
+        }
+
+        Comments.remove({ _id : comment._id })
+    }
+})

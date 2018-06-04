@@ -1,4 +1,16 @@
 /* Document - Show
 -------------------------------------------------- */
 
-.document-show {}
+.document-show {
+    .comment-settings {
+        i {
+            cursor: pointer;
+
+            &.icon-settings.dropdown-toggle {
+                &::after {
+                    border: none;
+                }
+            }
+        }
+    }
+}
