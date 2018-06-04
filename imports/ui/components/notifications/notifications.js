@@ -7,6 +7,8 @@ import { markNotificationAsRead } from '/imports/api/notifications/both/notifica
 import './notifications.html'
 
 Template.notifications.onCreated(function() {
+    this.unread = new ReactiveVar([])
+
     this.autorun(() => {
         this.subscribe('notifications')
 
@@ -16,6 +18,8 @@ Template.notifications.onCreated(function() {
         })
 
         if (notifications.count()) { // mark all unread notifications as read
+            this.unread.set(notifications.map(i => i._id))
+
             notifications.fetch().forEach(i => {
                 markNotificationAsRead.call({
                     notificationId: i._id
@@ -23,6 +27,13 @@ Template.notifications.onCreated(function() {
             })
         }
     })
+})
+
+Template.notifications.events({
+    'click .stats-item': function (event, templateInstance) {
+        let unread = templateInstance.unread.get()
+        templateInstance.unread.set(unread.filter(i => i !== this._id))
+    }
 })
 
 Template.notifications.helpers({
@@ -33,6 +44,9 @@ Template.notifications.helpers({
             createdAt: -1
         }
     }),
+    read: function() {
+        return !~Template.instance().unread.get().indexOf(this._id)
+    },
     href: function() {
         return this.href || '#'
     } 
