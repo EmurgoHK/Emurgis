@@ -333,7 +333,7 @@ export const updateStatus = new ValidatedMethod({
 
         if (status === 'closed' && info === 'actually-solved') {
             Stats.upsert({
-                userId: Meteor.userId()
+                userId: problem.claimedBy
             }, {
                 $addToSet: {
                     completedProblems: problemId

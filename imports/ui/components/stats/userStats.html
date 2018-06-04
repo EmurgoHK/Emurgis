@@ -2,12 +2,13 @@
   <div class="stats-index">
     <div class="card">
       <div class="card-body">
-        <h1>{{username}}'s stats</h1>
+        <h1>Stats</h1>
 
         {{#if Template.subscriptionsReady}}
             <table class="table table-hover mt-3">
               <thead>
                 <tr>
+                  <th>Username</th>
                   <th>Logged problems</th>
                   <th>Claimed problems</th>
                   <th>Abandoned problems</th>
@@ -15,14 +16,29 @@
                 </tr>
               </thead>
               <tbody>
-                {{#with stats}}
-                <tr class="stats-item">
+                {{#with currentUser}}
+                <tr class="stats-item" style="background-color: #e4e5e6;"> <!-- feel free to change the color -->
+                  <td>{{profile.name}}</td>
+                  {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
                   <td>{{nullify claimedProblems.length}}</td>
                   <td>{{nullify unclaimedProblems.length}} ({{fixed unclaimedPercentage}}%)</td>
                   <td>{{nullify completedProblems.length}} ({{fixed completedPercentage}}%)</td>
+                  {{/with}}
                 </tr>
-                {{/with}}
+                {{/with}} <!-- show the current user first -->
+
+                {{#each users}}
+                <tr class="stats-item">
+                  <td>{{profile.name}}</td>
+                  {{#with stats}}
+                  <td scope="row">{{nullify loggedProblems.length}}</td>
+                  <td>{{nullify claimedProblems.length}}</td>
+                  <td>{{nullify unclaimedProblems.length}} ({{fixed unclaimedPercentage}}%)</td>
+                  <td>{{nullify completedProblems.length}} ({{fixed completedPercentage}}%)</td>
+                  {{/with}}
+                </tr>
+                {{/each}}
               </tbody>
             </table>
         {{else}}

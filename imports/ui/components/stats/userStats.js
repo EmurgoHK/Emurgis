@@ -7,20 +7,26 @@ import './userStats.html'
 
 Template.userStats.onCreated(function() {
     this.autorun(() => {
-        let userId = FlowRouter.getParam('userId') || Meteor.userId()
-
-        this.subscribe('userStats', userId)
-        this.subscribe('user', userId)
+        this.subscribe('users')
+        this.subscribe('userStats')
     })
 })
 
 Template.userStats.helpers({
-    stats: () => Stats.findOne({
-        userId: FlowRouter.getParam('userId') || Meteor.userId()
-    }) || {},
-    username: () => ((Meteor.users.findOne({
-        _id: FlowRouter.getParam('userId') || Meteor.userId()
-    }) || {}).profile || {}).name,
+    users: () => Meteor.users.find({
+        _id: {
+            $ne: Meteor.userId()
+        }
+    }, {
+        sort: {
+            'profile.name': -1
+        }
+    }),
+    stats: function () {
+        return Stats.findOne({
+            userId: this._id
+        }) || {}
+    },
     unclaimedPercentage: function() {
         return ((this.claimedProblems || []).length > 0 ? ((this.unclaimedProblems || []).length / this.claimedProblems.length) : 0) * 100
     },
