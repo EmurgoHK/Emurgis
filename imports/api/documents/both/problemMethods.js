@@ -6,6 +6,7 @@ import { Problems } from "./problemCollection.js"
 import { Stats } from '../../stats/both/statsCollection'
 
 import { sendNotification } from '/imports/api/notifications/both/notificationsMethods'
+import { isModerator } from '/imports/api/user/both/userMethods'
 
 
 //we need to move this to a global file and manage once
@@ -271,7 +272,7 @@ export const deleteProblem = new ValidatedMethod({
   			   throw new Meteor.Error('Error.', 'You have to be logged in.')
   		}
 
-      if (problem.createdBy === Meteor.userId()) {
+      if (problem.createdBy === Meteor.userId() || isModerator(Meteor.userId())) {
           Problems.remove({'_id' : id})
       } else {
           throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')

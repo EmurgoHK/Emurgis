@@ -5,7 +5,7 @@ import marked from 'marked';
 
 // check if current user created the problem
 Template.registerHelper("isProblemOwner", problemOwnerId => {
-    if (problemOwnerId !== undefined && problemOwnerId === Meteor.userId()) { return true }
+    return problemOwnerId !== undefined && problemOwnerId === Meteor.userId()
 })
 
 // check if current user has claimed problem

@@ -16,6 +16,10 @@
             <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
         		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
             {{{statusButton problem}}}
+            {{else}}
+            {{#if isModerator}}
+            <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+            {{/if}}
             {{/if}}
           </div>
 

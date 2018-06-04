@@ -6,6 +6,8 @@ import { Template } from "meteor/templating"
 
 import * as helpers from "/imports/modules/helpers.js"
 
+import { isModerator } from '/imports/api/user/both/userMethods'
+
 // Cheap pluralization
 Template.registerHelper("pluralize", (count, word) => {
   return helpers.pluralize(count, word)
@@ -41,3 +43,4 @@ Template.registerHelper("getProfileImage", image => {
   return helpers.getProfileImage(image)
 })
 
+Template.registerHelper('isModerator', () => isModerator(Meteor.userId()))
