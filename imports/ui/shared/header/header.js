@@ -11,6 +11,19 @@ Template.header.onCreated(function() {
 })
 
 Template.header.events({
+    'click .sign-in': function(event) {
+        event.preventDefault();
+        console.log("called")
+    
+        Meteor.loginWithGoogle({}, (err) => {
+            if (err) { 
+                notify("Invalid login", "error")
+            return 
+            }
+            var redirectTo = window.last || '/'
+            FlowRouter.go(redirectTo)
+        })
+    },
     'click .sign-out': (event) => {
         event.preventDefault()
 
