@@ -1,7 +1,9 @@
 <template name="documentsIndexItem">
 
   <tr class="documents-index-item">
-    <td scope="row"><a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a></td>
+    <td scope="row">
+      <div><a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a></div>
+    </td>
     <td>{{showTimeAgoTimestamp document.createdAt}}</td>
     <td>{{{statusText document.status}}}</td>
     <td><span class="badge badge-pill badge-primary">✉ {{numberOfComments document._id}}</span></td>

@@ -1,5 +1,6 @@
 import { FlowRouter } from "meteor/kadira:flow-router"
 import { BlazeLayout } from "meteor/kadira:blaze-layout"
+import { appRoutes } from './group-config'
 
 import "/imports/ui/components/documents/index/documents-index.js"
 import "/imports/ui/components/documents/new/document-new.js"
@@ -12,12 +13,13 @@ import "/imports/ui/components/documents/edit/document-edit.js"
 
 // DOCUMENTS INDEX
 // -------------------------------------------------------
-FlowRouter.route("/", {
+appRoutes.route("/", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
       main: "documentsIndex",
-      footer: "footer"
+      footer: "footer",
+      sidebar: 'sidebar'
     })
   },
   name: "documentsIndex"
@@ -25,12 +27,13 @@ FlowRouter.route("/", {
 
 // DOCUMENT NEW
 // -------------------------------------------------------
-FlowRouter.route("/new", {
+appRoutes.route("/new", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
       main: "documentNew",
-      footer: "footer"
+      footer: "footer",
+      sidebar: 'sidebar'
     })
   },
   name: "documentNew"
@@ -38,12 +41,13 @@ FlowRouter.route("/new", {
 
 // DOCUMENT SHOW
 // -------------------------------------------------------
-FlowRouter.route("/:documentId", {
+appRoutes.route("/:documentId", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
       main: "documentShow",
-      footer: "footer"
+      footer: "footer",
+      sidebar: 'sidebar'
     })
   },
   name: "documentShow"
@@ -51,12 +55,13 @@ FlowRouter.route("/:documentId", {
 
 // DOCUMENT EDIT
 // -------------------------------------------------------
-FlowRouter.route("/:documentId/edit", {
+appRoutes.route("/:documentId/edit", {
   action: function() {
     BlazeLayout.render("layout", {
       header: "header",
       main: "documentEdit",
-      footer: "footer"
+      footer: "footer",
+      sidebar: 'sidebar'
     })
   },
   name: "documentEdit"
