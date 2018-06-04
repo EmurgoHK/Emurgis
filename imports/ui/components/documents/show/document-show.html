@@ -20,30 +20,41 @@
           </div>
 
           <h3>{{problem.summary}}</h3>
-          {{{statusText problem.status}}}
-          <p class="card-text">{{problem.description}}</p>
-
-          <h6 class="card-subtitle text-muted">Solution:</h6>
-          <p class="card-text">{{problem.solution}}</p>
+          <div class="card-subtitle">
+            {{{statusText problem.status}}}
+          </div>
+          <br/>
+          <h5 class="card-subtitle">Problem</h5>
+          <p class="card-text font-weight-normal">{{problem.description}}</p>
+          <br/>
+          <h5 class="card-subtitle">Solution</h5>
+          <p class="card-text font-weight-normal">{{problem.solution}}</p>
           <hr>
-          <p class="text-muted">
+          <p class="text-muted" style="margin:0">
+            <strong>{{getNameById problem.createdBy}}</strong> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
+
             {{#if problem.updatedAt}}
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
-
           {{#if problem.claimed}}
-          <strong>Claimed by {{problem.claimedFullname}} {{showTimeAgoTimestamp problem.claimedDateTime}}</strong> <br />
+          Claimed by <strong>{{problem.claimedFullname}}</strong> {{showTimeAgoTimestamp problem.claimedDateTime}} <br />
           {{/if}}
           {{#if problem.resolved}}
             Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
           {{/if}}
-          Created By: {{getNameById problem.createdBy}}<br />
-          Created: {{showTimeAgoTimestamp problem.createdAt}}
           </p>
-          <a href="{{pathFor 'documentsIndex'}}" class="btn btn-link">Back</a>
         {{else}}
           {{> loader}}
         {{/if}}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <p class="card-text">{{problem.description}}</p>
+
+        <h6 class="card-subtitle text-muted">Solution:</h6>
+        <p class="card-text">{{problem.solution}}</p>
       </div>
     </div>
   </div>
