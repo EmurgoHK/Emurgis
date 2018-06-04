@@ -341,7 +341,7 @@ export const updateStatus = new ValidatedMethod({
             })
         } else {
           Stats.upsert({
-              userId: Meteor.userId()
+              userId: problem.claimedBy
           }, {
               $pull: {
                   completedProblems: problemId
