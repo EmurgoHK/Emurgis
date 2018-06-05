@@ -31,6 +31,7 @@ describe('problem methods', () => {
         return callWithPromise('markAsResolved', {
             problemId: problem._id,
             claimerId: Meteor.userId(),
+            resolutionSummary: 'Some random resolution summary...'
         }).then(problemId => {
             let problem = Problems.findOne({ _id : problemId})
             assert.equal(problem.status, 'ready for review')
@@ -48,7 +49,8 @@ describe('problem methods', () => {
 
         return callWithPromise('markAsResolved', {
             problemId: problem._id,
-            claimerId: 'fake-claimer'
+            claimerId: 'fake-claimer',
+            resolutionSummary: 'Some random resolution summary...'
         }).then(data => {
             assert.isNull(data)
         }).catch(err => {

@@ -30,6 +30,7 @@
           {{#if problem.resolved}}
             Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
           {{/if}}
+          
           </p>
           <div class="float-right">
             {{#if isProblemOwner problem.createdBy}}
@@ -46,25 +47,33 @@
         {{/if}}
       </div>
     </div>
-  </div>
+    
+    {{#if problem.resolveSteps}}
+    <div class="card {{#if problem.hasAcceptedSolution}} border-success {{else}} border-warning {{/if}}">
+      <div class="card-body">
+        <h5 class="card-subtitle"> {{{ isSolutionAccepted problem }}} Submitted solution </h5>
+        <hr>
+        
+        <span class="pre">{{problem.resolveSteps}}</span><br>
+        <small><strong>{{problem.claimedFullname}}</strong> | {{showTimeAgoTimestamp problem.resolvedDateTime}} <br /></small>
+      </div>
+    </div>
+    {{/if}}
+    {{#each comment in comments}}
+      {{> documentComments comment=comment}}
+    {{/each}}
 
-{{#each comment in comments}}
-  {{> documentComments comment=comment}}
-{{/each}}
-
-      <div class="document-show">
-        <div class="card">
-            <div class="card-body">
-                <div class="form-group">
-                    <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
-                </div>
-                <p class="text-danger">{{ commentInvalidMessage }}</p>
-                <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
-            </div>
-        </div>
+    <div class="card">
+      <div class="card-body">
+          <div class="form-group">
+              <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
+          </div>
+          <p class="text-danger">{{ commentInvalidMessage }}</p>
+          <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
+      </div>
     </div>
 
-    <div class="document-show my-2">
+    <div class="my-2">
       <div class="take-action card">
           <div class="card-body">
             <p class="take-action-button pl-4 pt-1 mr-4 float-left">
@@ -80,6 +89,7 @@
                 {{/if}}
               {{/if}}
               {{{statusButton problem}}}
+
             </span>
             {{else}}
               {{> loader}}
@@ -87,4 +97,7 @@
           </div>
       </div>
     </div>
+
+    {{> resolvedModal }}
+  </div>
 </template>

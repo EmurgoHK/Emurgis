@@ -286,16 +286,22 @@ export const markAsResolved = new ValidatedMethod({
     name: 'markAsResolved',
     validate: new SimpleSchema({
         problemId: { type: String, optional: false},
-        claimerId: { type: String, optional: false}
+        claimerId: { type: String, optional: false},
+        resolutionSummary: { type: String, optional: false}
     }).validator(),
-    run({ problemId, claimerId }) {
+    run({ problemId, claimerId, resolutionSummary }) {
 
         if (claimerId !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to resolve this problem')
         }
 
         Problems.update({ '_id' : problemId }, {
-            $set : { 'status' : 'ready for review' }
+            $set : { 
+                'status' : 'ready for review',
+                'resolveSteps': resolutionSummary,
+                'hasAcceptedSolution': false,
+                'resolvedDateTime': new Date().getTime()
+            }
         });
 
         return problemId;
@@ -327,7 +333,12 @@ export const updateStatus = new ValidatedMethod({
         if (status === 'closed' && problem.status === 'ready for review') {
             updateData.resolved = true
             updateData.resolvedBy = problem.claimedBy
-            updateData.resolvedDateTime = new Date().getTime()
+            updateData.hasAcceptedSolution = true
+        }
+
+        if (status === 'open') {
+            updateData.hasAcceptedSolution = false
+            updateData.resolved = false
         }
 
         Problems.update({ '_id' : problemId }, { $set : updateData })
