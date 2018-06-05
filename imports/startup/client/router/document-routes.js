@@ -7,6 +7,7 @@ import "/imports/ui/components/documents/new/document-new.js"
 import "/imports/ui/components/documents/show/document-show.js"
 import "/imports/ui/components/documents/show/document-comments.js"
 import "/imports/ui/components/documents/edit/document-edit.js"
+import '/imports/ui/components/documents/index/documents-claimed'
 
 // ***************************************************************
 // Document routes
@@ -38,6 +39,20 @@ appRoutes.route("/new", {
     })
   },
   name: "documentNew"
+})
+
+// CLAIMED DOCUMENTS
+// -------------------------------------------------------
+appRoutes.route('/claimed', {
+    name: 'documentsClaimed',
+    action: () => {
+        BlazeLayout.render('layout', {
+            header: 'header',
+            main: 'documentsClaimed',
+            footer: 'footer',
+            sidebar: 'sidebar'
+        })
+    }
 })
 
 // DOCUMENT SHOW
