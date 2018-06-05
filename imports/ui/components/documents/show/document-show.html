@@ -4,25 +4,6 @@
     <div class="card">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
-          <div class="float-right">
-            {{{claimButton problem}}}
-            {{{watchButton problem}}}
-            {{#if problem.claimed}}
-              {{#if hasClaimedProblem problem.claimedBy}}
-                {{{ markAsResolved problem }}}
-              {{/if}}
-            {{/if}}
-            {{#if isProblemOwner problem.createdBy}}
-            <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
-        		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
-            {{{statusButton problem}}}
-            {{else}}
-            {{#if isModerator}}
-            <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
-            {{/if}}
-            {{/if}}
-          </div>
-
           <h3>{{problem.summary}}</h3>
           <div class="card-subtitle">
             {{{statusText problem.status}}}
@@ -37,7 +18,7 @@
           <h5 class="card-subtitle">Solution</h5>
           <p class="card-text font-weight-normal">{{problem.solution}}</p>
           <hr>
-          <p class="text-muted" style="margin:0">
+          <p class="text-muted float-left" style="margin:0">
             <strong>{{getNameById problem.createdBy}}</strong> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
 
             {{#if problem.updatedAt}}
@@ -50,6 +31,16 @@
             Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
           {{/if}}
           </p>
+          <div class="float-right">
+            {{#if isProblemOwner problem.createdBy}}
+            <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
+        		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+            {{else}}
+            {{#if isModerator}}
+            <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+            {{/if}}
+            {{/if}}
+          </div>
         {{else}}
           {{> loader}}
         {{/if}}
@@ -61,7 +52,7 @@
   {{> documentComments comment=comment}}
 {{/each}}
 
-      <div class="document-show pb-4">
+      <div class="document-show">
         <div class="card">
             <div class="card-body">
                 <div class="form-group">
@@ -71,5 +62,29 @@
                 <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
             </div>
         </div>
+    </div>
+
+    <div class="document-show my-2">
+      <div class="take-action card">
+          <div class="card-body">
+            <p class="take-action-button pl-4 pt-1 mr-4 float-left">
+              Take an action
+            </p>
+            {{#if Template.subscriptionsReady}}
+            <span class="problem-action-buttons float-right">
+              {{{claimButton problem}}}
+              {{{watchButton problem}}}
+              {{#if problem.claimed}}
+                {{#if hasClaimedProblem problem.claimedBy}}
+                  {{{ markAsResolved problem }}}
+                {{/if}}
+              {{/if}}
+              {{{statusButton problem}}}
+            </span>
+            {{else}}
+              {{> loader}}
+            {{/if}}
+          </div>
+      </div>
     </div>
 </template>

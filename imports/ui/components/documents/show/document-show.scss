@@ -13,4 +13,32 @@
             }
         }
     }
+
+    .problem-action-buttons {
+        .btn {
+            min-width: 100px;   // in order to make buttons to render in same size, if possible
+            margin-bottom: 4px; // avoid vertical button merge in small screens
+        }
+    }
+    
+    .take-action-button {
+        min-width: 200px;
+        background: #aaaaaa;
+        color:#fff;
+        display:block;
+        position:relative;
+        height: 28px;
+        margin: 0 0 4px 0;
+    }
+    .take-action-button:after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-top: 14px solid transparent;
+        border-bottom: 14px solid transparent;
+        border-left: 14px solid #aaaaaa;
+        right:-14px;
+        top: 0px;
+    }
 }
