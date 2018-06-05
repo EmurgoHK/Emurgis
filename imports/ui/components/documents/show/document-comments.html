@@ -6,13 +6,19 @@
                 <div class="comment-settings float-right dropup">
                     <i class="nav-icon icon-settings dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href=""><i class="icon-pencil"></i> Edit</a>
+                        <a class="dropdown-item edit-mode" href=""><i class="icon-pencil"></i> Edit</a>
                         <a class="dropdown-item delete-comment text-danger" data-comment-id="{{comment._id}}" href><i class="icon-trash text-danger"></i> Delete</a>
                     </div>
                 </div>
                 {{/if}}
                <strong>{{comment.createdByName}}</strong> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
-                <span class="markdown">{{{md comment.comment}}}</span>
+               {{#if editMode}}
+               <textarea class="form-control" id="js-comment">{{{comment.comment}}}</textarea>
+               <a class="btn btn-sm btn-primary edit-comment" role="button">Save</a>
+               <a class="btn btn-sm btn-danger cancel-edit" role="button">Cancel</a>
+               {{else}}
+               <span class="markdown">{{{md comment.comment}}}</span>
+               {{/if}}
             </div>
         </div>
     </div>

@@ -65,3 +65,30 @@ export const deleteComment = new ValidatedMethod({
         Comments.remove({ _id : comment._id })
     }
 })
+
+export const editComment = new ValidatedMethod({
+    name: 'editComment',
+    validate: new SimpleSchema({
+        commentId: { type: String, optional: false },
+        comment: { type: String, max: 5000, optional: false }
+    }).validator(),
+    run({ commentId, comment }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        let c = Comments.findOne({ _id : commentId }) 
+
+        if (c.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to edit this comment.')
+        }
+
+        Comments.update({
+            _id: commentId
+        }, {
+            $set: {
+                comment: comment
+            }
+        })
+    }
+})
