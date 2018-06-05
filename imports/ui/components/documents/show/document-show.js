@@ -56,7 +56,7 @@ Template.documentShow.helpers({
     },
     markAsResolved(problem) {
         if (problem.status !== 'ready for review' && problem.status !== 'closed') {
-            return '<a id="resolveProblem" class="btn btn-sm btn-primary" role="button" href> I have solved this problem </a>'
+            return '<a id="resolveProblem" class="btn btn-sm btn-success" role="button" href> I have solved this problem </a>'
         }
     },
     statusButton(problem) {
