@@ -12,6 +12,8 @@ import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
 import "./document-show.html"
 import "./document-comments.html"
+import "./resolved-modal.html"
+import "./resolved-modal.js"
 
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
@@ -56,7 +58,7 @@ Template.documentShow.helpers({
     },
     markAsResolved(problem) {
         if (problem.status !== 'ready for review' && problem.status !== 'closed') {
-            return '<a id="resolveProblem" class="btn btn-sm btn-success" role="button" href> I have solved this problem </a>'
+            return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
         }
     },
     statusButton(problem) {
@@ -80,6 +82,13 @@ Template.documentShow.helpers({
     },
     commentInvalidMessage() {
         return Template.instance().commentInvalidMessage.get()
+    },
+    isSolutionAccepted(problem) {
+        if (problem.hasAcceptedSolution) {
+            return `<i class="nav-icon icon-check text-success"></i>`
+        }
+
+        return `<i class="nav-icon icon-info text-warning"></i>`
     }
 })
 
