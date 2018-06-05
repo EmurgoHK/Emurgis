@@ -12,5 +12,5 @@ appRoutes.route('/notifications', {
           header: 'header'
         })
     },
-    name: 'stats'
+    name: 'notifications'
 })
