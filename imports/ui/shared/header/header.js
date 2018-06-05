@@ -30,6 +30,10 @@ Template.header.events({
         if (Meteor.userId()) {
             Meteor.logout()   
         }
+    },
+    'click .sidebar-toggler': function() {
+        // toggle "sidebar-show" class to show/hide sidebar
+        $('body').toggleClass("sidebar-lg-show")
     }
 })
 

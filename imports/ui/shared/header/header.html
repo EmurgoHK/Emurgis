@@ -1,14 +1,10 @@
 <template name="header">
   <header class="app-header navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container-fluid">
-        <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        <a class="navbar-brand" href="{{pathFor '/'}}"><img src="/img/emurgis.png" width="150px" /></a>
-
-        <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <button class="navbar-toggler sidebar-toggler d-block" type="button">
+        <span class="navbar-toggler-white-icon"></span>
+      </button>
+      <a class="navbar-brand" href="{{pathFor '/'}}"><img src="/img/emurgis.png" height="30px" /></a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
         aria-expanded="false" aria-label="Toggle navigation">
