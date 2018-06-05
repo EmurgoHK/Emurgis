@@ -27,12 +27,5 @@ Template.userStats.helpers({
             userId: this._id
         }) || {}
     },
-    unclaimedPercentage: function() {
-        return ((this.claimedProblems || []).length > 0 ? ((this.unclaimedProblems || []).length / this.claimedProblems.length) : 0) * 100
-    },
-    completedPercentage: function() {
-        return ((this.claimedProblems || []).length > 0 ? ((this.completedProblems || []).length / this.claimedProblems.length) : 0) * 100
-    },
-    fixed: val => parseInt(val) !== val ? val.toFixed(2) : val, // fix decimal points only if there are some to prevent 100.00,
     nullify: val => val || 0
 })
