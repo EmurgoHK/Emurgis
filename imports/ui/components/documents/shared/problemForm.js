@@ -17,9 +17,11 @@ Template.problemForm.events({
         let charsLeftText = inputMaxChars + ' characters left'
     
         $('#' + inputId + '-chars').text(charsLeftText)
-    
+            
+        let specialCodes = [8, 46, 37, 39] // backspace, delete, left, right
+
         if (inputMaxChars <= 0) { 
-          $('#' + inputId).keypress((e) => { return false })
+          $('#' + inputId).keypress((e) => { return !!~specialCodes.indexOf(e.keyCode) })
           return true
         } 
         
