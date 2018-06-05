@@ -21,7 +21,7 @@
                   <td>{{profile.name}}</td>
                   {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
-                  <td>{{nullify claimedProblems.length}}</td>
+                  <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
                   <td>{{nullify unclaimedProblems.length}}</td>
                   <td>{{nullify completedProblems.length}}</td>
                   {{/with}}

@@ -43,4 +43,9 @@ Template.registerHelper("getProfileImage", image => {
   return helpers.getProfileImage(image)
 })
 
+// Get output of basic inline calculations
+Template.registerHelper("math", () => {
+  return helpers.math()
+})
+
 Template.registerHelper('isModerator', () => isModerator(Meteor.userId()))

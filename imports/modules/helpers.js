@@ -43,3 +43,13 @@ export const getProfileImage = image => {
     return image
   }
 }
+
+// Outputs results of basic calculations
+export const math = () => {
+  return {
+    mul ( a, b ) { return isNaN(a * b) ? 0 : a * b; },
+    div ( a, b ) { return isNaN(b ? a / b : 0) ? 0 : b ? a / b : 0; },
+    sum ( a, b ) { return isNaN(a + b) ? 0 : a + b; },
+    sub ( a, b ) { return isNaN(a - b) ? 0 : a - b; },
+  }
+}
