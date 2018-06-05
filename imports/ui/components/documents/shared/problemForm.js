@@ -3,7 +3,7 @@ import { Template } from "meteor/templating"
 import "./problemForm.html"
 
 const maxCharValue = (inputId) => {
-    if(inputId === 'summary') { return (62 - 'problem: '.length) }
+    if(inputId === 'summary') { return (72 - 'problem: '.length) }
     return 500
 }
 
