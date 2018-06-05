@@ -88,7 +88,9 @@ Template.documentShow.events({
             swal({
                     text: `Was this problem actually solved by ${(claimer.profile || {}).name}?`,
                     icon: "warning",
+                    buttons: true,
                     dangerMode: true,
+                    showCancelButton: true
                 })
                 .then(confirmed => {
                     if (status === 'closed' && claimer && confirmed) {
@@ -201,7 +203,9 @@ Template.documentShow.events({
         swal({
                 text: "Are you sure you want to delete this problem?",
                 icon: "warning",
+                buttons: true,
                 dangerMode: true,
+                showCancelButton: true
             })
             .then(confirmed => {
                 if (confirmed) {
@@ -230,7 +234,9 @@ Template.documentShow.events({
             swal({
                     text: "Are you sure you want to claim this problem?",
                     icon: "success",
+                    buttons: true,
                     dangerMode: true,
+                    showCancelButton: true
                 })
                 .then(confirmed => {
                     if (confirmed) {
@@ -264,7 +270,9 @@ Template.documentShow.events({
             swal({
                     text: "Are you sure you want to unclaim this problem?",
                     icon: "warning",
+                    buttons: true,
                     dangerMode: true,
+                    showCancelButton: true
                 })
                 .then(confirmed => {
                     if (confirmed) {

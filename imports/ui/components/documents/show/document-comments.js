@@ -34,7 +34,8 @@ Template.documentComments.events({
       text: "Are you sure you want to delete this comment?",
       icon: "warning",
       buttons: true,
-      dangerMode: true
+      dangerMode: true,
+      showCancelButton: true
     }).then(confirmed => {
       if (confirmed) {
         let commentId = element.data('comment-id')
