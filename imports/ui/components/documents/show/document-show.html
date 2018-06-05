@@ -4,7 +4,7 @@
     <div class="card">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
-          <h3>{{problem.summary}}</h3>
+          <h3>{{{md problem.summary}}}</h3>
           <div class="card-subtitle">
             {{{statusText problem.status}}}
             {{#if isProblemOwner problem.createdBy}}
@@ -13,10 +13,10 @@
           </div>
           <br/>
           <h5 class="card-subtitle">Problem</h5>
-          <p class="card-text font-weight-normal">{{problem.description}}</p>
+          <p class="card-text font-weight-normal pre">{{{md problem.description}}}</p>
           <br/>
           <h5 class="card-subtitle">Solution</h5>
-          <p class="card-text font-weight-normal">{{problem.solution}}</p>
+          <p class="card-text font-weight-normal pre">{{{mdproblem.solution}}}</p>
           <hr>
           <p class="text-muted float-left" style="margin:0">
             <strong>{{getNameById problem.createdBy}}</strong> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
