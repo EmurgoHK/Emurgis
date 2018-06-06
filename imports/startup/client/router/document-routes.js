@@ -8,6 +8,7 @@ import "/imports/ui/components/documents/show/document-show.js"
 import "/imports/ui/components/documents/show/document-comments.js"
 import "/imports/ui/components/documents/edit/document-edit.js"
 import '/imports/ui/components/documents/index/documents-claimed'
+import '/imports/ui/components/documents/index/documents-logged.js'
 
 // ***************************************************************
 // Document routes
@@ -53,6 +54,20 @@ appRoutes.route('/claimed', {
             sidebar: 'sidebar'
         })
     }
+})
+
+// LOGGED DOCUMENTS
+// -------------------------------------------------------
+appRoutes.route('/logged', {
+  name: 'documentsLogged',
+  action: () => {
+      BlazeLayout.render('layout', {
+          header: 'header',
+          main: 'documentsLogged',
+          footer: 'footer',
+          sidebar: 'sidebar'
+      })
+  }
 })
 
 // DOCUMENT SHOW
