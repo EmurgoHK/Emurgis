@@ -17,20 +17,19 @@ Template.notifications.onCreated(function() {
             read: false
         })
 
-        if (notifications.count()) { // mark all unread notifications as read
+        if (notifications.count()) {
             this.unread.set(notifications.map(i => i._id))
-
-            notifications.fetch().forEach(i => {
-                markNotificationAsRead.call({
-                    notificationId: i._id
-                }, (err, data) => {})
-            })
         }
     })
 })
 
 Template.notifications.events({
     'click .stats-item': function (event, templateInstance) {
+        // mark clicked notification as read
+        markNotificationAsRead.call({
+            notificationId: this._id
+        }, (err, data) => {})
+        // remove clicked notification from unread notifications list
         let unread = templateInstance.unread.get()
         templateInstance.unread.set(unread.filter(i => i !== this._id))
     }
