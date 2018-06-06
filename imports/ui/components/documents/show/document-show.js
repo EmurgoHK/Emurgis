@@ -187,7 +187,7 @@ Template.documentShow.events({
                     Template.instance().commentInvalidMessage.set("Please type something before posting")
                 } else if (commentValue.length <= 3) {
                     Template.instance().commentInvalidMessage.set("The comment is too small")
-                } else if (commentValue.length > 250) {
+                } else if (commentValue.length > 500) {
                     Template.instance().commentInvalidMessage.set("The comment is too long")
                 } else {
                     Template.instance().commentInvalidMessage.set("")

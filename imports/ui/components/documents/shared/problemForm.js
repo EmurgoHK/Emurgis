@@ -4,7 +4,7 @@ import "./problemForm.html"
 
 const maxCharValue = (inputId) => {
     if(inputId === 'summary') { return (72 - 'problem: '.length) }
-    return 500
+    return 1000
 }
 
 Template.problemForm.events({
