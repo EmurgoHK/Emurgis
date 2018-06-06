@@ -54,11 +54,12 @@ export const addProblem = new ValidatedMethod({
         new SimpleSchema({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 500, optional: true},
-			      solution: { type: String, max: 500, optional: true}
+            solution: { type: String, max: 500, optional: true},
+            isProblemWithEmurgis: { type: Boolean, optional: true }
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution }) {
+    run({ summary, description, solution, isProblemWithEmurgis }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -71,6 +72,7 @@ export const addProblem = new ValidatedMethod({
       'createdAt': new Date().getTime(),
       'createdBy': Meteor.userId() || "",
       'status':'open',
+      'isProblemWithEmurgis': isProblemWithEmurgis,
       subscribers: [Meteor.userId()]
     })
 
@@ -236,9 +238,10 @@ export const editProblem = new ValidatedMethod({
 		'id': { type: String, optional: false},
 		'summary': { type: String, max: 70, optional: false},
 		'description': { type: String, max: 500, optional: true},
-		'solution': { type: String, max: 500, optional: true}
+        'solution': { type: String, max: 500, optional: true},
+        'isProblemWithEmurgis': { type: Boolean, optional: true }
 	}).validator(),
-	run({ id, summary, description, solution }) {
+	run({ id, summary, description, solution, isProblemWithEmurgis }) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
@@ -249,7 +252,8 @@ export const editProblem = new ValidatedMethod({
         Problems.update({'_id' : id}, { $set : {
           'summary': summary,
           'description': description || "",
-          'solution': solution || ""
+          'solution': solution || "",
+          'isProblemWithEmurgis': isProblemWithEmurgis
             }})
     } else {
         throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')

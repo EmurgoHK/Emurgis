@@ -1,15 +1,20 @@
 <template name="documentShow">
 
   <div class="document-show">
-    <div class="card">
+    <div class="card {{#if problem.isProblemWithEmurgis}}border-info{{/if}}">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
           <h3>{{{md problem.summary}}}</h3>
           <div class="card-subtitle">
+              {{#if problem.isProblemWithEmurgis}}
+              <span class="badge badge-info">EMURGIS</span>
+              {{/if}}
             {{{statusText problem.status}}}
             {{#if isProblemOwner problem.createdBy}}
             <span class="badge badge-success">My problem</span>
             {{/if}}
+
+            
           </div>
           <br/>
           <h5 class="card-subtitle">Problem</h5>

@@ -20,11 +20,7 @@ Template.documentsIndex.onCreated(function() {
         //reactive variable to query mongoDB based on the status type
         let projectStatusTypes = Template.instance().projectStatusTypes.get();
 
-        let query = {
-            status: {
-                $in: projectStatusTypes
-            }
-        }
+        let query = { '$or' : [{status: { $in: projectStatusTypes }}] }
 
         if (!~projectStatusTypes.indexOf('my')) {
           query = _.extend(query, {
@@ -32,6 +28,10 @@ Template.documentsIndex.onCreated(function() {
               $ne: Meteor.userId()
             }
           })
+        }
+
+        if (~projectStatusTypes.indexOf('isProblemWithEmurgis')) {
+          query['$or'].push({ isProblemWithEmurgis : true })
         }
 
         this.filter.set(query)

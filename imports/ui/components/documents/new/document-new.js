@@ -48,6 +48,7 @@ Template.documentNew.events({
     event.preventDefault();
     
     var data = formData(event.target)
+    data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
     
     addProblem.call(data, (err, res) => {
       if (!err) { 
