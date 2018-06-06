@@ -1,6 +1,16 @@
 <template name="problemForm">
   <form>
-    <div class="input-group">
+    <div class="form-check">
+      {{#if problem.isProblemWithEmurgis}}
+        <input type="checkbox" class="form-check-input" id="isProblemWithEmurgis" checked>
+      {{else}}
+        <input type="checkbox" class="form-check-input" id="isProblemWithEmurgis">
+      {{/if}}
+      
+      <label class="form-check-label" for="isProblemWithEmurgis">This is a problem with Emurgis itself</label>
+    </div>
+
+    <div class="input-group" style="padding-top:8px;">
       <textarea class="form-control" id="description" rows="6" value="{{problem.description}}" placeholder="Carefully describe the problem you have observed"></textarea>
       <div id="descriptionError" class="invalid-feedback"></div>
     </div>

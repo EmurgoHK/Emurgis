@@ -1,6 +1,6 @@
 <template name="documentsIndexItem">
 
-  <tr class="documents-index-item">
+  <tr class="documents-index-item {{#if document.isProblemWithEmurgis}}table-info{{/if}}">
     <td scope="row">
       <div><a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a></div>
     </td>
