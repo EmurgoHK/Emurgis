@@ -53,8 +53,8 @@ export const addProblem = new ValidatedMethod({
     validate:
         new SimpleSchema({
             summary: { type: String, max: 70, optional: false},
-            description: { type: String, max: 500, optional: true},
-            solution: { type: String, max: 500, optional: true},
+            description: { type: String, max: 1000, optional: true},
+            solution: { type: String, max: 1000, optional: true},
             isProblemWithEmurgis: { type: Boolean, optional: true }
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
@@ -237,8 +237,8 @@ export const editProblem = new ValidatedMethod({
 	validate: new SimpleSchema({
 		'id': { type: String, optional: false},
 		'summary': { type: String, max: 70, optional: false},
-		'description': { type: String, max: 500, optional: true},
-        'solution': { type: String, max: 500, optional: true},
+		'description': { type: String, max: 1000, optional: true},
+        'solution': { type: String, max: 1000, optional: true},
         'isProblemWithEmurgis': { type: Boolean, optional: true }
 	}).validator(),
 	run({ id, summary, description, solution, isProblemWithEmurgis }) {

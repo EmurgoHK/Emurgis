@@ -23,7 +23,7 @@ export const postComment = new ValidatedMethod({
             name: 'postComment',
             validate: new SimpleSchema({
                 'problemId': { type: String, optional: false},
-                'comment': { type: String, max: 5000, optional: false }
+                'comment': { type: String, max: 500, optional: false }
             }).validator(),
             run({ problemId, comment }) {
                 if (!Meteor.userId()) {
@@ -70,7 +70,7 @@ export const editComment = new ValidatedMethod({
     name: 'editComment',
     validate: new SimpleSchema({
         commentId: { type: String, optional: false },
-        comment: { type: String, max: 5000, optional: false }
+        comment: { type: String, max: 500, optional: false }
     }).validator(),
     run({ commentId, comment }) {
         if (!Meteor.userId()) {
