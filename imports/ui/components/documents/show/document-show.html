@@ -35,6 +35,9 @@
           {{#if problem.resolved}}
             Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>
           {{/if}}
+          {{#if problem.fyiProblem}}
+            Read and understood by {{#if fyi.firstFive}}{{{fyi.firstFive}}}{{else}}no one{{/if}} {{#if fyi.more.count}}and <span title="{{fyi.more.usernames}}">{{pluralize fyi.more.count "other"}}</span>{{/if}}
+          {{/if}}
           
           </p>
           <div class="float-right">

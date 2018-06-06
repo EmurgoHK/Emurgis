@@ -4,7 +4,7 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -32,6 +32,39 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    fyi: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        problem.read = problem.read || []
+
+        return {
+            firstFive: Meteor.users.find({
+                _id: {
+                    $in: problem.read
+                }
+            }, {
+                limit: 5,
+                sort: {
+                    'profile.name': -1
+                }
+            }).fetch().map(i => `<a href="#">${i.profile.name}</a>`).toString().replace(/,/ig, ', '),
+            more: {
+                count: problem.read.length > 5 ? problem.read.length - 5 : 0,
+                usernames: Meteor.users.find({
+                    _id: {
+                        $in: problem.read
+                    }
+                }, {
+                    skip: 5,
+                    sort: {
+                        'profile.name': -1
+                    }
+                }).fetch().map(i => i.profile.name).toString().replace(/,/ig, ', ')
+            }
+        }
+    },
     problem() {
         return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
     },
@@ -39,14 +72,22 @@ Template.documentShow.helpers({
         return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
     },
     claimButton(problem) {
-      if (problem.status !== 'closed') {
-        if (problem.claimed && problem.claimedBy === Meteor.userId()) {
-            return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
-        } else if (problem.claimed) {
-            return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
+      if (problem.fyiProblem) {
+        if (!~(problem.read || []).indexOf(Meteor.userId())) {
+            return '<a class="btn btn-sm btn-primary readProblem" href="#" role="button">Got it</a>'
         } else {
-            return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
+            return '<a class="btn btn-sm btn-primary disabled" href="#" role="button">Undrestood</a>'
         }
+      } else {
+          if (problem.status !== 'closed') {
+            if (problem.claimed && problem.claimedBy === Meteor.userId()) {
+                return '<a class="btn btn-sm btn-primary unclaimProblem" href="#" role="button">Unclaim</a>'
+            } else if (problem.claimed) {
+                return '<a class="btn btn-sm btn-success disabled" href="#" role="button">Claimed</a>'
+            } else {
+                return '<a class="btn btn-sm btn-success claimProblem" href="#" role="button">Claim</a>'
+            }
+          }
       }
     },
     watchButton(problem) {
@@ -133,6 +174,15 @@ Template.documentShow.events({
             markAsResolved.call({
                 problemId: problem._id,
                 claimerId: problem.claimedBy
+            }, (error, response) => {
+                if(error) { console.log(error.details) }
+            })
+        }
+    },
+    'click .readProblem': (event, templateInstance) => {
+        if (Meteor.userId()) {
+            readFYIProblem.call({
+                _id: templateInstance.getDocumentId()
             }, (error, response) => {
                 if(error) { console.log(error.details) }
             })

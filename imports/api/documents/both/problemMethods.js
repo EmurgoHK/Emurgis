@@ -55,11 +55,12 @@ export const addProblem = new ValidatedMethod({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 1000, optional: true},
             solution: { type: String, max: 1000, optional: true},
-            isProblemWithEmurgis: { type: Boolean, optional: true }
+            isProblemWithEmurgis: { type: Boolean, optional: true },
+            fyiProblem: { type: Boolean, optional: true }
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis }) {
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -73,6 +74,7 @@ export const addProblem = new ValidatedMethod({
       'createdBy': Meteor.userId() || "",
       'status':'open',
       'isProblemWithEmurgis': isProblemWithEmurgis,
+      fyiProblem: fyiProblem,
       subscribers: [Meteor.userId()]
     })
 
@@ -229,7 +231,28 @@ export const claimProblem = new ValidatedMethod({
     }
 });
 
-//end
+export const readFYIProblem = new ValidatedMethod({
+    name: 'readFYIProblem',
+    //Define the validation rules which will be applied on both the client and server
+    validate: new SimpleSchema({
+        _id: { type: RegEx, optional: false },
+    }).validator(),
+    run({ _id }) {
+        if (Meteor.userId()) {
+            Problems.update({
+                _id: _id
+            }, {
+                $addToSet: {
+                    read: Meteor.userId()
+                }
+            })
+
+            return _id;
+        } else {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+    }
+})
 
 //allow a user to edit a problem
 export const editProblem = new ValidatedMethod({
@@ -239,9 +262,10 @@ export const editProblem = new ValidatedMethod({
 		'summary': { type: String, max: 70, optional: false},
 		'description': { type: String, max: 1000, optional: true},
         'solution': { type: String, max: 1000, optional: true},
-        'isProblemWithEmurgis': { type: Boolean, optional: true }
+        'isProblemWithEmurgis': { type: Boolean, optional: true },
+        fyiProblem: { type: Boolean, optional: true }
 	}).validator(),
-	run({ id, summary, description, solution, isProblemWithEmurgis }) {
+	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem }) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
@@ -253,7 +277,8 @@ export const editProblem = new ValidatedMethod({
           'summary': summary,
           'description': description || "",
           'solution': solution || "",
-          'isProblemWithEmurgis': isProblemWithEmurgis
+          'isProblemWithEmurgis': isProblemWithEmurgis,
+          fyiProblem: fyiProblem
             }})
     } else {
         throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')
