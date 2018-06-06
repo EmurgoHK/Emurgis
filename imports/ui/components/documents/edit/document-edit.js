@@ -52,6 +52,7 @@ Template.documentEdit.events({
 		var data = formData(event.target)
 		
 		data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
+		data.fyiProblem = event.target.fyiProblem.checked
 		data.id = Template.instance().problemId()
 		
     	editProblem.call(data, (err, res) => {

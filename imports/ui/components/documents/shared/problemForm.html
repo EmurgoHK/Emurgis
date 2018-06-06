@@ -9,6 +9,14 @@
       
       <label class="form-check-label" for="isProblemWithEmurgis">This is a problem with Emurgis itself</label>
     </div>
+    <div class="form-check">
+      {{#if problem.fyiProblem}}
+        <input type="checkbox" class="form-check-input" id="fyiProblem" checked>
+      {{else}}
+        <input type="checkbox" class="form-check-input" id="fyiProblem">
+      {{/if}}
+      <label class="form-check-label" for="fyiProblem">This is an FYI</label>
+    </div>
 
     <div class="input-group" style="padding-top:8px;">
       <textarea class="form-control" id="description" rows="6" value="{{problem.description}}" placeholder="Carefully describe the problem you have observed"></textarea>
