@@ -1,4 +1,5 @@
 import { AutoForm } from "meteor/aldeed:autoform"
+import marked from 'marked';
 
 // ***************************************************************
 // Config for client-side only
@@ -7,6 +8,11 @@ import { AutoForm } from "meteor/aldeed:autoform"
 // Extra logging for Autoform. Turn off in production!
 AutoForm.debug()
 
+// Markdown config
+marked.setOptions({
+    gfm: true,
+    breaks: true,
+});
 
 // Theme configurations
 // One-time append required theme's classes to the document body
