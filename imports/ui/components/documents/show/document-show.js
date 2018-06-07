@@ -4,7 +4,7 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -377,6 +377,28 @@ Template.documentShow.events({
                 });
         } else {
             notify("Must be logged in!", "error")
+        }
+    },
+
+    "click #removeClaimer" (event) {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            let problemId = Template.instance().getDocumentId()
+
+            swal({
+                text: "Are you sure you want to remove claimer from this problem?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                showCancelButton: true
+            }).then((confirmed) => {
+                if (confirmed) {
+                    removeClaimer.call({ problemId: problemId }, (err, response) => {
+                        if (err) { notify(err.message, 'error'); }
+                    })
+                }
+            })
         }
     }
 
