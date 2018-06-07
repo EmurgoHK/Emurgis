@@ -5,7 +5,7 @@ import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
-
+import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
@@ -22,6 +22,7 @@ Template.documentShow.onCreated(function() {
     this.subscribe('users')
     this.subscribe("problems", this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
+    this.subscribe("dependencies", this.getDocumentId())
   })
 
   this.commentInvalidMessage = new ReactiveVar("")
@@ -68,6 +69,9 @@ Template.documentShow.helpers({
     problem() {
         return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
     },
+    dependencies() {
+      return Dependencies.find({ problemId: Template.instance().getDocumentId() }) || []
+    },
     comments() {
         return Comments.find({ problemId: Template.instance().getDocumentId() }) || {}
     },
@@ -110,7 +114,7 @@ Template.documentShow.helpers({
                 let claimer = Meteor.users.findOne({
                     _id: problem.claimedBy
                 }) || {}
-                
+
                 return `<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> ${(claimer.profile || {}).name} has solved this issue</a>`
             }
 
@@ -154,7 +158,7 @@ Template.documentShow.events({
                     if (status === 'closed' && claimer && confirmed) {
                         info = 'actually-solved'
                     }
-                    
+
                     updateStatus.call({
                         problemId: problem._id,
                         status: status,
@@ -275,7 +279,7 @@ Template.documentShow.events({
             })
             .then(confirmed => {
                 if (confirmed) {
-                    
+
                     if (Meteor.userId()) {
 
                         deleteProblem.call({ id: problemId }, (error, result) => {

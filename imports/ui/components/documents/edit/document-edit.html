@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<h2>Edit problem</h2>
 				{{#if Template.subscriptionsReady}}
-					{{> problemForm problem=problem}}
+					{{> problemForm problem=problem dependencies=dependencies}}
 				{{else}}
 					{{> loader}}
 				{{/if}}

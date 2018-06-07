@@ -13,8 +13,6 @@
             {{#if isProblemOwner problem.createdBy}}
             <span class="badge badge-success">My problem</span>
             {{/if}}
-
-            
           </div>
           <br/>
           <h5 class="card-subtitle">Problem</h5>
@@ -22,6 +20,12 @@
           <br/>
           <h5 class="card-subtitle">Solution</h5>
           <p class="card-text font-weight-normal">{{{md problem.solution}}}</p>
+          {{#if dependencies.count}} <h5>Dependencies</h5> {{/if}}
+          {{#each dependency in dependencies}}
+            <div>
+              <a href="{{pathFor 'documentShow' documentId=dependency.dependencyId}}">{{getSummaryById dependency.dependencyId}}</a>
+            </div>
+          {{/each}}
           <hr>
           <p class="text-muted float-left" style="margin:0">
             <strong>{{getNameById problem.createdBy}}</strong> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
@@ -38,7 +42,7 @@
           {{#if problem.fyiProblem}}
             Read and understood by {{#if fyi.firstFive}}{{{fyi.firstFive}}}{{else}}no one{{/if}} {{#if fyi.more.count}}and <span title="{{fyi.more.usernames}}">{{pluralize fyi.more.count "other"}}</span>{{/if}}
           {{/if}}
-          
+
           </p>
           <div class="float-right">
             {{#if isProblemOwner problem.createdBy}}
@@ -55,13 +59,13 @@
         {{/if}}
       </div>
     </div>
-    
+
     {{#if problem.resolveSteps}}
     <div class="card {{#if problem.hasAcceptedSolution}} border-success {{else}} border-warning {{/if}}">
       <div class="card-body">
         <h5 class="card-subtitle"> {{{ isSolutionAccepted problem }}} Submitted solution </h5>
         <hr>
-        
+
         <span class="pre">{{problem.resolveSteps}}</span><br>
         <small><strong>{{problem.claimedFullname}}</strong> | {{showTimeAgoTimestamp problem.resolvedDateTime}} <br /></small>
       </div>
