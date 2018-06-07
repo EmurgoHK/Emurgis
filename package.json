@@ -13,6 +13,7 @@
     "bootstrap": "^4.0.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.1",
+    "chart.js": "^2.7.2",
     "core-js": "^2.5.7",
     "coreui": "^0.4.2-alpha2",
     "flag-icon-css": "3.0.0",
