@@ -87,6 +87,13 @@ Template.documentNew.events({
   );
     event.preventDefault();
   },
+  'click .remove-dep': function (event, templateInstance) {
+    event.preventDefault()
+
+    let dep = Template.instance().dependency.get()
+
+    Template.instance().dependency.set(dep.filter(i => this.dependencyId !== i.dependencyId))
+  },
   'click .dependency' (event) {
     var dependency = Template.instance().dependency.get();
     dependency.push({dependency: event.target.innerHTML, dependencyId: event.target.id})

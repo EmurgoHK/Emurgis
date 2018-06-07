@@ -21,9 +21,9 @@
           <h5 class="card-subtitle">Solution</h5>
           <p class="card-text font-weight-normal">{{{md problem.solution}}}</p>
           {{#if dependencies.count}} <h5>Dependencies</h5> {{/if}}
-          {{#each dependency in dependencies}}
+          {{#each dependencies}}
             <div>
-              <a href="{{pathFor 'documentShow' documentId=dependency.dependencyId}}">{{getSummaryById dependency.dependencyId}}</a>
+              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a>{{#if isProblemOwner problem.createdBy}}<a href="#" class="remove-dep"><sup>X</sup></a>{{/if}}
             </div>
           {{/each}}
           <hr>

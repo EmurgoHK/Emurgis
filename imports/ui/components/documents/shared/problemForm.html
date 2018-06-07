@@ -64,9 +64,9 @@
     {{#if dependencies.count}}
       <h5 class="text-muted">Dependency</h5>
     {{/if}}
-    {{#each dependency in dependencies}}
+    {{#each dependencies}}
       <div >
-        <a href="">{{getSummaryById dependency.dependencyId}}</a>
+        <a href="#">{{getSummaryById dependencyId}}</a><a href="#" class="remove-dep"><sup>X</sup></a>
       </div>
     {{/each}}
 

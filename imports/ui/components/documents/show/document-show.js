@@ -6,6 +6,7 @@ import swal from 'sweetalert'
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
+import { deleteDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
@@ -138,6 +139,25 @@ Template.documentShow.helpers({
 })
 
 Template.documentShow.events({
+  'click .remove-dep': function (event, templateInstance) {
+    event.preventDefault()
+
+    swal({
+        text: `Are you sure you want to remove this dependency?`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        showCancelButton: true
+    }).then(confirmed => {
+        if (confirmed) {
+            deleteDependency.call({
+                id: this._id
+            }, (err, data) => {
+                if (err) { console.log(err) }
+            })
+        }
+    })
+  },
     "click .toggleProblem" (event) {
         var status = event.target.id === 'closeProblem' ? 'closed' : 'open';
         let problem = Problems.findOne({ _id: Template.instance().getDocumentId() })
