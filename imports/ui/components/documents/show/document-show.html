@@ -29,7 +29,9 @@
           <hr>
           <p class="text-muted float-left" style="margin:0">
             <strong>{{getNameById problem.createdBy}}</strong> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
-
+            {{#if problem.estimate}}
+            Its estimated that this problem will take <strong>{{problem.estimate}}</strong> minutes to resolve<br/>
+            {{/if}}
             {{#if problem.updatedAt}}
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}

@@ -24,6 +24,11 @@ var formData = (eventTarget) => {
 	  data.solution = eventTarget.solution.value;
 	}
 
+	if (eventTarget.estimate && eventTarget.estimate.value !== '') {
+    data.estimate = Number(eventTarget.estimate.value);
+  	}
+
+
 	return data;
 }
 

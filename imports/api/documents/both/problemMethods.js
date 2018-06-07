@@ -55,6 +55,7 @@ export const addProblem = new ValidatedMethod({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 1000, optional: true},
             solution: { type: String, max: 1000, optional: true},
+            estimate: { type: Number, optional: true },
             isProblemWithEmurgis: { type: Boolean, optional: true },
             fyiProblem: { type: Boolean, optional: true },
             dependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
@@ -62,7 +63,7 @@ export const addProblem = new ValidatedMethod({
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies }) {
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies,estimate }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -72,6 +73,7 @@ export const addProblem = new ValidatedMethod({
       'summary': summary,
       'description': description || "",
       'solution': solution || "",
+      'estimate': estimate || "",
       'createdAt': new Date().getTime(),
       'createdBy': Meteor.userId() || "",
       'status':'open',
@@ -271,9 +273,10 @@ export const editProblem = new ValidatedMethod({
 		'description': { type: String, max: 1000, optional: true},
         'solution': { type: String, max: 1000, optional: true},
         'isProblemWithEmurgis': { type: Boolean, optional: true },
+        'estimate': { type: Number, optional: true },
         fyiProblem: { type: Boolean, optional: true }
 	}).validator(),
-	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem }) {
+	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem,estimate }) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
@@ -285,6 +288,7 @@ export const editProblem = new ValidatedMethod({
           'summary': summary,
           'description': description || "",
           'solution': solution || "",
+          'estimate': estimate || "",
           'isProblemWithEmurgis': isProblemWithEmurgis,
           fyiProblem: fyiProblem
             }})

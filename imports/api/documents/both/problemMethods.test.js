@@ -39,6 +39,42 @@ describe('problem methods', () => {
 
     })
 
+    it('can mark problem as unsolved if current user is claimer', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        Problems.update({ _id : problem._id }, {
+            $set : { claimedBy : Meteor.userId() }
+        })
+
+        return callWithPromise('markAsUnSolved', {
+            problemId: problem._id,
+            claimerId: Meteor.userId()
+        }).then(problemId => {
+            let problem = Problems.findOne({ _id : problemId})
+            assert.equal(problem.status, 'in progress')
+        })
+
+    })
+
+  it('cannot mark problem as unsolved if current user isnt claimer', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        Problems.update({ _id : problem._id }, {
+            $set : { claimedBy : 'fake-claimer' }
+        })
+
+        return callWithPromise('markAsUnSolved', {
+            problemId: problem._id,
+            claimerId: 'fake-claimer'
+        }).then(data => {
+            assert.isNull(data)
+        }).catch(err => {
+            assert.include(err.message, 'You are not allowed to unsolve this problem')
+        })
+
+    })
 	it('cannot mark problem as resolved if current user isnt claimer', () => {
         let problem = Problems.findOne({})
         assert.ok(problem)
