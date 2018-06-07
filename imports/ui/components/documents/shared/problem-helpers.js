@@ -36,3 +36,7 @@ Template.registerHelper('statusText', status => {
         return '-'
     }
 })
+
+Template.registerHelper('getSummaryById', id => {
+    return  Problems.findOne({_id: id}).summary;
+})

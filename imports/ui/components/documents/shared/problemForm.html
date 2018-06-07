@@ -6,7 +6,7 @@
       {{else}}
         <input type="checkbox" class="form-check-input" id="isProblemWithEmurgis">
       {{/if}}
-      
+
       <label class="form-check-label" for="isProblemWithEmurgis">This is a problem with Emurgis itself</label>
     </div>
     <div class="form-check">
@@ -22,24 +22,47 @@
       <textarea class="form-control" id="description" rows="6" value="{{problem.description}}" placeholder="Carefully describe the problem you have observed"></textarea>
       <div id="descriptionError" class="invalid-feedback"></div>
     </div>
-    <small><i id="description-chars" class="text-muted"></i></small> 
-    
+    <small><i id="description-chars" class="text-muted"></i></small>
+
     <div class="input-group" style="padding-top:8px;">
       <textarea class="form-control" id="solution" rows="6" value="{{problem.solution}}" placeholder="This is optional. If you have some ideas of what the simplest possible solution to this problem is, you can explain it here."></textarea>
       <div id="solutionError" class="invalid-feedback"></div>
     </div>
-    <small><i id="solution-chars" class="text-muted"></i></small> 
-    
+    <small><i id="solution-chars" class="text-muted"></i></small>
+
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
         <div class="input-group-text">Problem:</div>
       </div>
-      
+
       <input type="text" class="form-control" id="summary" value="{{problem.summary}}" placeholder="summarize the problem in 63 characters or less">
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
-    <small><i id="summary-chars" class="text-muted"></i></small> 
-    
+    <small><i id="summary-chars" class="text-muted"></i></small>
+
+    <div class="input-group" style="padding-top:8px;">
+      <div class="input-group-prepend">
+        <div class="input-group-text">Dependency:</div>
+      </div>
+
+      <input type="text" class="form-control" id="dependency" value="" placeholder="Enter the name of the problem">
+      <div id="summaryError" class="invalid-feedback"></div>
+    </div>
+    <ul class="list-group">
+      {{#each problem in problems}}
+        <li class="list-group-item dependency" id={{problem._id}}>{{problem.summary}}</li>
+      {{/each}}
+    </ul>
+
+    {{#if dependencies.count}}
+      <h5 class="text-muted">Dependency</h5>
+    {{/if}}
+    {{#each dependency in dependencies}}
+      <div >
+        <a href="">{{getSummaryById dependency.dependencyId}}</a>
+      </div>
+    {{/each}}
+
     <div style="padding-top:8px;">
       <button type="submit" class="btn btn-primary float-right newproblem">Submit</button>
     </div>

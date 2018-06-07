@@ -7,7 +7,7 @@ import { Stats } from '../../stats/both/statsCollection'
 
 import { sendNotification } from '/imports/api/notifications/both/notificationsMethods'
 import { isModerator } from '/imports/api/user/both/userMethods'
-
+import { insertDependency } from './dependenciesMethods'
 
 //we need to move this to a global file and manage once
 const {
@@ -56,11 +56,13 @@ export const addProblem = new ValidatedMethod({
             description: { type: String, max: 1000, optional: true},
             solution: { type: String, max: 1000, optional: true},
             isProblemWithEmurgis: { type: Boolean, optional: true },
-            fyiProblem: { type: Boolean, optional: true }
+            fyiProblem: { type: Boolean, optional: true },
+            dependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
+            "dependencies.$": {type: String, optional: true},
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem }) {
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -78,6 +80,12 @@ export const addProblem = new ValidatedMethod({
       subscribers: [Meteor.userId()]
     })
 
+
+    if (dependencies.length > 0) {
+      for (var i = 0; i<dependencies.length; i++) {
+        insertDependency(pId , dependencies[i]);
+      }
+    }
     Stats.upsert({
       userId: Meteor.userId()
     }, {
@@ -325,7 +333,7 @@ export const markAsResolved = new ValidatedMethod({
         }
 
         Problems.update({ '_id' : problemId }, {
-            $set : { 
+            $set : {
                 'status' : 'ready for review',
                 'resolveSteps': resolutionSummary,
                 'hasAcceptedSolution': false,

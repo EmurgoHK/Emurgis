@@ -23,11 +23,21 @@ var formData = (eventTarget) => {
   if (eventTarget.solution && eventTarget.solution.value !== '') {
     data.solution = eventTarget.solution.value;
   }
-  
+
+  if (Template.instance().dependency.get() != []) {
+    var dependencies =[]
+    Template.instance().dependency.get().forEach( dep => {
+      dependencies.push(dep.dependencyId);
+    })
+    data.dependencies = dependencies;
+  }
+
   return data;
 }
 
 Template.documentNew.onCreated(function() {
+  this.dependency = new ReactiveVar([])
+
   this.autorun(() => {
     this.subscribe("problems")
   })
@@ -40,22 +50,26 @@ Template.documentNew.onDestroyed(function() {})
 Template.documentNew.helpers({
   problem: () => {
     return {}
+  },
+  dependencies: () => {
+    return Template.instance().dependency.get();
   }
 })
 
 Template.documentNew.events({
   'submit'(event){
     event.preventDefault();
-    
+
     var data = formData(event.target)
     data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
     data.fyiProblem = event.target.fyiProblem.checked
-    
+
     addProblem.call(data, (err, res) => {
-      if (!err) { 
-        FlowRouter.go('/' + res); 
+      if (!err) {
+        FlowRouter.go('/' + res);
         return;
       }
+      console.log(err);
       var errResponse = JSON.parse(JSON.stringify(err))
 
       if(errResponse.details && errResponse.details.length >= 1) {
@@ -69,5 +83,12 @@ Template.documentNew.events({
     }
   );
     event.preventDefault();
+  },
+  'click .dependency' (event) {
+    var dependency = Template.instance().dependency.get();
+    dependency.push({dependency: event.target.innerHTML, dependencyId: event.target.id})
+    Template.instance().dependency.set(dependency)
+    $('#dependency').val('');
+    $('#dependency').trigger('keyup');
   }
 })
