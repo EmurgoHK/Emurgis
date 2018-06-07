@@ -346,6 +346,42 @@ export const markAsResolved = new ValidatedMethod({
 });
 // end
 
+// allow users to unsolve a problem if its been solved
+export const markAsUnSolved = new ValidatedMethod({
+    name: 'markAsUnSolved',
+    validate: new SimpleSchema({
+        problemId: { type: String, optional: false},
+        claimerId: { type: String, optional: false}
+    }).validator(),
+    run({ problemId, claimerId }) {
+
+        if (claimerId !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to unsolve this problem')
+        }
+
+        Problems.update({ '_id' : problemId }, {
+            $set : {
+                'status' : 'in progress'
+            },
+            $unset: {
+                  resolvedDateTime:1,
+                  hasAcceptedSolution: 1,
+                  resolveSteps: 1
+            },
+            $push: {
+              history: {
+                event: 'Marked a problem as unsolved from solved',
+                dateTime: new Date().getTime(),
+                claimerId: claimerId
+              }
+            }
+        });
+
+        return problemId;
+    }
+});
+// end
+
 // allow users to change the status of probltm to close
 export const updateStatus = new ValidatedMethod({
     name: 'updateStatus',

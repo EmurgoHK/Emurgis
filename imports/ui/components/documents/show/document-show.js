@@ -4,7 +4,7 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
@@ -106,6 +106,11 @@ Template.documentShow.helpers({
             return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
         }
     },
+    unsolve(problem) {
+        if (problem.status == 'ready for review' && problem.status !== 'closed') {
+            return '<button id="unSolveProblem" class="btn btn-sm btn-warning" role="button"> Unsolve </button>'
+        }
+    },
     statusButton(problem) {
         if (problem.status === 'closed') {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
@@ -176,6 +181,18 @@ Template.documentShow.events({
 
         if (Meteor.userId()) {
             markAsResolved.call({
+                problemId: problem._id,
+                claimerId: problem.claimedBy
+            }, (error, response) => {
+                if(error) { console.log(error.details) }
+            })
+        }
+    },
+    "click #unSolveProblem" (event) {
+        let problem = Problems.findOne({ _id : Template.instance().getDocumentId() })
+
+        if (Meteor.userId()) {
+            markAsUnSolved.call({
                 problemId: problem._id,
                 claimerId: problem.claimedBy
             }, (error, response) => {
