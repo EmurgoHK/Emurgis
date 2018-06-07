@@ -13,15 +13,32 @@ Template.documentsIndex.onCreated(function() {
     //Reactive Vars
     this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my'])
     this.filter = new ReactiveVar({})
+    this.searchFilter = new ReactiveVar(undefined);
 
     this.autorun(() => {
         this.subscribe("problems");
 
         //reactive variable to query mongoDB based on the status type
         let projectStatusTypes = Template.instance().projectStatusTypes.get();
+        let searchFilter = Template.instance().searchFilter.get();
 
-        let query = { '$or' : [{status: { $in: projectStatusTypes }}] }
-
+        let query = {
+            '$or': [{
+                status: { $in: projectStatusTypes },
+                summary: {
+                    $regex: new RegExp(searchFilter, "i")
+                }
+            }, {
+                solution: {
+                    $regex: new RegExp(searchFilter, "i")
+                }
+            }, {
+                description: {
+                    $regex: new RegExp(searchFilter, "i")
+                }
+            }]
+        }
+        
         if (!~projectStatusTypes.indexOf('my')) {
           query = _.extend(query, {
             createdBy: {
@@ -71,5 +88,19 @@ Template.documentsIndex.events({
     var whatIsChecked = $.makeArray(projectStatusTypes);
     console.log(whatIsChecked)
     template.projectStatusTypes.set(whatIsChecked);
+  },
+  'keyup #searchFilter': function (event) {
+    event.preventDefault();
+    let query = $('#searchFilter').val();
+
+    //clear filter if no value in search bar
+    if (query.length < 1) {
+      Template.instance().searchFilter.set(undefined);
+    }
+
+    if (query) {
+      Template.instance().searchFilter.set(query); //done
+    }
+
   }
 })
