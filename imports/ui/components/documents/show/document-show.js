@@ -114,16 +114,6 @@ Template.documentShow.helpers({
     statusButton(problem) {
         if (problem.status === 'closed') {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
-        } else {
-            if (problem.status === 'ready for review') {
-                let claimer = Meteor.users.findOne({
-                    _id: problem.claimedBy
-                }) || {}
-
-                return `<a id="closeProblem" class="btn btn-sm btn-danger toggleProblem" role="button" href> ${(claimer.profile || {}).name} has solved this issue</a>`
-            }
-
-            return ''
         }
     },
     resolvedByUser(problem) {
@@ -139,6 +129,11 @@ Template.documentShow.helpers({
         }
 
         return `<i class="nav-icon icon-info text-warning"></i>`
+    },
+    acceptSolution(problem) {
+        if (problem.createdBy === Meteor.userId() && problem.status === 'ready for review') {
+            return `<hr><a id="closeProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> accept this solution</a>`
+        }
     }
 })
 
