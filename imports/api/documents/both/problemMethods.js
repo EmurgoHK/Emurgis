@@ -304,17 +304,37 @@ export const editProblem = new ValidatedMethod({
 export const deleteProblem = new ValidatedMethod({
 	name: 'deleteProblem',
 	validate: new SimpleSchema({
-		'id': { type: String, optional: false}
+		'id': { type: String, optional: false },
+    reason: { type: String, optional: true }
 	}).validator(),
-	run({ id }) {
+	run({ id, reason }) {
       let problem = Problems.findOne({_id: id});
 
   		if (!Meteor.userId()) {
   			   throw new Meteor.Error('Error.', 'You have to be logged in.')
   		}
 
-      if (problem.createdBy === Meteor.userId() || isModerator(Meteor.userId())) {
+      if (problem.createdBy === Meteor.userId()) {
           Problems.remove({'_id' : id})
+      } else if (isModerator(Meteor.userId())) {
+          Problems.update({
+            _id: id
+          }, {
+            $set: {
+              status: 'rejected',
+              rejectionReason: reason,
+              rejectedAt: new Date().getTime(),
+              rejectedBy: Meteor.userId()
+            }
+          })
+
+          Stats.upsert({
+              userId: problem.createdBy
+          }, {
+              $addToSet: {
+                  rejectedProblems: problem._id
+              }
+          })
       } else {
           throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')
       }

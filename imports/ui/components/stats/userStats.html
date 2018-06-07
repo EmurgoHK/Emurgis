@@ -20,6 +20,7 @@
                 <tr>
                   <th>Username</th>
                   <th>Logged problems</th>
+                  <th>Rejected problems</th>
                   <th>Claimed problems</th>
                   <th>Abandoned problems</th>
                   <th>Completed problems</th>
@@ -31,6 +32,7 @@
                   <td>{{profile.name}}</td>
                   {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
+                  <td>{{nullify rejectedProblems.length}}</td>
                   <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
                   <td>{{nullify unclaimedProblems.length}}</td>
                   <td>{{nullify completedProblems.length}}</td>
@@ -43,7 +45,8 @@
                   <td>{{profile.name}}</td>
                   {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
-                  <td>{{nullify claimedProblems.length}}</td>
+                  <td>{{nullify rejectedProblems.length}}</td>
+                  <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
                   <td>{{nullify unclaimedProblems.length}}</td>
                   <td>{{nullify completedProblems.length}}</td>
                   {{/with}}
