@@ -98,6 +98,7 @@
               {{#if problem.claimed}}
                 {{#if hasClaimedProblem problem.claimedBy}}
                   {{{ markAsResolved problem }}}
+                  {{{ unsolve problem }}}
                 {{/if}}
               {{/if}}
               {{{statusButton problem}}}
