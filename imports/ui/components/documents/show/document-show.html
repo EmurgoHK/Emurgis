@@ -36,7 +36,10 @@
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
           {{#if problem.claimed}}
-          Claimed by <strong>{{problem.claimedFullname}}</strong> {{showTimeAgoTimestamp problem.claimedDateTime}} <br />
+            <strong>{{problem.claimedFullname}}</strong> claimed this {{showTimeAgoTimestamp problem.claimedDateTime}} 
+            {{#if isProblemOwner problem.createdBy}} 
+              <button id="removeClaimer" class="btn btn-sm btn-ghost-danger" style="cursor: pointer;"> <i class="icon-close"></i> remove </button>  
+            {{/if}} <br />
           {{/if}}
           {{#if problem.resolved}}
             Resolved by <strong>{{resolvedByUser problem}}</strong> {{showTimeAgoTimestamp problem.resolvedDateTime}} <br>

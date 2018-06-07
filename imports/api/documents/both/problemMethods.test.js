@@ -57,7 +57,7 @@ describe('problem methods', () => {
 
     })
 
-  it('cannot mark problem as unsolved if current user isnt claimer', () => {
+    it('cannot mark problem as unsolved if current user isnt claimer', () => {
         let problem = Problems.findOne({})
         assert.ok(problem)
 
@@ -95,6 +95,45 @@ describe('problem methods', () => {
 
     })
 
+    it('can kick out claimer if is problem owner', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        Problems.update({ _id : problem._id }, {
+            $set : { 
+                createdBy : Meteor.userId(),
+                claimedBy : 'another-claimer' 
+            }
+        })
+
+        return callWithPromise('removeClaimer', {
+            problemId: problem._id
+        }).then(problemId => {
+            let problem = Problems.findOne({_id : problemId })
+            assert.isUndefined(problem.claimedBy)
+        })
+    })
+
+    it('cannot kick out claimer if isn\'t problem owner', () => {
+        let problem = Problems.findOne({})
+        assert.ok(problem)
+
+        Problems.update({ _id : problem._id }, {
+            $set : { 
+                createdBy : 'another-owner',
+                claimedBy : 'another-claimer' 
+            }
+        })
+
+        return callWithPromise('removeClaimer', {
+            problemId: problem._id
+        }).then(problemId => {
+            assert.isNull(problemId)
+        }).catch(err => {
+            assert.include(err.message, 'You are not allowed to remove claimer')
+        })
+    })
+
     it('cannot close the problem if current user isnt creator', () => {
           let problem = Problems.findOne({})
           assert.ok(problem)
@@ -126,7 +165,7 @@ describe('problem methods', () => {
             assert.equal(problem.status, 'closed')
           })
 
-      })
+    })
 
     it('can claim the problem if available', () => {
         let problem = Problems.findOne({})
@@ -159,7 +198,7 @@ describe('problem methods', () => {
         }).catch(err => {
             assert.include(err.message, 'You cannot claim a problem that is already claimed')
         })
-      })
+    })
 
       it('can unclaim the problem if claimed by user', () => {
           let problem = Problems.findOne({})
