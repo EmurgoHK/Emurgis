@@ -27,7 +27,7 @@ Template.registerHelper('statusText', status => {
     if (status && status === 'open') {
         return '<span class="badge badge-success">Open</span>'
     } else if (status && status === 'closed') {
-        return '<span class="badge badge-danger">This is fixed/solved</span>'
+        return '<span class="badge badge-danger">Fixed/solved</span>'
     } else if (status && status === 'in progress') {
         return '<span class="badge badge-secondary">In progress</span>'
     } else if (status && status === 'ready for review') {
@@ -42,3 +42,7 @@ Template.registerHelper('statusText', status => {
 Template.registerHelper('getSummaryById', id => {
     return  Problems.findOne({_id: id}).summary;
 })
+
+Template.registerHelper('getStatusById', id => (Problems.findOne({
+    _id: id
+}) || {}).status || '')

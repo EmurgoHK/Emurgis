@@ -30,7 +30,7 @@
           {{#if dependencies.count}} <h5>Dependencies</h5> {{/if}}
           {{#each dependencies}}
             <div>
-              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a>{{#if isProblemOwner problem.createdBy}}<a href="#" class="remove-dep"><sup>X</sup></a>{{/if}}
+              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a>{{#if isProblemOwner problem.createdBy}} {{{statusText (getStatusById dependencyId)}}} <a class="btn btn-sm btn-danger remove-dep" style="height: 15px;font-size: 10px;padding: 0px 5px 0px 5px;" href="#" role="button">X</a>{{/if}}
             </div>
           {{/each}}
           <hr>
