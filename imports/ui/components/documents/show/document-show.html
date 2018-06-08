@@ -1,6 +1,13 @@
 <template name="documentShow">
 
   <div class="document-show">
+    {{#if blocking}}
+    <div class="card bg-warning">
+      <div class="card-body">
+        This problem is blocking {{pluralize blocking "other problem"}} from being completed.
+      </div>
+    </div>
+    {{/if}}
     <div class="card {{#if problem.isProblemWithEmurgis}}border-info{{/if}}">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}

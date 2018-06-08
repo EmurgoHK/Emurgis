@@ -26,7 +26,7 @@ Template.documentShow.onCreated(function() {
     this.subscribe('users')
     this.subscribe("problems", this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
-    this.subscribe("dependencies", this.getDocumentId())
+    this.subscribe("dependenciesProblem", this.getDocumentId())
   })
 
   this.commentInvalidMessage = new ReactiveVar("")
@@ -37,6 +37,9 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    blocking: () => Dependencies.find({
+        dependencyId: Template.instance().getDocumentId()
+    }).count(),
     rejected: () => {
         let problem = Problems.findOne({
             _id: Template.instance().getDocumentId()
