@@ -96,6 +96,10 @@
         </div>
     </div>
     {{/if}}
+    {{#each solution in problem.rejectedSolutions}}
+      {{> rejectedSolutions solution=solution}}
+    {{/each}}
+    
     {{#each comment in comments}}
       {{> documentComments comment=comment}}
     {{/each}}
@@ -139,6 +143,7 @@
     {{/unless}}
 
     {{> resolvedModal }}
-    {{> rejectModal}}
+    {{> rejectModal }}
+    {{> rejectSolutionModal }}
   </div>
 </template>

@@ -526,3 +526,50 @@ export const removeClaimer = new ValidatedMethod({
     }
 });
 // end
+
+// allow problem owners to nullify solution
+export const rejectSolution = new ValidatedMethod({
+    name: 'rejectSolution',
+    validate: new SimpleSchema({
+        problemId:  { type: String, optional: false },
+        rejectReason:  { type: String, optional: false }
+    }).validator(),
+    run ({ problemId, rejectReason }) {
+        let problem = Problems.findOne({ _id : problemId })
+
+        if (problem.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to reject solution')
+        }
+
+        let rejectedSolution = {}
+
+        rejectedSolution.resolveSteps = problem.resolveSteps
+        rejectedSolution.resolvedBy = problem.claimedBy
+        rejectedSolution.rejectReason = rejectReason
+        rejectedSolution.submittedAt = problem.resolvedDateTime
+        rejectedSolution.rejectedAt = new Date().getTime()
+
+
+        Problems.update({ _id : problemId }, {
+            $set: {status :  'open'},
+            $unset : {
+                resolveSteps: true,
+                hasAcceptedSolution: true,
+                resolvedDateTime: true,
+                claimedBy: true,
+                claimed: true,
+                claimedFullname: true,
+                claimedDateTime: true
+            },
+            $addToSet : {
+                rejectedSolutions: rejectedSolution
+            }
+        })
+
+        sendToSubscribers(problemId, Meteor.userId(), `Your solution has been rejected for the following reason ${'\'' + rejectReason + '\''} `)
+        addToSubscribers(problemId, Meteor.userId())
+
+        return problemId
+    }
+})
+// end

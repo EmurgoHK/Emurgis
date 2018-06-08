@@ -19,6 +19,11 @@ import "./resolved-modal.js"
 import './reject-modal.html'
 import './reject-modal'
 
+import './reject-solution-modal.html'
+import './reject-solution-modal.js'
+import './rejected-solutions.html'
+import './rejected-solutions.js'
+
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
@@ -155,7 +160,11 @@ Template.documentShow.helpers({
     },
     acceptSolution(problem) {
         if (problem.createdBy === Meteor.userId() && problem.status === 'ready for review') {
-            return `<hr><a id="closeProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> accept this solution</a>`
+            return `
+                <hr>
+                <a id="closeProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> accept this solution</a>
+                <a id="rejectSolution" data-toggle="modal" data-target="#rejectSolutionModal" class="btn btn-sm btn-danger" role="button" href> reject this solution</a>
+            `
         }
     }
 })

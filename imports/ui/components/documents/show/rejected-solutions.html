@@ -1,0 +1,10 @@
+<template name="rejectedSolutions">
+    <div class="document-show my-2">
+        <div class="card">
+            <div class="card-body">
+               <strong>{{ getResolverById solution.resolvedBy }}</strong> submitted a solution {{showTimeAgoTimestamp solution.submittedAt}} <span class="badge badge-dark">rejected</span> <br>
+               <span>{{ solution.resolveSteps }}</span> <br>
+            </div>
+        </div>
+    </div>
+</template>
