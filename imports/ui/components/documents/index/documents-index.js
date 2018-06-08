@@ -11,7 +11,7 @@ import "./documents-index-item/documents-index-item.js"
 Template.documentsIndex.onCreated(function() {
 
     //Reactive Vars
-    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my'])
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my', 'isProblemWithEmurgis'])
     this.filter = new ReactiveVar({})
     this.searchFilter = new ReactiveVar(undefined);
 
@@ -47,8 +47,10 @@ Template.documentsIndex.onCreated(function() {
           })
         }
 
-        if (~projectStatusTypes.indexOf('isProblemWithEmurgis')) {
-          query['$or'].push({ isProblemWithEmurgis : true })
+        if (!~projectStatusTypes.indexOf('isProblemWithEmurgis')) {
+          query.isProblemWithEmurgis = {
+            $ne: true
+          }
         }
 
         this.filter.set(query)
