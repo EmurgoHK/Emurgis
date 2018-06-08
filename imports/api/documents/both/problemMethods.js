@@ -304,17 +304,37 @@ export const editProblem = new ValidatedMethod({
 export const deleteProblem = new ValidatedMethod({
 	name: 'deleteProblem',
 	validate: new SimpleSchema({
-		'id': { type: String, optional: false}
+		'id': { type: String, optional: false },
+    reason: { type: String, optional: true }
 	}).validator(),
-	run({ id }) {
+	run({ id, reason }) {
       let problem = Problems.findOne({_id: id});
 
   		if (!Meteor.userId()) {
   			   throw new Meteor.Error('Error.', 'You have to be logged in.')
   		}
 
-      if (problem.createdBy === Meteor.userId() || isModerator(Meteor.userId())) {
+      if (problem.createdBy === Meteor.userId()) {
           Problems.remove({'_id' : id})
+      } else if (isModerator(Meteor.userId())) {
+          Problems.update({
+            _id: id
+          }, {
+            $set: {
+              status: 'rejected',
+              rejectionReason: reason,
+              rejectedAt: new Date().getTime(),
+              rejectedBy: Meteor.userId()
+            }
+          })
+
+          Stats.upsert({
+              userId: problem.createdBy
+          }, {
+              $addToSet: {
+                  rejectedProblems: problem._id
+              }
+          })
       } else {
           throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')
       }
@@ -444,3 +464,41 @@ export const updateStatus = new ValidatedMethod({
     }
 });
 //end
+
+
+// allow problem owners to kick out claimer
+export const removeClaimer = new ValidatedMethod({
+    name: 'removeClaimer',
+    validate: new SimpleSchema({
+        problemId: { type: String, optional: false }
+    }).validator(),
+    run ({ problemId }) {
+        let problem = Problems.findOne({ _id : problemId })
+        let currentClaimerId = problem.claimedBy
+
+        if (problem.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to remove claimer')
+        }
+
+        Problems.update({ _id: problemId }, {
+            $set: { status: 'open' },
+            $unset: {
+                claimedBy: true,
+                claimed: true,
+                claimedFullname: true
+            }
+        })
+
+        Stats.upsert({ userId: currentClaimerId }, {
+            $addToSet: {
+                unclaimedProblems: problemId // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
+            }
+        })
+
+        sendToSubscribers(problemId, Meteor.userId(), `${(Meteor.users.findOne(currentClaimerId).profile || {}).name} You have been removed from a problem you recently claimed.`)
+        addToSubscribers(problemId, Meteor.userId())
+
+        return problemId
+    }
+});
+// end

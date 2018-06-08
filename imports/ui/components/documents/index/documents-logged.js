@@ -7,7 +7,15 @@ import './documents-logged.html'
 import './documents-index-item/documents-index-item'
 
 Template.documentsLogged.onCreated(function() {
-    this.projectStatusTypes = new ReactiveVar(['in progress', 'ready for review', 'open'])
+    this.projectStatusTypes = new ReactiveVar([])
+
+    this.autorun(() => {
+        FlowRouter.watchPathChange()
+
+        const rejectedOnly = (FlowRouter.current().route || {}).name === 'documentsRejected'
+
+        this.projectStatusTypes.set(rejectedOnly ? ['rejected'] : ['in progress', 'ready for review', 'open', 'rejected'])
+    })
 
     this.filter = new ReactiveVar({})
 
@@ -20,6 +28,12 @@ Template.documentsLogged.onCreated(function() {
             },
             createdBy: Meteor.userId()
         })
+    })
+})
+
+Template.documentsLogged.onRendered(function() {
+    this.autorun(() => {
+        ['open', 'in progress', 'ready for review', 'closed', 'rejected'].forEach(i => $(`:checkbox[value="${i}"]`).prop('checked', ~this.projectStatusTypes.get().indexOf(i))) // dynamically check them
     })
 })
 

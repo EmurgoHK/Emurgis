@@ -15,12 +15,12 @@ Template.registerHelper('hasClaimedProblem', claimedById => {
 
 // get the users name by userId
 Template.registerHelper('getNameById', userId => {
-  	let getName = Meteor.users.findOne({_id: userId}).profile.name
+  	let getName = ((Meteor.users.findOne({_id: userId}) || {}).profile || {}).name
     return getName ? getName : null;
 })
 
 Template.registerHelper('md', content => {
-    return  this.innerHTML = marked(content);
+    return  this.innerHTML = marked(content || '');
 })
 
 Template.registerHelper('statusText', status => {
@@ -32,6 +32,8 @@ Template.registerHelper('statusText', status => {
         return '<span class="badge badge-secondary">In progress</span>'
     } else if (status && status === 'ready for review') {
         return '<span class="badge badge-primary">Ready for review</span>'
+    } else if (status && status === 'rejected') {
+        return '<span class="badge badge-danger">Rejected</span>'
     } else {
         return '-'
     }

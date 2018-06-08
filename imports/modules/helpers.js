@@ -50,6 +50,11 @@ export const math = () => {
     mul ( a, b ) { return isNaN(a * b) ? 0 : a * b; },
     div ( a, b ) { return isNaN(b ? a / b : 0) ? 0 : b ? a / b : 0; },
     sum ( a, b ) { return isNaN(a + b) ? 0 : a + b; },
-    sub ( a, b ) { return isNaN(a - b) ? 0 : a - b; },
+    sub ( a, b ) {
+      a = a || 0
+      b = b || 0
+
+      return isNaN(a - b) ? 0 : a - b
+    },
   }
 }

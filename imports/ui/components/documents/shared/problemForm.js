@@ -18,9 +18,9 @@ Template.problemForm.helpers({
   problems() {
     let query = {
       $or: [{
-        summary: new RegExp(Template.instance().filter.get(), 'ig')
+        summary: new RegExp(Template.instance().filter.get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
       }, {
-        description: new RegExp(Template.instance().filter.get(), 'ig')
+        description: new RegExp(Template.instance().filter.get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
       }]
     }
     if (Template.instance().filter.get()) {

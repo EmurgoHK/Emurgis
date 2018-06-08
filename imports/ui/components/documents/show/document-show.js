@@ -4,8 +4,9 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
+import { deleteDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
@@ -14,6 +15,9 @@ import "./document-show.html"
 import "./document-comments.html"
 import "./resolved-modal.html"
 import "./resolved-modal.js"
+
+import './reject-modal.html'
+import './reject-modal'
 
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
@@ -33,6 +37,22 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    rejected: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return problem.status === 'rejected'
+    },
+    rejectedBy: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return ((Meteor.users.findOne({
+            _id: problem.rejectedBy
+        }) || {}).profile || {}).name
+    },
     fyi: () => {
         let problem = Problems.findOne({
             _id: Template.instance().getDocumentId()
@@ -138,6 +158,25 @@ Template.documentShow.helpers({
 })
 
 Template.documentShow.events({
+  'click .remove-dep': function (event, templateInstance) {
+    event.preventDefault()
+
+    swal({
+        text: `Are you sure you want to remove this dependency?`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        showCancelButton: true
+    }).then(confirmed => {
+        if (confirmed) {
+            deleteDependency.call({
+                id: this._id
+            }, (err, data) => {
+                if (err) { console.log(err) }
+            })
+        }
+    })
+  },
     "click .toggleProblem" (event) {
         var status = event.target.id === 'closeProblem' ? 'closed' : 'open';
         let problem = Problems.findOne({ _id: Template.instance().getDocumentId() })
@@ -377,6 +416,28 @@ Template.documentShow.events({
                 });
         } else {
             notify("Must be logged in!", "error")
+        }
+    },
+
+    "click #removeClaimer" (event) {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            let problemId = Template.instance().getDocumentId()
+
+            swal({
+                text: "Are you sure you want to remove claimer from this problem?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                showCancelButton: true
+            }).then((confirmed) => {
+                if (confirmed) {
+                    removeClaimer.call({ problemId: problemId }, (err, response) => {
+                        if (err) { notify(err.message, 'error'); }
+                    })
+                }
+            })
         }
     }
 

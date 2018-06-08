@@ -23,8 +23,8 @@ Template.documentsIndex.onCreated(function() {
         let searchFilter = Template.instance().searchFilter.get();
 
         let query = {
+            status: { $in: projectStatusTypes },
             '$or': [{
-                status: { $in: projectStatusTypes },
                 summary: {
                     $regex: new RegExp(searchFilter, "i")
                 }
