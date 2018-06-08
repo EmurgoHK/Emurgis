@@ -23,9 +23,6 @@ var formData = (eventTarget) => {
   if (eventTarget.solution && eventTarget.solution.value !== '') {
     data.solution = eventTarget.solution.value;
   }
-  if (eventTarget.estimate && eventTarget.estimate.value !== '') {
-    data.estimate = Number(eventTarget.estimate.value);
-  }
 
   if (Template.instance().dependency.get() != []) {
     var dependencies =[]
