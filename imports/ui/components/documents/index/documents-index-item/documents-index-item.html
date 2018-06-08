@@ -2,7 +2,7 @@
 
   <tr class="documents-index-item {{#if document.isProblemWithEmurgis}}table-info{{/if}}">
     <td scope="row">
-      <div><a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a></div>
+      <div><a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a> {{#if blocking}}<i title='This problem is blocking {{pluralize blocking "other problem"}} from being completed.' style="color: orange;" class="fas fa-exclamation-triangle"></i>{{/if}}</div>
     </td>
     <td>{{showTimeAgoTimestamp document.createdAt}}</td>
     <td>{{{statusText document.status}}}</td>

@@ -8,5 +8,13 @@ if (Meteor.isServer) {
         } else {
             return Dependencies.find();
         }
-    });
+    })
+
+    Meteor.publish('dependenciesProblem', problemId => Dependencies.find({
+    	$or: [{
+	    	problemId: problemId
+	    }, {
+	    	dependencyId: problemId
+	    }]
+	}))
 }
