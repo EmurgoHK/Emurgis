@@ -351,19 +351,43 @@ export const markAsResolved = new ValidatedMethod({
         resolutionSummary: { type: String, optional: false}
     }).validator(),
     run({ problemId, claimerId, resolutionSummary }) {
+        let problem = Problems.findOne({
+          _id: problemId
+        })
 
         if (claimerId !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to resolve this problem')
         }
 
-        Problems.update({ '_id' : problemId }, {
-            $set : {
-                'status' : 'ready for review',
-                'resolveSteps': resolutionSummary,
-                'hasAcceptedSolution': false,
-                'resolvedDateTime': new Date().getTime()
-            }
-        });
+        if (problem.createdBy !== claimerId) {
+          Problems.update({ '_id' : problemId }, {
+              $set : {
+                  'status' : 'ready for review',
+                  'resolveSteps': resolutionSummary,
+                  'hasAcceptedSolution': false,
+                  'resolvedDateTime': new Date().getTime()
+              }
+          })
+        } else {
+          Problems.update({ '_id' : problemId }, {
+              $set : {
+                  'status' : 'closed',
+                  'resolveSteps': resolutionSummary,
+                  'hasAcceptedSolution': true,
+                  'resolvedDateTime': new Date().getTime(),
+                  resolved: true,
+                  resolvedBy: claimerId
+              }
+          })
+
+          Stats.upsert({
+              userId: problem.claimedBy
+          }, {
+              $addToSet: {
+                  completedProblems: problemId
+              }
+          })
+        }
 
         return problemId;
     }
