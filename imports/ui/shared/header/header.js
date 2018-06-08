@@ -1,11 +1,13 @@
 import './header.html'
 
 import { Notifications } from '/imports/api/notifications/both/notificationsCollection'
+import { Problems } from '/imports/api/documents/both/problemCollection'
 
 Template.header.onCreated(function() {
 	this.autorun(() => {
 		if (Meteor.userId()) {
 			this.subscribe('notifications')
+			this.subscribe('problems')
 		}
 	})
 })
@@ -41,5 +43,9 @@ Template.header.helpers({
 	notificationsCount: () => Notifications.find({
     	userId: Meteor.userId(),
     	read: false
+    }).count(),
+    resolvedProblemsCount: () => Problems.find({
+        createdBy: Meteor.userId(),
+        status: 'ready for review'
     }).count()
 })

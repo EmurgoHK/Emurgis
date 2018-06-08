@@ -9,6 +9,7 @@ import "/imports/ui/components/documents/show/document-comments.js"
 import "/imports/ui/components/documents/edit/document-edit.js"
 import '/imports/ui/components/documents/index/documents-claimed'
 import '/imports/ui/components/documents/index/documents-logged.js'
+import '/imports/ui/components/documents/index/documents-resolved'
 
 // ***************************************************************
 // Document routes
@@ -64,6 +65,20 @@ appRoutes.route('/logged', {
       BlazeLayout.render('layout', {
           header: 'header',
           main: 'documentsLogged',
+          footer: 'footer',
+          sidebar: 'sidebar'
+      })
+  }
+})
+
+// RESOLVED DOCUMENTS
+// -------------------------------------------------------
+appRoutes.route('/resolved', {
+  name: 'documentsResolved',
+  action: () => {
+      BlazeLayout.render('layout', {
+          header: 'header',
+          main: 'documentsResolved',
           footer: 'footer',
           sidebar: 'sidebar'
       })
