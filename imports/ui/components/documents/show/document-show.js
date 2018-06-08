@@ -16,6 +16,9 @@ import "./document-comments.html"
 import "./resolved-modal.html"
 import "./resolved-modal.js"
 
+import './reject-modal.html'
+import './reject-modal'
+
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
@@ -34,6 +37,22 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    rejected: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return problem.status === 'rejected'
+    },
+    rejectedBy: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return ((Meteor.users.findOne({
+            _id: problem.rejectedBy
+        }) || {}).profile || {}).name
+    },
     fyi: () => {
         let problem = Problems.findOne({
             _id: Template.instance().getDocumentId()

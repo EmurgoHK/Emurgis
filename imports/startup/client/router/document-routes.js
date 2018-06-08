@@ -70,6 +70,20 @@ appRoutes.route('/logged', {
   }
 })
 
+// REJECTED DOCUMENTS
+// -------------------------------------------------------
+appRoutes.route('/rejected', {
+  name: 'documentsRejected',
+  action: () => {
+      BlazeLayout.render('layout', {
+          header: 'header',
+          main: 'documentsLogged',
+          footer: 'footer',
+          sidebar: 'sidebar'
+      })
+  }
+})
+
 // DOCUMENT SHOW
 // -------------------------------------------------------
 appRoutes.route("/:documentId", {

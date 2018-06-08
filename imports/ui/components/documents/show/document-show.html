@@ -49,16 +49,18 @@
           {{/if}}
 
           </p>
+          {{#unless rejected}}
           <div class="float-right">
             {{#if isProblemOwner problem.createdBy}}
             <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
         		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
             {{else}}
             {{#if isModerator}}
-            <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+            <button data-toggle="modal" data-target="#rejectModal" class="btn btn-sm btn-danger" role="button">Delete</button>
             {{/if}}
             {{/if}}
           </div>
+          {{/unless}}
         {{else}}
           {{> loader}}
         {{/if}}
@@ -77,6 +79,16 @@
       </div>
     </div>
     {{/if}}
+    {{#if rejected}}
+    <div class="document-show my-2">
+        <div class="card">
+            <div class="card-body bg-danger text-light">
+               <strong>{{rejectedBy}}</strong> rejected this problem and commented {{showTimeAgoTimestamp problem.rejectedAt}} <br />
+               <span>{{{md problem.rejectionReason}}}</span>
+            </div>
+        </div>
+    </div>
+    {{/if}}
     {{#each comment in comments}}
       {{> documentComments comment=comment}}
     {{/each}}
@@ -91,6 +103,7 @@
       </div>
     </div>
 
+    {{#unless rejected}}
     <div class="my-2">
       <div class="take-action card">
           <div class="card-body">
@@ -116,7 +129,9 @@
           </div>
       </div>
     </div>
+    {{/unless}}
 
     {{> resolvedModal }}
+    {{> rejectModal}}
   </div>
 </template>
