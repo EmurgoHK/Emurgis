@@ -21,6 +21,7 @@ Meteor.publish(null, () => Meteor.users.find({
 	fields: {
 		'profile.name': 1,
 		_id: 1,
-		moderator: 1
+		moderator: 1,
+		hidden: 1
 	}
 }))
