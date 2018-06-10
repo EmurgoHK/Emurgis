@@ -90,19 +90,5 @@ Template.documentsIndex.events({
     var whatIsChecked = $.makeArray(projectStatusTypes);
     console.log(whatIsChecked)
     template.projectStatusTypes.set(whatIsChecked);
-  },
-  'keyup #searchFilter': function (event) {
-    event.preventDefault();
-    let query = $('#searchFilter').val();
-
-    //clear filter if no value in search bar
-    if (query.length < 1) {
-      Template.instance().searchFilter.set(undefined);
-    }
-
-    if (query) {
-      Template.instance().searchFilter.set(query); //done
-    }
-
   }
 })

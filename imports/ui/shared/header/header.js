@@ -1,14 +1,20 @@
-import './header.html'
-
+import { FlowRouter } from "meteor/kadira:flow-router"
 import { Notifications } from '/imports/api/notifications/both/notificationsCollection'
 import { Problems } from '/imports/api/documents/both/problemCollection'
 
+import './header.html'
+
 Template.header.onCreated(function() {
+    this.searchFilter = new ReactiveVar(undefined);
+
 	this.autorun(() => {
+        this.subscribe('problems')
+
 		if (Meteor.userId()) {
 			this.subscribe('notifications')
-			this.subscribe('problems')
-		}
+        }
+
+        let searchFilter = Template.instance().searchFilter.get();
 	})
 })
 
@@ -36,6 +42,26 @@ Template.header.events({
     'click .sidebar-toggler': function() {
         // toggle "sidebar-show" class to show/hide sidebar
         $('body').toggleClass("sidebar-lg-show")
+    },
+    'keyup #searchFilterHeader': function (event) {
+        event.preventDefault();
+        let query = $('#searchFilterHeader').val();
+        let documentsIndex = $("div.documents-index")
+        
+        if (documentsIndex.length === 0) {
+            let queryParam = { query: query }
+            let path = FlowRouter.path('/', {}, queryParam)
+            FlowRouter.go(path)
+        }
+    
+        //clear filter if no value in search bar
+        if (query.length < 1) {
+            Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set(undefined)
+        }
+        
+        if (query) {
+            Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set(query)
+        }
     }
 })
 
