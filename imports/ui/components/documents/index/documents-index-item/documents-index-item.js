@@ -5,6 +5,7 @@ import { notify } from "/imports/modules/notifier"
 import { claimProblem, unclaimProblem, deleteProblem } from "/imports/api/documents/both/problemMethods.js"
 
 import { Dependencies } from '/imports/api/documents/both/dependenciesCollection'
+import { Problems } from '/imports/api/documents/both/problemCollection'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 
 import "./documents-index-item.html"
@@ -16,6 +17,7 @@ Template.documentsIndexItem.onCreated(function() {
   this.autorun(() => {
   	this.subscribe('dependenciesProblem', this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
+    this.subscribe('problems')
   })
 })
 
@@ -30,7 +32,16 @@ Template.documentsIndexItem.helpers({
     },
     blocking: () => Dependencies.find({
     	dependencyId: Template.instance().getDocumentId()
-    }).count()
+    }).count(),
+    blocked: () => !Dependencies.find({
+    	problemId: Template.instance().getDocumentId()
+    }).fetch().every(i => {
+    	let problem = Problems.findOne({
+    		_id: i.dependencyId
+    	}) || {}
+
+    	return problem.status === 'closed'
+    })
 })
 
 Template.documentsIndexItem.events({
