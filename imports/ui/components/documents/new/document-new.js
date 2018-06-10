@@ -35,11 +35,20 @@ var formData = (eventTarget) => {
     data.dependencies = dependencies;
   }
 
+  if (Template.instance().invDependency.get() != []) {
+    var invDependencies = []
+    Template.instance().invDependency.get().forEach( dep => {
+      invDependencies.push(dep.problemId)
+    })
+    data.invDependencies = invDependencies
+  }
+
   return data;
 }
 
 Template.documentNew.onCreated(function() {
   this.dependency = new ReactiveVar([])
+  this.invDependency = new ReactiveVar([])
 
   this.autorun(() => {
     this.subscribe("problems")
@@ -56,7 +65,8 @@ Template.documentNew.helpers({
   },
   dependencies: () => {
     return Template.instance().dependency.get();
-  }
+  },
+  invDependencies: () => Template.instance().invDependency.get()
 })
 
 Template.documentNew.events({
@@ -94,11 +104,31 @@ Template.documentNew.events({
 
     Template.instance().dependency.set(dep.filter(i => this.dependencyId !== i.dependencyId))
   },
+  'click .remove-dep-inv': function (event, templateInstance) {
+    event.preventDefault()
+
+    let dep = Template.instance().invDependency.get()
+
+    Template.instance().invDependency.set(dep.filter(i => this.problemId !== i.problemId))
+  },
   'click .dependency' (event) {
     var dependency = Template.instance().dependency.get();
     dependency.push({dependency: event.target.innerHTML, dependencyId: event.target.id})
     Template.instance().dependency.set(dependency)
     $('#dependency').val('');
     $('#dependency').trigger('keyup');
+  },
+  'click .invDependency': (event, templateInstance) => {
+    let invDependency = templateInstance.invDependency.get()
+
+    invDependency.push({
+      problem: event.target.innerHTML,
+      problemId: event.target.id
+    })
+
+    templateInstance.invDependency.set(invDependency)
+
+    $('#invDependency').val('')
+    $('#invDependency').trigger('keyup')
   }
 })

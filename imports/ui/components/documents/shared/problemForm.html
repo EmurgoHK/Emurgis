@@ -61,12 +61,29 @@
       {{/each}}
     </ul>
 
-    {{#if dependencies.count}}
-      <h5 class="text-muted">Dependency</h5>
-    {{/if}}
     {{#each dependencies}}
       <div >
         <a href="#">{{getSummaryById dependencyId}}</a><a href="#" class="remove-dep"><sup>X</sup></a>
+      </div>
+    {{/each}}
+
+    <div class="input-group" style="padding-top:8px;">
+      <div class="input-group-prepend">
+        <div class="input-group-text">The following problems can't be completed until this problem is closed:</div>
+      </div>
+
+      <input type="text" class="form-control" id="invDependency" value="" placeholder="Enter the name of the problem">
+      <div id="summaryError" class="invalid-feedback"></div>
+    </div>
+    <ul class="list-group">
+      {{#each (problems true)}}
+        <li class="list-group-item invDependency" id={{_id}}>{{summary}}</li>
+      {{/each}}
+    </ul>
+
+    {{#each invDependencies}}
+      <div >
+        <a href="#">{{getSummaryById problemId}}</a><a href="#" class="remove-dep-inv"><sup>X</sup></a>
       </div>
     {{/each}}
 

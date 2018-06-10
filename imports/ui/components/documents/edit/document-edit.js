@@ -38,7 +38,7 @@ Template.documentEdit.onCreated(function() {
 
 	this.autorun(() => {
 		this.subscribe("problems", this.problemId())
-		this.subscribe("dependencies", this.problemId())
+		this.subscribe('dependenciesProblem', this.problemId())
     })
 })
 Template.documentEdit.onRendered(function() {})
@@ -52,8 +52,11 @@ Template.documentEdit.helpers({
 		if (problemOwner !== Meteor.userId()) { FlowRouter.go('/') }
 	},
 	dependencies() {
-    return Dependencies.find({ problemId: Template.instance().problemId() }) || [];
-  }
+    	return Dependencies.find({ problemId: Template.instance().problemId() }).fetch() || [];
+  	},
+  	invDependencies() {
+    	return Dependencies.find({ dependencyId: Template.instance().problemId() }).fetch() || [];
+  	}
 })
 
 Template.documentEdit.events({
@@ -83,27 +86,45 @@ Template.documentEdit.events({
 			}
 		})
 	},
-	'click .delete-button' (event) {
-		event.preventDefault();
+	'click .remove-dep, click .remove-dep-inv': function(event, templateInstance) {
+		event.preventDefault()
+
 		deleteDependency.call({
-			id: event.target.id
+			id: this._id
 		}, (err, res) => {
 			if (err) {
-					console.error(err)
-			}
-		});
-	},
-	'click .dependency' (event) {
-		//create a new dependency here
-		event.preventDefault();
-		addDependency.call({ pId: Template.instance().problemId(), dId: event.target.id }, (err, res) => {
-			if(!err) {
-				console.log("Created successfully");
-			} else {
-				$('#dependency').val('');
-				$('#dependency').trigger('keyup');
-				console.error(err);
+				console.error(err)
 			}
 		})
-	}
+	},
+	'click .dependency' (event) {
+		event.preventDefault()
+
+		addDependency.call({
+			pId: Template.instance().problemId(),
+			dId: event.target.id
+		}, (err, res) => {
+			if (!err) {
+				$('#dependency').val('')
+				$('#dependency').trigger('keyup')
+			} else {
+				console.log(err)
+			}
+		})
+	},
+	'click .invDependency': (event, templateInstance) => {
+		event.preventDefault()
+
+		addDependency.call({
+			pId: event.target.id,
+			dId: Template.instance().problemId()
+		}, (err, res) => {
+			if (!err) {
+				$('#invDependency').val('')
+				$('#invDependency').trigger('keyup')
+			} else {
+				console.log(err)
+			}
+		})
+  	}
 })
