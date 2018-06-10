@@ -60,10 +60,12 @@ export const addProblem = new ValidatedMethod({
             fyiProblem: { type: Boolean, optional: true },
             dependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
             "dependencies.$": {type: String, optional: true},
+            invDependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
+            'invDependencies.$': {type: String, optional: true},
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies,estimate }) {
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies, invDependencies, estimate }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -82,12 +84,9 @@ export const addProblem = new ValidatedMethod({
       subscribers: [Meteor.userId()]
     })
 
+    dependencies.forEach(i => insertDependency(pId, i))
+    invDependencies.forEach(i => insertDependency(i, pId))
 
-    if (dependencies.length > 0) {
-      for (var i = 0; i<dependencies.length; i++) {
-        insertDependency(pId , dependencies[i]);
-      }
-    }
     Stats.upsert({
       userId: Meteor.userId()
     }, {

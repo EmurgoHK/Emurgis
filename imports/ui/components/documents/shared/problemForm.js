@@ -19,49 +19,54 @@ const maxCharValue = (inputId) => {
 }
 
 Template.problemForm.onCreated(function() {
-  this.filter = new ReactiveVar('');
+  this.filter = new ReactiveVar('')
+  this.invFilter = new ReactiveVar('')
 
   this.shown = new ReactiveDict()
 })
 
 Template.problemForm.helpers({
-  problems() {
-    let query = {
-      $or: [{
-        summary: new RegExp(Template.instance().filter.get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
-      }, {
-        description: new RegExp(Template.instance().filter.get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
-      }]
-    }
-    if (Template.instance().filter.get()) {
-      return Problems.find(query);
+  problems: (inverse) => {
+    if (Template.instance()[inverse ? 'invFilter' : 'filter'].get()) {
+      return Problems.find({
+        _id: {
+            $nin: _.union(Template.instance().data.dependencies.map(i => i.dependencyId), Template.instance().data.invDependencies.map(i => i.problemId)) // dont show already added problems
+        },
+        $or: [{
+            summary: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+        }, {
+            description: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+        }]
+      })
     }
   }
 })
 
 const showModal = (id, templateInstance) => {
-    swal({
-        text: helperTexts[id],
-        buttons: {
-            hide: {
-                text: 'Hide permanently',
-                value: 'hide',
-            },
-            ok: true
-        }
-    }).then(value => {
-        if (value === 'hide') {
-            hideHelpModal.call({
-                helpModalId: id
-            }, (err, data) => {
-                if (err) {
-                    console.log(err)
-                }
-            })
-        }
+    if (helperTexts[id]) {
+        swal({
+            text: helperTexts[id],
+            buttons: {
+                hide: {
+                    text: 'Hide permanently',
+                    value: 'hide',
+                },
+                ok: true
+            }
+        }).then(value => {
+            if (value === 'hide') {
+                hideHelpModal.call({
+                    helpModalId: id
+                }, (err, data) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                })
+            }
 
-        templateInstance.shown.set(id, true)
-    })
+            templateInstance.shown.set(id, true)
+        })
+    }
 }
 
 Template.problemForm.events({
@@ -97,6 +102,9 @@ Template.problemForm.events({
     },
     'keyup #dependency' (event) {
         Template.instance().filter.set(event.target.value)
+    },
+    'keyup #invDependency' (event) {
+        Template.instance().invFilter.set(event.target.value)
     },
     'click #isProblemWithEmurgis' (event) {
       let currentRoute = FlowRouter.current().route.name
