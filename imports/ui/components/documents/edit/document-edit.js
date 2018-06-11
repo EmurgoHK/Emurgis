@@ -85,46 +85,5 @@ Template.documentEdit.events({
 				});
 			}
 		})
-	},
-	'click .remove-dep, click .remove-dep-inv': function(event, templateInstance) {
-		event.preventDefault()
-
-		deleteDependency.call({
-			id: this._id
-		}, (err, res) => {
-			if (err) {
-				console.error(err)
-			}
-		})
-	},
-	'click .dependency' (event) {
-		event.preventDefault()
-
-		addDependency.call({
-			pId: Template.instance().problemId(),
-			dId: event.target.id
-		}, (err, res) => {
-			if (!err) {
-				$('#dependency').val('')
-				$('#dependency').trigger('keyup')
-			} else {
-				console.log(err)
-			}
-		})
-	},
-	'click .invDependency': (event, templateInstance) => {
-		event.preventDefault()
-
-		addDependency.call({
-			pId: event.target.id,
-			dId: Template.instance().problemId()
-		}, (err, res) => {
-			if (!err) {
-				$('#invDependency').val('')
-				$('#invDependency').trigger('keyup')
-			} else {
-				console.log(err)
-			}
-		})
-  	}
+	}
 })

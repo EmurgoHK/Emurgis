@@ -6,7 +6,7 @@ import swal from 'sweetalert'
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
-import { deleteDependency } from '/imports/api/documents/both/dependenciesMethods'
+import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 
@@ -35,6 +35,9 @@ Template.documentShow.onCreated(function() {
   })
 
   this.commentInvalidMessage = new ReactiveVar("")
+
+  this.filter = new ReactiveVar('')
+  this.invFilter = new ReactiveVar('')
 })
 
 Template.documentShow.onRendered(function() {})
@@ -42,6 +45,28 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    problems: (inverse) => {
+        if (Template.instance()[inverse ? 'invFilter' : 'filter'].get()) {
+            let dep = Dependencies.find({
+                dependencyId: Template.instance().getDocumentId()
+            }).fetch()
+
+            let invDep = Dependencies.find({
+                problemId: Template.instance().getDocumentId()
+            }).fetch()
+
+            return Problems.find({
+                _id: {
+                    $nin: _.union(invDep.map(i => i.dependencyId), dep.map(i => i.problemId)) // dont show already added problems
+                },
+                $or: [{
+                    summary: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+                }, {
+                    description: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+                }]
+            }).fetch()
+        }
+    },
     blocking: () => Dependencies.find({
         dependencyId: Template.instance().getDocumentId()
     }).count(),
@@ -166,10 +191,57 @@ Template.documentShow.helpers({
                 <a id="rejectSolution" data-toggle="modal" data-target="#rejectSolutionModal" class="btn btn-sm btn-danger" role="button" href> reject this solution</a>
             `
         }
+    },
+    canDeleteDep: problem => {
+        let user = Meteor.users.findOne({
+            _id: Meteor.userId()
+        }) || {}
+
+        return problem.createdBy === Meteor.userId() || user.moderator 
     }
 })
 
 Template.documentShow.events({
+    'keyup #dependency' (event) {
+        Template.instance().filter.set(event.target.value)
+    },
+    'keyup #invDependency' (event) {
+        Template.instance().invFilter.set(event.target.value)
+    },
+    'click .dependency' (event) {
+        event.preventDefault()
+
+        addDependency.call({
+            pId: Template.instance().getDocumentId(),
+            dId: event.target.id
+        }, (err, res) => {
+            if (!err) {
+                $('#dependency').val('')
+                $('#dependency').trigger('keyup')
+
+                window.scroll({ top: 0 })
+            } else {
+                console.log(err)
+            }
+        })
+    },
+    'click .invDependency': (event, templateInstance) => {
+        event.preventDefault()
+
+        addDependency.call({
+            pId: event.target.id,
+            dId: Template.instance().getDocumentId()
+        }, (err, res) => {
+            if (!err) {
+                $('#invDependency').val('')
+                $('#invDependency').trigger('keyup')
+
+                window.scroll({ top: 0 })
+            } else {
+                console.log(err)
+            }
+        })
+    },
   'click .remove-dep': function (event, templateInstance) {
     event.preventDefault()
 
