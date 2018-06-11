@@ -16,6 +16,7 @@
     "chart.js": "^2.7.2",
     "core-js": "^2.5.7",
     "coreui": "^0.4.2-alpha2",
+    "crypto-js": "^3.1.9-1",
     "flag-icon-css": "3.0.0",
     "font-awesome": "4.7.0",
     "jquery": "^3.3.1",

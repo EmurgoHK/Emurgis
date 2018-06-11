@@ -1,0 +1,13 @@
+<template name="imageUploader">
+	<div>
+		<label class="btn btn-primary" for="imageInput" id="imageInputLabel">
+	        <input id="imageInput" type="file" style="display:none">
+	        <span id="fileUploadValue">Upload an image</span>
+	    </label>
+	    <div id="preview">
+	    	{{#each images}}
+	    		<img src="{{this}}" height="100" />
+	    	{{/each}}
+	    </div>
+	</div>
+</template>

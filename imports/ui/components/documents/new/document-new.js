@@ -4,6 +4,7 @@ import { Problems } from "/imports/api/documents/both/problemCollection.js"
 
 
 import { addProblem } from "/imports/api/documents/both/problemMethods.js"
+import { getImages } from '/imports/ui/components/uploader/imageUploader'
 
 import "./document-new.html"
 import "./document-new-hooks.js"
@@ -76,6 +77,7 @@ Template.documentNew.events({
     var data = formData(event.target)
     data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
     data.fyiProblem = event.target.fyiProblem.checked
+    data.images = getImages()
 
     addProblem.call(data, (err, res) => {
       if (!err) {

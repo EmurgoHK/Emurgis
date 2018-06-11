@@ -89,6 +89,15 @@
     {{/each}}
     {{/if}}
 
+    <br />
+    <!-- 
+    to include image uploader, just include the template 
+    if you already have some images uploaded and you want to upload more (i.e. on problem edit), you can pass an array of exisiting images to images variable,
+    images array should only consists of strings that mark absolute or relative paths to images 
+    -->
+
+    {{> imageUploader images=images}}
+
     <div style="padding-top:8px;">
       <button type="submit" class="btn btn-primary float-right newproblem">Submit</button>
     </div>

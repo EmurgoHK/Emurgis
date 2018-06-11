@@ -4,11 +4,14 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
+
+import { getImages } from '/imports/ui/components/uploader/imageUploader'
+import '/imports/ui/components/uploader/imageUploader'
 
 
 import "./document-show.html"
@@ -242,6 +245,18 @@ Template.documentShow.events({
             }
         })
     },
+  'click .remove-problem-image': (event, templateInstance) => {
+    event.preventDefault()
+
+    removeProblemImage.call({
+      _id: $(event.currentTarget).data('id'),
+      image: $(event.currentTarget).data('image')
+    }, (err, data) => {
+      if (err) {
+        console.log(err)
+      }
+    })
+  },
   'click .remove-dep': function (event, templateInstance) {
     event.preventDefault()
 
@@ -383,7 +398,8 @@ Template.documentShow.events({
 
                     postComment.call({
                         problemId: problemId,
-                        comment: commentValue
+                        comment: commentValue,
+                        images: getImages(true)
                     }, (error, result) => {
                         if (error) {
                             if (error.details) {

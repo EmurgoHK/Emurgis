@@ -3,7 +3,7 @@ import { FlowRouter } from "meteor/kadira:flow-router"
 import { notify } from "/imports/modules/notifier"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
-import { deleteComment, editComment } from "/imports/api/documents/both/commentsMethods.js"
+import { deleteComment, editComment, removeCommentImage } from "/imports/api/documents/both/commentsMethods.js"
 
 import swal from 'sweetalert'
 
@@ -39,6 +39,18 @@ Template.documentComments.events({
     event.preventDefault()
 
     templateInstance.editMode.set(false)
+  },
+  'click .remove-comment-image': (event, templateInstance) => {
+    event.preventDefault()
+
+    removeCommentImage.call({
+      commentId: $(event.currentTarget).data('id'),
+      image: $(event.currentTarget).data('image')
+    }, (err, data) => {
+      if (err) {
+        console.log(err)
+      }
+    })
   },
   'click .edit-comment' (event, templateInstance) {
     let element = $(event.target)

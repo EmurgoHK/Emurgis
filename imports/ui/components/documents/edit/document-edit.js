@@ -5,6 +5,8 @@ import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { notify } from "/imports/modules/notifier"
 
+import { getImages } from '/imports/ui/components/uploader/imageUploader'
+
 import "./document-edit.html"
 import "/imports/ui/components/documents/shared/problemForm.html"
 
@@ -45,6 +47,7 @@ Template.documentEdit.onRendered(function() {})
 Template.documentEdit.onDestroyed(function() {})
 
 Template.documentEdit.helpers({
+	images: () => (Problems.findOne({ _id: Template.instance().problemId() }) || {}).images || [],
 	problem() {
 		return Problems.findOne({ _id: Template.instance().problemId() }) || {}
     },
@@ -68,6 +71,8 @@ Template.documentEdit.events({
 		data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
 		data.fyiProblem = event.target.fyiProblem.checked
 		data.id = Template.instance().problemId()
+
+		data.images = getImages()
 
     	editProblem.call(data, (err, res) => {
 			if (!err) {
