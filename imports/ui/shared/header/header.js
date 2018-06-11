@@ -56,7 +56,7 @@ Template.header.events({
     
         //clear filter if no value in search bar
         if (query.length < 1) {
-            Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set(undefined)
+            Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set('')
         }
         
         if (query) {
