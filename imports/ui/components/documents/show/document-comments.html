@@ -14,10 +14,22 @@
                <strong>{{comment.createdByName}}</strong> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
                {{#if editMode}}
                <textarea class="form-control" id="js-comment">{{{comment.comment}}}</textarea>
+               <br />
+               <div id="comment-images">
+                   {{#each image in comment.images}}
+                        <img src="{{image}}" height="300" /><a href="#" class="remove-comment-image" data-image="{{image}}" data-id="{{comment._id}}"><sup>X</sup></a>
+                   {{/each}}
+               </div>
+               <br />
                <a class="btn btn-sm btn-primary edit-comment" role="button">Save</a>
                <a class="btn btn-sm btn-danger cancel-edit" role="button">Cancel</a>
                {{else}}
                <span>{{{md comment.comment}}}</span>
+               <div id="comment-images">
+                   {{#each comment.images}}
+                        <img src="{{this}}" height="300" />
+                   {{/each}}
+               </div>
                {{/if}}
             </div>
         </div>

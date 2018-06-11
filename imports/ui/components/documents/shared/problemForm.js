@@ -7,6 +7,9 @@ import { hideHelpModal } from '/imports/api/user/both/userMethods'
 
 import "./problemForm.html"
 
+// to be able to use the imageUploader template, you'll have to include it here as well
+import '/imports/ui/components/uploader/imageUploader'
+
 const helperTexts = {
     description: 'Carefully write the issue by describing the problem you face or observe. You SHOULD seek consensus from others on the accuracy of your observation to ensure that what you think is a problem really is actually a problem. You should also seek consensus on the value of solving the problem.\n\nAny non-problems will be deleted and added to your non-problem statistics.',
     solution: 'What is the simplest possible solution? You SHOULD NOT log any ideas, suggestions, or any solutions to problems that are not explicitly documented above.',
@@ -26,6 +29,7 @@ Template.problemForm.onCreated(function() {
 })
 
 Template.problemForm.helpers({
+    images: () => Template.instance().data.images,
   problems: (inverse) => {
     if (Template.instance()[inverse ? 'invFilter' : 'filter'].get()) {
       return Problems.find({

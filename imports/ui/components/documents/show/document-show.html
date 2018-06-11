@@ -27,6 +27,15 @@
           <br/>
           <h5 class="card-subtitle">Solution</h5>
           <p class="card-text font-weight-normal">{{{md problem.solution}}}</p>
+          {{#if problem.images}}
+          <br />
+          <h5 class="card-subtitle">Images</h5>
+          <div id="problem-images">
+              {{#each image in problem.images}}
+                  <img src="{{image}}" height="300" />{{#if isProblemOwner problem.createdBy}}<a href="#" class="remove-problem-image" data-image="{{image}}" data-id="{{problem._id}}"><sup>X</sup></a>{{/if}}
+              {{/each}}
+          </div>
+          {{/if}}
           {{#if dependencies.count}} <h5>Dependencies</h5> {{/if}}
           {{#each dependencies}}
             <div>
@@ -110,6 +119,8 @@
               <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
           </div>
           <p class="text-danger">{{ commentInvalidMessage }}</p>
+          {{> imageUploader}}
+          <br />
           <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
       </div>
     </div>

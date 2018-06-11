@@ -23,9 +23,11 @@ export const postComment = new ValidatedMethod({
             name: 'postComment',
             validate: new SimpleSchema({
                 'problemId': { type: String, optional: false},
-                'comment': { type: String, max: 500, optional: false }
+                'comment': { type: String, max: 500, optional: false },
+                images: { type: Array, optional: true },
+                'images.$': { type: String, optional: true }
             }).validator(),
-            run({ problemId, comment }) {
+            run({ problemId, comment, images }) {
                 if (!Meteor.userId()) {
                     throw new Meteor.Error('Error.', 'You have to be logged in.')
                 }
@@ -37,7 +39,8 @@ export const postComment = new ValidatedMethod({
                     'comment': comment,
                     'createdAt': new Date().getTime(),
                     'createdByName': getName || "",
-                    'createdBy': Meteor.userId() || ""
+                    'createdBy': Meteor.userId() || "",
+                    images: images
                 })
 
                 sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
@@ -88,6 +91,35 @@ export const editComment = new ValidatedMethod({
         }, {
             $set: {
                 comment: comment
+            }
+        })
+    }
+})
+
+export const removeCommentImage = new ValidatedMethod({
+    name: 'removeCommentImage',
+    validate: new SimpleSchema({
+        commentId: { type: String, optional: false },
+        image: { type: String, optional: false }
+    }).validator({
+        clean: true
+    }),
+    run({ commentId, image }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        let c = Comments.findOne({ _id : commentId }) 
+
+        if (c.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to edit this comment.')
+        }
+
+        Comments.update({
+            _id: commentId
+        }, {
+            $pull: {
+                images: image
             }
         })
     }

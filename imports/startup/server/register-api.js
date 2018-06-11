@@ -6,3 +6,5 @@
 
 import "/imports/api/user/server/accounts-config.js"
 import '/imports/api/user/server/publications'
+
+import '/imports/api/uploader/imageUploader'

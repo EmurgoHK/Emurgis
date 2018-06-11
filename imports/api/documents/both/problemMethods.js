@@ -62,10 +62,12 @@ export const addProblem = new ValidatedMethod({
             "dependencies.$": {type: String, optional: true},
             invDependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
             'invDependencies.$': {type: String, optional: true},
+            images: { type: Array, optional: true },
+            'images.$': { type: String, optional: true }
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies, invDependencies, estimate }) {
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies, invDependencies, images, estimate }) {
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -81,7 +83,8 @@ export const addProblem = new ValidatedMethod({
       'status':'open',
       'isProblemWithEmurgis': isProblemWithEmurgis,
       fyiProblem: fyiProblem,
-      subscribers: [Meteor.userId()]
+      subscribers: [Meteor.userId()],
+      images: images
     })
 
     dependencies.forEach(i => insertDependency(pId, i))
@@ -114,6 +117,35 @@ export const watchProblem = new ValidatedMethod({
     }
 
     addToSubscribers(_id, Meteor.userId())
+  }
+})
+
+export const removeProblemImage = new ValidatedMethod({
+  name: 'removeProblemImage',
+  validate: new SimpleSchema({
+    _id: { type: RegEx, optional: false },
+    image: { type: String, optional: false }
+  }).validator({
+    clean: true
+  }),
+  run({ _id, image }) {
+    if (!Meteor.userId()) {
+      throw new Meteor.Error('Error.', 'You have to be logged in.')
+    }
+
+    let problem = Problems.findOne({_id: _id}) || {}
+
+    if (problem.createdBy === Meteor.userId()) {
+      Problems.update({
+        _id: _id
+      }, {
+        $pull: {
+          images: image
+        }
+      })
+    } else {
+      throw new Meteor.Error('Error.', 'You can\'t edit a problem that\'s not your.')
+    }
   }
 })
 
@@ -273,9 +305,11 @@ export const editProblem = new ValidatedMethod({
         'solution': { type: String, max: 1000, optional: true},
         'isProblemWithEmurgis': { type: Boolean, optional: true },
         'estimate': { type: Number, optional: true },
-        fyiProblem: { type: Boolean, optional: true }
+        fyiProblem: { type: Boolean, optional: true },
+        images: { type: Array, optional: true },
+            'images.$': { type: String, optional: true }
 	}).validator(),
-	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem,estimate }) {
+	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem, images, estimate }) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
@@ -289,7 +323,8 @@ export const editProblem = new ValidatedMethod({
           'solution': solution || "",
           'estimate': estimate || "",
           'isProblemWithEmurgis': isProblemWithEmurgis,
-          fyiProblem: fyiProblem
+          fyiProblem: fyiProblem,
+          images: images
             }})
     } else {
         throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')
