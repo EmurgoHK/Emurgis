@@ -40,7 +40,7 @@ Template.documentsIndexItem.helpers({
     		_id: i.dependencyId
     	}) || {}
 
-    	return problem.status === 'closed'
+    	return problem.status === 'closed' || problem.status === 'rejected'
     })
 })
 

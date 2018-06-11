@@ -39,7 +39,8 @@ Template.problemForm.helpers({
         }]
       })
     }
-  }
+  },
+  onNewProblem: () => FlowRouter.current().route.name === 'documentNew'
 })
 
 const showModal = (id, templateInstance) => {

@@ -47,6 +47,7 @@
       <input type="number" class="form-control" id="estimate" value="{{problem.estimate}}">
       <div id="estimate" class="invalid-feedback"></div>
     </div>
+    {{#if onNewProblem}}
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
         <div class="input-group-text">Dependency:</div>
@@ -86,6 +87,7 @@
         <a href="#">{{getSummaryById problemId}}</a><a href="#" class="remove-dep-inv"><sup>X</sup></a>
       </div>
     {{/each}}
+    {{/if}}
 
     <div style="padding-top:8px;">
       <button type="submit" class="btn btn-primary float-right newproblem">Submit</button>
