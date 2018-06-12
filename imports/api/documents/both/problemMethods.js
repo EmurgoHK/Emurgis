@@ -607,3 +607,20 @@ export const rejectSolution = new ValidatedMethod({
     }
 })
 // end
+
+
+if (Meteor.isDevelopment) {
+    Meteor.methods({
+        generateTestProblems: () => {
+            for (let i = 0; i < 10; i++) {
+                Problems.insert({
+                    summary: "Derp",
+                    description: "Lorem ipsum, herp derp durr.",
+                    solution: "Lorem ipsum, herp derp durr.",
+                    createdAt: new Date().getTime(),
+                    createdBy: ''
+                })
+            }
+        }
+    })
+}
