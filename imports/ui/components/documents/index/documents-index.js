@@ -26,7 +26,7 @@ Template.documentsIndex.onCreated(function() {
         let query = {
             status: { $in: projectStatusTypes }
         }
-        
+
         if (!~projectStatusTypes.indexOf('my')) {
           query = _.extend(query, {
             createdBy: {
@@ -59,7 +59,7 @@ Template.documentsIndex.helpers({
       }).fetch()
 
       let regex = new RegExp(Template.instance().searchFilter.get().replace(/ /g, '|').replace(/\|$/, ''), 'i')
-      
+
       return regex.test(i.summary) || regex.test(i.solution) || regex.test(i.description) || comments.some(j => regex.test(j.comment))
     })
   }

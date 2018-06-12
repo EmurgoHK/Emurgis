@@ -55,7 +55,7 @@ export const addProblem = new ValidatedMethod({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 1000, optional: true},
             solution: { type: String, max: 1000, optional: true},
-            estimate: { type: Number, optional: true },
+            estimate: { type: Number, min:1, optional: true },
             isProblemWithEmurgis: { type: Boolean, optional: true },
             fyiProblem: { type: Boolean, optional: true },
             dependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
