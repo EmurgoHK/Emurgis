@@ -3,12 +3,13 @@ const baseUrl = 'http://localhost:3000' // baseUrl of the app we are testing, it
 
 // see the full webdriverio browser API here: http://webdriver.io/api.html
 describe('page header', function () {
-    beforeEach(() => {
+    before(() => {
         browser.url(`${baseUrl}/`) // navigate to the home route `/`
         browser.pause(5000) // let it load, wait for 2 seconds
 
         browser.execute(() => {
             Meteor.call('generateTestProblems', (err, data) => {})
+
             return 'ok'
         })
 
@@ -34,5 +35,15 @@ describe('page header', function () {
         browser.click('.navbar-toggler')
         assert(browser.isExisting('.sidebar'), false)
         assert(browser.isVisible('.sidebar'), false)
+    })
+
+    it('search bar should work', () => {
+        browser.setValue('#searchFilterHeader', 'derp')
+
+        browser.pause(3000)
+
+        assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentsIndex', true)
+
+        assert(browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('a').html())).some(i => /derp/ig.test(i))).value, true)
     })
 })
