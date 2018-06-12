@@ -21,7 +21,7 @@
                   </div>
                 </div>
             </div>
-              
+
             </form>
         <ul class="navbar-nav mr-auto">
         </ul>
@@ -30,13 +30,17 @@
           <li class="nav-item">
     <a class="nav-link" href="/notifications" role="button">
 <i class="icon-bell"></i>
-<span class="badge badge-pill badge-danger">{{notificationsCount}}</span>
+{{#if notificationsCount}}
+  <span class="badge badge-pill badge-danger">{{notificationsCount}}</span>
+{{/if}}
 </a>
 </li>
 <li class="nav-item">
     <a class="nav-link" href="/resolved" title="Resolved problems" role="button">
 <i class="far fa-check-circle"></i>
-<span class="badge badge-pill badge-danger">{{resolvedProblemsCount}}</span>
+{{#if resolvedProblemsCount}}
+  <span class="badge badge-pill badge-danger">{{resolvedProblemsCount}}</span>
+{{/if}}
 </a>
 </li>
           <li class="nav-item">
@@ -59,7 +63,7 @@
                 </div>
                 <a class="sign-out dropdown-item" style="cursor: pointer;"><i class="nav-icon icon-logout"></i>  Sign out</a>
               </div>
-        
+
             {{else}}
               <a class="sign-in nav-link" style="cursor: pointer;">Sign in</a>
             {{/if}}
@@ -67,8 +71,8 @@
         </ul>
       </div>
     </div>
-    
-      
+
+
   </header>
 
 </template>
