@@ -68,3 +68,15 @@ export const resetHiddenModals = new ValidatedMethod({
         })
     }
 })
+
+if (Meteor.isDevelopment) {
+    Meteor.methods({
+        generateTestUser: () => {
+            Accounts.createUser({
+                username: 'testing',
+                password: 'testing',
+                email: 'testing@testing.test'
+            })
+        }
+    })
+}
