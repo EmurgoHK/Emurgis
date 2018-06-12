@@ -45,7 +45,7 @@
       </div>
 
       <input type="number" class="form-control" id="estimate" value="{{problem.estimate}}">
-      <div id="estimate" class="invalid-feedback"></div>
+      <div id="estimateError" class="invalid-feedback"></div>
     </div>
     {{#if onNewProblem}}
     <div class="input-group" style="padding-top:8px;">
@@ -90,10 +90,10 @@
     {{/if}}
 
     <br />
-    <!-- 
-    to include image uploader, just include the template 
+    <!--
+    to include image uploader, just include the template
     if you already have some images uploaded and you want to upload more (i.e. on problem edit), you can pass an array of exisiting images to images variable,
-    images array should only consists of strings that mark absolute or relative paths to images 
+    images array should only consists of strings that mark absolute or relative paths to images
     -->
 
     {{> imageUploader images=images}}
