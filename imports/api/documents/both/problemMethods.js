@@ -618,9 +618,15 @@ if (Meteor.isDevelopment) {
                     description: "Lorem ipsum, herp derp durr.",
                     solution: "Lorem ipsum, herp derp durr.",
                     createdAt: new Date().getTime(),
-                    createdBy: ''
+                    createdBy: '',
+                    status: 'open'
                 })
             }
+        },
+        removeTestProblems: () => {
+            Problems.remove({
+                summary: 'Derp'
+            })
         }
     })
 }

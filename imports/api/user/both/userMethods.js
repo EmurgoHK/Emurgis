@@ -75,7 +75,10 @@ if (Meteor.isDevelopment) {
             Accounts.createUser({
                 username: 'testing',
                 password: 'testing',
-                email: 'testing@testing.test'
+                email: 'testing@testing.test',
+                profile: {
+                	name: 'Tester'
+                }
             })
         }
     })
