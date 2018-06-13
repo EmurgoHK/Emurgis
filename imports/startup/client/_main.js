@@ -32,3 +32,5 @@ import "/imports/modules/notifier.js"
 
 // Bootstrap
 import "bootstrap"
+
+import './testingCollections'

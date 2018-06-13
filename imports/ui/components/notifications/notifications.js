@@ -24,7 +24,7 @@ Template.notifications.onCreated(function() {
 })
 
 Template.notifications.events({
-    'click .stats-item': function (event, templateInstance) {
+    'click .notification-item': function (event, templateInstance) {
         // mark clicked notification as read
         markNotificationAsRead.call({
             notificationId: this._id

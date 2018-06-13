@@ -93,9 +93,27 @@ describe('Problem page', function () {
     it('user can solve a problem', () => {
         let isClaimed = browser.execute(() => $('.unclaimProblem').length === 1).value
 
-        if (isClaimed) {
-            // todo
+        if (!isClaimed) {
+            browser.click('.claimProblem')
+            browser.pause(3000)
+            browser.click('.swal-button--confirm')
+            browser.pause(3000)
+
+            assert(browser.execute(() => $('.unclaimProblem').length === 1).value, true)
         }
+
+        browser.click('button[data-target$="#markAsSolvedModal"]')
+
+        browser.pause(3000)
+
+        browser.setValue('#resolutionSummary', 'Some summary')
+
+        browser.pause(3000)
+
+        browser.execute(() => $('button[type$="submit"]:visible').click())
+        browser.pause(3000)
+
+        assert(browser.execute(() => $('#unSolveProblem').length === 1).value, true)
     })
 
     it('user can add dependencies', () => {
