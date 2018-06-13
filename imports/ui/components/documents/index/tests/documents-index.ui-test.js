@@ -55,4 +55,60 @@ describe('Problems page', function () {
             assert(!checkStatus(i.toLowerCase()), true) // there should be no open ones then
         })
     })
+
+    it('my rejected problems page shows only rejected problems', () => {
+        browser.url(`${baseUrl}/rejected`)
+        browser.pause(5000)
+
+        let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
+
+        assert(rejected.every(i => i.toLowerCase() === 'rejected'), true)
+        assert(rejected.length === browser.execute(() => testingProblems.find({
+            createdBy: Meteor.userId(),
+            status: 'rejected'
+        }).count()).value, true)
+    })
+
+    it('resolved problems page shows only resolved problems', () => {
+        browser.url(`${baseUrl}/resolved`)
+        browser.pause(5000)
+
+        let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
+
+        assert(rejected.every(i => i.toLowerCase() === 'ready for review'), true)
+        assert(rejected.length === browser.execute(() => testingProblems.find({
+            createdBy: Meteor.userId(),
+            status: 'ready for review'
+        }).count()).value, true)
+    })
+
+    it('my logged problems shows only problems created by the current user', () => {
+        browser.url(`${baseUrl}/logged`)
+        browser.pause(5000)
+
+        browser.click('#checkboxClosed')
+        browser.pause(2000)
+
+        let count = browser.execute(() => $('.documents-index-item').length).value
+
+        assert(count === browser.execute(() => testingProblems.find({
+            createdBy: Meteor.userId()
+        }).count()).value, true)
+    })
+
+    it('my claimed problems shows only problems that the user has claimed', () => {
+        browser.url(`${baseUrl}/claimed`)
+        browser.pause(5000)
+
+        browser.click('#checkboxClosed')
+        browser.pause(2000)
+
+        let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('a').attr('href').replace('/', '')))).value
+
+        rejected.forEach(i => {
+            assert(browser.execute((id) => (testingProblems.findOne({
+                _id: id
+            }) || {}).claimedBy === Meteor.userId(), i).value, true)
+        })
+    })
 })

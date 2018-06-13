@@ -32,7 +32,7 @@ describe('New problem page', function () {
         })
     })
 
-    it ('should create a new problem when submitted', function() {
+    it ('should show modals and create a new problem when submitted', function() {
         browser.setValue('#summary', 'T')
         browser.pause(2000)
         browser.click('.swal-button--ok')
@@ -52,6 +52,60 @@ describe('New problem page', function () {
 
         assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentShow', true)
         assert(browser.execute(() => !!FlowRouter.current().params.documentId).value, true)
+
+        assert(browser.execute(() => {
+            let problem = testingProblems.findOne({
+                _id: FlowRouter.current().params.documentId
+            }) || {}
+
+            return problem.summary === 'T' && problem.description === 'T' && problem.solution === 'T'
+        }).value, true)
+    })
+
+    it ('user can edit the created problem', function() {
+        browser.url(`http://localhost:3000/${browser.execute(() => FlowRouter.current().params.documentId).value}/edit`)
+        browser.pause(5000)
+
+        assert(browser.getValue('#description') === 'T', true)
+        assert(browser.getValue('#summary') === 'T', true)
+        assert(browser.getValue('#solution') === 'T', true)
+
+        browser.setValue('#summary', '')
+        browser.pause(2000)
+        browser.setValue('#summary', 'Andrej')
+        browser.pause(2000)
+
+        browser.click('.newproblem')
+        browser.pause(3000)
+
+        assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentShow', true)
+        assert(browser.execute(() => !!FlowRouter.current().params.documentId).value, true)
+
+        assert(browser.execute(() => {
+            let problem = testingProblems.findOne({
+                _id: FlowRouter.current().params.documentId
+            }) || {}
+
+            return problem.summary === 'Andrej' && problem.description === 'T' && problem.solution === 'T'
+        }).value, true)
+    })
+
+    it ('user can delete the problem he has added', () => {
+        let id = browser.execute(() => FlowRouter.current().params.documentId).value
+
+        browser.click('.js-delete-document')
+        browser.pause(2000)
+
+        browser.click('.swal-button--confirm')
+        browser.pause(3000)
+
+        assert(browser.execute((id) => {
+            let problem = testingProblems.findOne({
+                _id: id
+            })
+
+            return !problem
+        }, id), true)
     })
 
     it ('dependencies can be added on the form', function() {
