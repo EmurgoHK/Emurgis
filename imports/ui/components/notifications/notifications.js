@@ -2,7 +2,7 @@ import { Template } from 'meteor/templating'
 import { FlowRouter } from 'meteor/kadira:flow-router'
 
 import { Notifications } from '/imports/api/notifications/both/notificationsCollection.js'
-import { markNotificationAsRead } from '/imports/api/notifications/both/notificationsMethods.js'
+import { markNotificationAsRead, markAllAsRead } from '/imports/api/notifications/both/notificationsMethods.js'
 
 import './notifications.html'
 
@@ -32,6 +32,16 @@ Template.notifications.events({
         // remove clicked notification from unread notifications list
         let unread = templateInstance.unread.get()
         templateInstance.unread.set(unread.filter(i => i !== this._id))
+    },
+    'click #markAllAsRead': function (event, templateInstance) {
+      markAllAsRead.call({
+        userId : Meteor.userId()
+      }, (err, data) => {
+        if (!err) {
+          templateInstance.unread.set([])
+        }
+      })
+
     }
 })
 
@@ -46,7 +56,10 @@ Template.notifications.helpers({
     read: function() {
         return !~Template.instance().unread.get().indexOf(this._id)
     },
+    unreadCount: function() {
+        return Template.instance().unread.get().length;
+    },
     href: function() {
         return this.href || '#'
-    } 
+    }
 })
