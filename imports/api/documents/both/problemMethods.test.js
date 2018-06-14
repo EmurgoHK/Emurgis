@@ -177,6 +177,7 @@ describe('problem methods', () => {
 
         return callWithPromise('claimProblem', {
             _id: problem._id,
+            estimate: 60
         }).then(problemId => {
           let problem = Problems.findOne({ _id : problemId})
           assert.equal(problem.claimedBy, Meteor.userId())
@@ -192,7 +193,8 @@ describe('problem methods', () => {
         })
 
         return callWithPromise('claimProblem', {
-            _id: problem._id
+            _id: problem._id,
+            estimate: 60
         }).then(data => {
             assert.isNull(data)
         }).catch(err => {
