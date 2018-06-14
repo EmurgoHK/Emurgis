@@ -1,6 +1,13 @@
 <template name="documentShow">
 
   <div class="document-show">
+    {{#if blocking}}
+    <div class="card bg-warning">
+      <div class="card-body">
+        This problem is blocking {{pluralize blocking "other problem"}} from being completed.
+      </div>
+    </div>
+    {{/if}}
     <div class="card {{#if problem.isProblemWithEmurgis}}border-info{{/if}}">
       <div class="card-body">
         {{#if Template.subscriptionsReady}}
@@ -20,10 +27,19 @@
           <br/>
           <h5 class="card-subtitle">Solution</h5>
           <p class="card-text font-weight-normal">{{{md problem.solution}}}</p>
+          {{#if problem.images}}
+          <br />
+          <h5 class="card-subtitle">Images</h5>
+          <div id="problem-images">
+              {{#each image in problem.images}}
+                  <img src="{{image}}" height="300" />{{#if isProblemOwner problem.createdBy}}<a href="#" class="remove-problem-image" data-image="{{image}}" data-id="{{problem._id}}"><sup>X</sup></a>{{/if}}
+              {{/each}}
+          </div>
+          {{/if}}
           {{#if dependencies.count}} <h5>Dependencies</h5> {{/if}}
           {{#each dependencies}}
             <div>
-              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a>{{#if isProblemOwner problem.createdBy}}<a href="#" class="remove-dep"><sup>X</sup></a>{{/if}}
+              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a> {{{statusText (getStatusById dependencyId)}}} {{#if canDeleteDep problem}}<a class="btn btn-sm btn-danger remove-dep" style="height: 15px;font-size: 10px;padding: 0px 5px 0px 5px;" href="#" role="button">X</a>{{/if}}
             </div>
           {{/each}}
           <hr>
@@ -89,6 +105,10 @@
         </div>
     </div>
     {{/if}}
+    {{#each solution in problem.rejectedSolutions}}
+      {{> rejectedSolutions solution=solution}}
+    {{/each}}
+    
     {{#each comment in comments}}
       {{> documentComments comment=comment}}
     {{/each}}
@@ -99,6 +119,8 @@
               <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
           </div>
           <p class="text-danger">{{ commentInvalidMessage }}</p>
+          {{> imageUploader}}
+          <br />
           <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
       </div>
     </div>
@@ -123,6 +145,33 @@
               {{{statusButton problem}}}
 
             </span>
+            <div class="input-group" style="padding-top:8px;">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Add dependency:</div>
+              </div>
+
+              <input type="text" class="form-control" id="dependency" value="" placeholder="Enter the name of the problem">
+              <div id="summaryError" class="invalid-feedback"></div>
+            </div>
+            <ul class="list-group">
+              {{#each problems}}
+                <li class="list-group-item dependency" id={{_id}}>{{summary}}</li>
+              {{/each}}
+            </ul>
+
+            <div class="input-group" style="padding-top:8px;">
+              <div class="input-group-prepend">
+                <div class="input-group-text">The following problems can't be completed until this problem is closed:</div>
+              </div>
+
+              <input type="text" class="form-control" id="invDependency" value="" placeholder="Enter the name of the problem">
+              <div id="summaryError" class="invalid-feedback"></div>
+            </div>
+            <ul class="list-group">
+              {{#each (problems true)}}
+                <li class="list-group-item invDependency" id={{_id}}>{{summary}}</li>
+              {{/each}}
+            </ul>
             {{else}}
               {{> loader}}
             {{/if}}
@@ -132,6 +181,7 @@
     {{/unless}}
 
     {{> resolvedModal }}
-    {{> rejectModal}}
+    {{> rejectModal }}
+    {{> rejectSolutionModal }}
   </div>
 </template>

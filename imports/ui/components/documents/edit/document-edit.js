@@ -5,6 +5,8 @@ import { Problems } from "/imports/api/documents/both/problemCollection.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { notify } from "/imports/modules/notifier"
 
+import { getImages } from '/imports/ui/components/uploader/imageUploader'
+
 import "./document-edit.html"
 import "/imports/ui/components/documents/shared/problemForm.html"
 
@@ -38,13 +40,14 @@ Template.documentEdit.onCreated(function() {
 
 	this.autorun(() => {
 		this.subscribe("problems", this.problemId())
-		this.subscribe("dependencies", this.problemId())
+		this.subscribe('dependenciesProblem', this.problemId())
     })
 })
 Template.documentEdit.onRendered(function() {})
 Template.documentEdit.onDestroyed(function() {})
 
 Template.documentEdit.helpers({
+	images: () => (Problems.findOne({ _id: Template.instance().problemId() }) || {}).images || [],
 	problem() {
 		return Problems.findOne({ _id: Template.instance().problemId() }) || {}
     },
@@ -52,8 +55,11 @@ Template.documentEdit.helpers({
 		if (problemOwner !== Meteor.userId()) { FlowRouter.go('/') }
 	},
 	dependencies() {
-    return Dependencies.find({ problemId: Template.instance().problemId() }) || [];
-  }
+    	return Dependencies.find({ problemId: Template.instance().problemId() }).fetch() || [];
+  	},
+  	invDependencies() {
+    	return Dependencies.find({ dependencyId: Template.instance().problemId() }).fetch() || [];
+  	}
 })
 
 Template.documentEdit.events({
@@ -65,6 +71,8 @@ Template.documentEdit.events({
 		data.isProblemWithEmurgis = event.target.isProblemWithEmurgis.checked
 		data.fyiProblem = event.target.fyiProblem.checked
 		data.id = Template.instance().problemId()
+
+		data.images = getImages()
 
     	editProblem.call(data, (err, res) => {
 			if (!err) {
@@ -80,29 +88,6 @@ Template.documentEdit.events({
 					$('#' + e.name + 'Error').show()
 					$('#' + e.name + 'Error').text(e.message)
 				});
-			}
-		})
-	},
-	'click .delete-button' (event) {
-		event.preventDefault();
-		deleteDependency.call({
-			id: event.target.id
-		}, (err, res) => {
-			if (err) {
-					console.error(err)
-			}
-		});
-	},
-	'click .dependency' (event) {
-		//create a new dependency here
-		event.preventDefault();
-		addDependency.call({ pId: Template.instance().problemId(), dId: event.target.id }, (err, res) => {
-			if(!err) {
-				console.log("Created successfully");
-			} else {
-				$('#dependency').val('');
-				$('#dependency').trigger('keyup');
-				console.error(err);
 			}
 		})
 	}

@@ -25,6 +25,13 @@
                 <li class="nav-item"><a href="/rejected" class="nav-link">
                     <i class="nav-icon icon-docs"></i> My rejected problems</a>
                 </li>
+
+                <!-- mdoerator pages -->
+                {{#if isModerator}}
+                <li class="nav-item"><a href="/moderator/users" class="nav-link">
+                    <i class="nav-icon icon-people"></i> User management</a>
+                </li>
+                {{/if}}
             </ul>
         </nav>
         <button class="sidebar-minimizer" type="button"></button>

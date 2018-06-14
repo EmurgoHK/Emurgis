@@ -22,13 +22,13 @@
       <textarea class="form-control" id="description" rows="6" value="{{problem.description}}" placeholder="Carefully describe the problem you have observed"></textarea>
       <div id="descriptionError" class="invalid-feedback"></div>
     </div>
-    <small><i id="description-chars" class="text-muted"></i></small>
+    <small><a class="far fa-question-circle" data-id="description" style="display: none"></a> <i id="description-chars" class="text-muted"></i></small>
 
     <div class="input-group" style="padding-top:8px;">
       <textarea class="form-control" id="solution" rows="6" value="{{problem.solution}}" placeholder="This is optional. If you have some ideas of what the simplest possible solution to this problem is, you can explain it here."></textarea>
       <div id="solutionError" class="invalid-feedback"></div>
     </div>
-    <small><i id="solution-chars" class="text-muted"></i></small>
+    <small><a class="far fa-question-circle" data-id="solution" style="display: none"></a> <i id="solution-chars" class="text-muted"></i></small>
 
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
@@ -38,12 +38,21 @@
       <input type="text" class="form-control" id="summary" value="{{problem.summary}}" placeholder="summarize the problem in 63 characters or less">
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
-    <small><i id="summary-chars" class="text-muted"></i></small>
+    <small><a class="far fa-question-circle" data-id="summary" style="display: none"></a> <i id="summary-chars" class="text-muted"></i></small>
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
-        <div class="input-group-text">Dependency:</div>
+        <div class="input-group-text">Estimate <i> (Minutes)</i>:</div>
       </div>
 
+      <input type="number" class="form-control" id="estimate" value="{{problem.estimate}}">
+      <div id="estimateError" class="invalid-feedback"></div>
+    </div>
+    {{#if onNewProblem}}
+    <div class="input-group" style="padding-top:8px;">
+      <div class="input-group-prepend">
+
+        <div class="input-group-text">Dependency:</div>
+      </div>
       <input type="text" class="form-control" id="dependency" value="" placeholder="Enter the name of the problem">
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
@@ -53,14 +62,41 @@
       {{/each}}
     </ul>
 
-    {{#if dependencies.count}}
-      <h5 class="text-muted">Dependency</h5>
-    {{/if}}
     {{#each dependencies}}
       <div >
         <a href="#">{{getSummaryById dependencyId}}</a><a href="#" class="remove-dep"><sup>X</sup></a>
       </div>
     {{/each}}
+
+    <div class="input-group" style="padding-top:8px;">
+      <div class="input-group-prepend">
+        <div class="input-group-text">The following problems can't be completed until this problem is closed:</div>
+      </div>
+
+      <input type="text" class="form-control" id="invDependency" value="" placeholder="Enter the name of the problem">
+      <div id="summaryError" class="invalid-feedback"></div>
+    </div>
+    <ul class="list-group">
+      {{#each (problems true)}}
+        <li class="list-group-item invDependency" id={{_id}}>{{summary}}</li>
+      {{/each}}
+    </ul>
+
+    {{#each invDependencies}}
+      <div >
+        <a href="#">{{getSummaryById problemId}}</a><a href="#" class="remove-dep-inv"><sup>X</sup></a>
+      </div>
+    {{/each}}
+    {{/if}}
+
+    <br />
+    <!--
+    to include image uploader, just include the template
+    if you already have some images uploaded and you want to upload more (i.e. on problem edit), you can pass an array of exisiting images to images variable,
+    images array should only consists of strings that mark absolute or relative paths to images
+    -->
+
+    {{> imageUploader images=images}}
 
     <div style="padding-top:8px;">
       <button type="submit" class="btn btn-primary float-right newproblem">Submit</button>

@@ -3,6 +3,7 @@ import SimpleSchema from "simpl-schema"
 import { ValidatedMethod } from "meteor/mdg:validated-method"
 
 import { Dependencies } from './dependenciesCollection'
+import { Problems } from './problemCollection'
 
 const {
     RegEx
@@ -52,13 +53,21 @@ export const deleteDependency = new ValidatedMethod({
 		id: { type: String, optional: false}
 	}).validator(),
 	run({ id }) {
-      let dependency = Dependencies.findOne({_id: id});
+      let dependency = Dependencies.findOne({_id: id})
+
+      let problem = Problems.findOne({
+        _id: dependency.problemId
+      })
 
   		if (!Meteor.userId()) {
   			   throw new Meteor.Error('Error.', 'You have to be logged in.')
   		}
 
-      if (dependency.createdBy === Meteor.userId()) {
+      let user = Meteor.users.findOne({
+        _id: Meteor.userId()
+      })
+
+      if (problem.createdBy === Meteor.userId() || user.moderator) {
           Dependencies.remove({'_id' : id})
       } else {
           throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')

@@ -3,6 +3,7 @@ import { FlowRouter } from "meteor/kadira:flow-router"
 
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
+import { Comments } from '/imports/api/documents/both/commentsCollection'
 
 
 import "./documents-index.html"
@@ -11,34 +12,21 @@ import "./documents-index-item/documents-index-item.js"
 Template.documentsIndex.onCreated(function() {
 
     //Reactive Vars
-    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my'])
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my', 'isProblemWithEmurgis'])
     this.filter = new ReactiveVar({})
-    this.searchFilter = new ReactiveVar(undefined);
+    this.searchFilter = new ReactiveVar('');
 
     this.autorun(() => {
-        this.subscribe("problems");
+        this.subscribe('problems')
+        this.subscribe('comments')
 
         //reactive variable to query mongoDB based on the status type
         let projectStatusTypes = Template.instance().projectStatusTypes.get();
-        let searchFilter = Template.instance().searchFilter.get();
 
         let query = {
-            status: { $in: projectStatusTypes },
-            '$or': [{
-                summary: {
-                    $regex: new RegExp(searchFilter, "i")
-                }
-            }, {
-                solution: {
-                    $regex: new RegExp(searchFilter, "i")
-                }
-            }, {
-                description: {
-                    $regex: new RegExp(searchFilter, "i")
-                }
-            }]
+            status: { $in: projectStatusTypes }
         }
-        
+
         if (!~projectStatusTypes.indexOf('my')) {
           query = _.extend(query, {
             createdBy: {
@@ -47,13 +35,13 @@ Template.documentsIndex.onCreated(function() {
           })
         }
 
-        if (~projectStatusTypes.indexOf('isProblemWithEmurgis')) {
-          query['$or'].push({ isProblemWithEmurgis : true })
+        if (!~projectStatusTypes.indexOf('isProblemWithEmurgis')) {
+          query.isProblemWithEmurgis = {
+            $ne: true
+          }
         }
 
         this.filter.set(query)
-
-
     });
 });
 
@@ -63,8 +51,17 @@ Template.documentsIndex.onDestroyed(function() {})
 
 Template.documentsIndex.helpers({
   problems() {
-    let filter = Template.instance().filter.get();
-    return Problems.find(filter, { sort: { createdAt: -1 } })
+    let filter = Template.instance().filter.get()
+
+    return Problems.find(filter, { sort: { createdAt: -1 } }).fetch().filter(i => {
+      let comments = Comments.find({
+        problemId: i._id
+      }).fetch()
+
+      let regex = new RegExp(Template.instance().searchFilter.get().replace(/ /g, '|').replace(/\|$/, ''), 'i')
+
+      return regex.test(i.summary) || regex.test(i.solution) || regex.test(i.description) || comments.some(j => regex.test(j.comment))
+    })
   }
 })
 
@@ -88,19 +85,5 @@ Template.documentsIndex.events({
     var whatIsChecked = $.makeArray(projectStatusTypes);
     console.log(whatIsChecked)
     template.projectStatusTypes.set(whatIsChecked);
-  },
-  'keyup #searchFilter': function (event) {
-    event.preventDefault();
-    let query = $('#searchFilter').val();
-
-    //clear filter if no value in search bar
-    if (query.length < 1) {
-      Template.instance().searchFilter.set(undefined);
-    }
-
-    if (query) {
-      Template.instance().searchFilter.set(query); //done
-    }
-
   }
 })

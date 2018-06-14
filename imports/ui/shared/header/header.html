@@ -1,7 +1,7 @@
 <template name="header">
   <header class="app-header navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container-fluid">
-      <button class="navbar-toggler sidebar-toggler d-block" type="button">
+      <button class="navbar-toggler sidebar-toggler d-block" type="button" style="border: none;">
         <span class="navbar-toggler-white-icon"></span>
       </button>
       <a class="navbar-brand" href="{{pathFor '/'}}"><img src="/img/emurgis.png" height="30px" /></a>
@@ -12,6 +12,17 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <form class="form-inline">
+            <div class="input-group">
+                <input class="form-control mr-sm-2" type="search" id="searchFilterHeader" placeholder="Search for a problem" aria-label="Search" style="margin-right: 0 !important;">
+                <div class="input-group-append">
+                  <div class="input-group-text">
+                    <i class="nav-icon icon-magnifier"></i>
+                  </div>
+                </div>
+            </div>
+
+            </form>
         <ul class="navbar-nav mr-auto">
         </ul>
 
@@ -19,17 +30,21 @@
           <li class="nav-item">
     <a class="nav-link" href="/notifications" role="button">
 <i class="icon-bell"></i>
-<span class="badge badge-pill badge-danger">{{notificationsCount}}</span>
+{{#if notificationsCount}}
+  <span class="badge badge-pill badge-danger">{{notificationsCount}}</span>
+{{/if}}
 </a>
 </li>
 <li class="nav-item">
     <a class="nav-link" href="/resolved" title="Resolved problems" role="button">
 <i class="far fa-check-circle"></i>
-<span class="badge badge-pill badge-danger">{{resolvedProblemsCount}}</span>
+{{#if resolvedProblemsCount}}
+  <span class="badge badge-pill badge-danger">{{resolvedProblemsCount}}</span>
+{{/if}}
 </a>
 </li>
           <li class="nav-item">
-            <a class="nav-link" href="https://github.com/emurgohk/emurgis" target="_blank">Github</a>
+            <a class="nav-link github" href="https://github.com/emurgohk/emurgis" target="_blank">Github</a>
           </li>
 
           <li class="nav-item dropdown">
@@ -48,7 +63,7 @@
                 </div>
                 <a class="sign-out dropdown-item" style="cursor: pointer;"><i class="nav-icon icon-logout"></i>  Sign out</a>
               </div>
-        
+
             {{else}}
               <a class="sign-in nav-link" style="cursor: pointer;">Sign in</a>
             {{/if}}
@@ -56,8 +71,8 @@
         </ul>
       </div>
     </div>
-    
-      
+
+
   </header>
 
 </template>

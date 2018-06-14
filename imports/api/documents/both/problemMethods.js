@@ -55,14 +55,21 @@ export const addProblem = new ValidatedMethod({
             summary: { type: String, max: 70, optional: false},
             description: { type: String, max: 1000, optional: true},
             solution: { type: String, max: 1000, optional: true},
+            estimate: { type: Number, min:1, optional: true },
             isProblemWithEmurgis: { type: Boolean, optional: true },
             fyiProblem: { type: Boolean, optional: true },
             dependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
             "dependencies.$": {type: String, optional: true},
+            invDependencies: {type: Array, minCount: 0, maxCount: 10, optional: true},
+            'invDependencies.$': {type: String, optional: true},
+            images: { type: Array, optional: true },
+            'images.$': { type: String, optional: true }
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
-    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies }) {
+
+    run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies, invDependencies, images, estimate }) {
+
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -77,15 +84,13 @@ export const addProblem = new ValidatedMethod({
       'status':'open',
       'isProblemWithEmurgis': isProblemWithEmurgis,
       fyiProblem: fyiProblem,
-      subscribers: [Meteor.userId()]
+      subscribers: [Meteor.userId()],
+      images: images
     })
 
+    dependencies.forEach(i => insertDependency(pId, i))
+    invDependencies.forEach(i => insertDependency(i, pId))
 
-    if (dependencies.length > 0) {
-      for (var i = 0; i<dependencies.length; i++) {
-        insertDependency(pId , dependencies[i]);
-      }
-    }
     Stats.upsert({
       userId: Meteor.userId()
     }, {
@@ -113,6 +118,35 @@ export const watchProblem = new ValidatedMethod({
     }
 
     addToSubscribers(_id, Meteor.userId())
+  }
+})
+
+export const removeProblemImage = new ValidatedMethod({
+  name: 'removeProblemImage',
+  validate: new SimpleSchema({
+    _id: { type: RegEx, optional: false },
+    image: { type: String, optional: false }
+  }).validator({
+    clean: true
+  }),
+  run({ _id, image }) {
+    if (!Meteor.userId()) {
+      throw new Meteor.Error('Error.', 'You have to be logged in.')
+    }
+
+    let problem = Problems.findOne({_id: _id}) || {}
+
+    if (problem.createdBy === Meteor.userId()) {
+      Problems.update({
+        _id: _id
+      }, {
+        $pull: {
+          images: image
+        }
+      })
+    } else {
+      throw new Meteor.Error('Error.', 'You can\'t edit a problem that\'s not your.')
+    }
   }
 })
 
@@ -274,9 +308,12 @@ export const editProblem = new ValidatedMethod({
 		'description': { type: String, max: 1000, optional: true},
         'solution': { type: String, max: 1000, optional: true},
         'isProblemWithEmurgis': { type: Boolean, optional: true },
-        fyiProblem: { type: Boolean, optional: true }
+        'estimate': { type: Number, optional: true },
+        fyiProblem: { type: Boolean, optional: true },
+        images: { type: Array, optional: true },
+            'images.$': { type: String, optional: true }
 	}).validator(),
-	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem }) {
+	run({ id, summary, description, solution, isProblemWithEmurgis, fyiProblem, images, estimate }) {
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
 		}
@@ -289,7 +326,8 @@ export const editProblem = new ValidatedMethod({
           'description': description || "",
           'solution': solution || "",
           'isProblemWithEmurgis': isProblemWithEmurgis,
-          fyiProblem: fyiProblem
+          fyiProblem: fyiProblem,
+          images: images
             }})
     } else {
         throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')
@@ -350,19 +388,43 @@ export const markAsResolved = new ValidatedMethod({
         resolutionSummary: { type: String, optional: false}
     }).validator(),
     run({ problemId, claimerId, resolutionSummary }) {
+        let problem = Problems.findOne({
+          _id: problemId
+        })
 
         if (claimerId !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to resolve this problem')
         }
 
-        Problems.update({ '_id' : problemId }, {
-            $set : {
-                'status' : 'ready for review',
-                'resolveSteps': resolutionSummary,
-                'hasAcceptedSolution': false,
-                'resolvedDateTime': new Date().getTime()
-            }
-        });
+        if (problem.createdBy !== claimerId) {
+          Problems.update({ '_id' : problemId }, {
+              $set : {
+                  'status' : 'ready for review',
+                  'resolveSteps': resolutionSummary,
+                  'hasAcceptedSolution': false,
+                  'resolvedDateTime': new Date().getTime()
+              }
+          })
+        } else {
+          Problems.update({ '_id' : problemId }, {
+              $set : {
+                  'status' : 'closed',
+                  'resolveSteps': resolutionSummary,
+                  'hasAcceptedSolution': true,
+                  'resolvedDateTime': new Date().getTime(),
+                  resolved: true,
+                  resolvedBy: claimerId
+              }
+          })
+
+          Stats.upsert({
+              userId: problem.claimedBy
+          }, {
+              $addToSet: {
+                  completedProblems: problemId
+              }
+          })
+        }
 
         return problemId;
     }
@@ -501,3 +563,73 @@ export const removeClaimer = new ValidatedMethod({
     }
 });
 // end
+
+// allow problem owners to nullify solution
+export const rejectSolution = new ValidatedMethod({
+    name: 'rejectSolution',
+    validate: new SimpleSchema({
+        problemId:  { type: String, optional: false },
+        rejectReason:  { type: String, optional: false }
+    }).validator(),
+    run ({ problemId, rejectReason }) {
+        let problem = Problems.findOne({ _id : problemId })
+
+        if (problem.createdBy !== Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You are not allowed to reject solution')
+        }
+
+        let rejectedSolution = {}
+
+        rejectedSolution.resolveSteps = problem.resolveSteps
+        rejectedSolution.resolvedBy = problem.claimedBy
+        rejectedSolution.rejectReason = rejectReason
+        rejectedSolution.submittedAt = problem.resolvedDateTime
+        rejectedSolution.rejectedAt = new Date().getTime()
+
+
+        Problems.update({ _id : problemId }, {
+            $set: {status :  'open'},
+            $unset : {
+                resolveSteps: true,
+                hasAcceptedSolution: true,
+                resolvedDateTime: true,
+                claimedBy: true,
+                claimed: true,
+                claimedFullname: true,
+                claimedDateTime: true
+            },
+            $addToSet : {
+                rejectedSolutions: rejectedSolution
+            }
+        })
+
+        sendToSubscribers(problemId, Meteor.userId(), `Your solution has been rejected for the following reason ${'\'' + rejectReason + '\''} `)
+        addToSubscribers(problemId, Meteor.userId())
+
+        return problemId
+    }
+})
+// end
+
+
+if (Meteor.isDevelopment) {
+    Meteor.methods({
+        generateTestProblems: () => {
+            for (let i = 0; i < 10; i++) {
+                Problems.insert({
+                    summary: "Derp",
+                    description: "Lorem ipsum, herp derp durr.",
+                    solution: "Lorem ipsum, herp derp durr.",
+                    createdAt: new Date().getTime(),
+                    createdBy: '',
+                    status: 'open'
+                })
+            }
+        },
+        removeTestProblems: () => {
+            Problems.remove({
+                summary: 'Derp'
+            })
+        }
+    })
+}

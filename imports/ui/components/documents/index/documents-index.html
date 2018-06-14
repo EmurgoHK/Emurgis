@@ -10,10 +10,6 @@
             <button type="button" class="btn btn-primary float-right mb-4" id="new-problem">
                 New Problem
             </button>
-<div class="form-group">
-    <input type="text" class="form-control" id="searchFilter" placeholder="Search for a problem">
-</div>
-
           </div>
         </div>
 
@@ -42,7 +38,7 @@
                   </div>
 
                   <div class="form-check form-check-inline mr-1">
-                    <input class="form-check-input" type="checkbox" id="checkboxIsProblemWithEmurgis" value="isProblemWithEmurgis">
+                    <input class="form-check-input" type="checkbox" id="checkboxIsProblemWithEmurgis" value="isProblemWithEmurgis" checked>
                     <label class="form-check-label" for="inline-checkbox2"><strong>Emurgis</strong></label>
                 </div>
           </div>
@@ -53,7 +49,7 @@
 
 
         {{#if Template.subscriptionsReady}}
-          {{#if problems.count}}
+          {{#if problems.length}}
             <table class="table table-responsive-sm table-hover table-outline mb-0">
               <thead class="thead-light">
                 <tr>
