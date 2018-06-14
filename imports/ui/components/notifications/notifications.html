@@ -2,8 +2,14 @@
   <div class="notifications-index">
     <div class="card">
       <div class="card-body">
-        <h1>My notifications</h1>
-
+        <div class="card-title">
+          <h1 class="{{#if unreadCount}}float-left{{/if}}">My notifications</h1>
+          {{#if unreadCount}}
+          <div class="float-right">
+            <a class="btn btn-sm btn-success" href="" role="button" id="markAllAsRead">Mark all as read</a>
+          </div>
+          {{/if}}
+        </div>
         {{#if Template.subscriptionsReady}}
           {{#if notifications.count}}
             <table class="table table-hover mt-3">

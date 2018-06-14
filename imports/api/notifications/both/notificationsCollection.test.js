@@ -48,6 +48,24 @@ describe('notifications methods', () => {
 
     })
 
+    it('can mark all notifications as read', () => {
+        sendNotification(Meteor.userId(), 'test message2', 'System', '#')
+        let notification = Notifications.update({}, {
+          $set : {
+            read: false
+          }
+        }, { multi: true })
+
+        assert.ok(notification)
+
+        return callWithPromise('markAllAsRead', {
+            userId: Meteor.userId()
+        }).then(data => {
+            assert.equal(data, 2)
+        })
+
+    })
+
     after(function() {
         Notifications.remove({})
     })

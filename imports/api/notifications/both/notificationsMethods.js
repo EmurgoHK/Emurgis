@@ -30,7 +30,7 @@ export const markNotificationAsRead = new ValidatedMethod({
         if (!Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
-        
+
         return Notifications.update({
         	_id: notificationId
         }, {
@@ -38,6 +38,35 @@ export const markNotificationAsRead = new ValidatedMethod({
         		read: true,
         		readAt: new Date().getTime()
         	}
+        })
+    }
+})
+
+export const markAllAsRead = new ValidatedMethod({
+    name: 'markAllAsRead',
+    validate: new SimpleSchema({
+    	userId: {
+    		type: String,
+    		optional: false
+    	}
+    }).validator({
+    	clean: true
+    }),
+    run({ userId }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        return Notifications.update({
+        	userId: userId,
+          read: false
+        }, {
+        	$set: {
+        		read: true,
+        		readAt: new Date().getTime()
+        	}
+        }, {
+          multi: true
         })
     }
 })
