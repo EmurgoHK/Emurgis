@@ -136,7 +136,7 @@ Template.documentShow.helpers({
         if (!~(problem.read || []).indexOf(Meteor.userId())) {
             return '<a class="btn btn-sm btn-primary readProblem" href="#" role="button">Got it</a>'
         } else {
-            return '<a class="btn btn-sm btn-primary disabled" href="#" role="button">Undrestood</a>'
+            return '<a class="btn btn-sm btn-primary disabled" href="#" role="button">Understood</a>'
         }
       } else {
           if (problem.status !== 'closed') {
@@ -448,33 +448,53 @@ Template.documentShow.events({
     },
 
     "click .claimProblem" (event, instance) {
-        event.preventDefault()
+     event.preventDefault()
 
-        if (Meteor.userId()) {
-            let problemId = Template.instance().getDocumentId()
-            swal({
-                    text: "Are you sure you want to claim this problem?",
-                    icon: "success",
-                    buttons: true,
-                    dangerMode: true,
-                    showCancelButton: true
-                })
-                .then(confirmed => {
-                    if (confirmed) {
+     if (Meteor.userId()) {
+         let problemId = Template.instance().getDocumentId()
+         swal({
+                 text: "Are you sure you want to claim this problem?",
+                 icon: "success",
+                 buttons: true,
+                 dangerMode: true,
+                 showCancelButton: true
+             })
+             .then(confirmed => {
+                     if (confirmed) {
 
-                        if (Meteor.userId()) {
+                         if (Meteor.userId()) {
+                             swal({
+                                 text: 'Estimate how long this problem will take!',
+                                 content: {
+                                     element: "input",
+                                     attributes: {
+                                         placeholder: "Estimated workload and not time to completion",
+                                         type: "number",
+                                     }
+                                 },
+                                 button: {
+                                     text: "Estimate",
+                                     closeModal: true,
+                                 },
+                             }).then(estimate => {
 
-                            claimProblem.call({
-                                _id: problemId
-                            }, (error, result) => {
-                                if (error) {
-                                    if (error.details) {
-                                        console.error(error.details)
-                                    } else {
-                                        notify('Problem claimed successfully', 'success');
-                                    }
-                                }
-                            })
+                                 if (!estimate) throw null;
+
+                                 claimProblem.call({
+                                     _id: problemId,
+                                     estimate: Number(estimate)
+                                 }, (error, result) => {
+                                     if (error) {
+                                         if (error.details) {
+                                             console.error(error.details)
+                                         } else {
+                                             notify('Problem claimed successfully', 'success');
+                                         }
+                                     }
+                                 })
+
+                             })
+
                         }
                     }
                 });

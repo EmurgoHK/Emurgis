@@ -67,7 +67,9 @@ export const addProblem = new ValidatedMethod({
             //url: {type: String, regEx:SimpleSchema.RegEx.Url, optional: false},
             //image: {label:'Your Image',type: String, optional: true, regEx: /\.(gif|jpg|jpeg|tiff|png)$/
         }).validator(),
+
     run({ summary, description, solution, isProblemWithEmurgis, fyiProblem, dependencies, invDependencies, images, estimate }) {
+
     	//Define the body of the ValidatedMethod, e.g. insert some data to a collection
 		if (!Meteor.userId()) {
 			throw new Meteor.Error('Error.', 'You have to be logged in.')
@@ -77,7 +79,6 @@ export const addProblem = new ValidatedMethod({
       'summary': summary,
       'description': description || "",
       'solution': solution || "",
-      'estimate': estimate || "",
       'createdAt': new Date().getTime(),
       'createdBy': Meteor.userId() || "",
       'status':'open',
@@ -191,6 +192,7 @@ export const unclaimProblem = new ValidatedMethod({
                     status: 'open',
                   },
                   $unset: {
+                      estimate: true,
                       claimedBy: true,
                       claimed: true,
                       claimedFullname: true
@@ -226,8 +228,9 @@ export const claimProblem = new ValidatedMethod({
     //Define the validation rules which will be applied on both the client and server
     validate: new SimpleSchema({
         _id: { type: RegEx, optional: false },
+        estimate: { type: Number, optional: false },
     }).validator(),
-    run({ _id }) {
+    run({ _id,estimate }) {
         if (Meteor.userId()) {
             let problem = Problems.findOne({_id: _id});
 
@@ -241,6 +244,7 @@ export const claimProblem = new ValidatedMethod({
                 }, {
                     $set: {
                         status: 'in progress',
+                        estimate: estimate,
                         claimedBy: Meteor.userId(),
                         claimed: true,
                         claimedDateTime: new Date().getTime(),
@@ -321,7 +325,6 @@ export const editProblem = new ValidatedMethod({
           'summary': summary,
           'description': description || "",
           'solution': solution || "",
-          'estimate': estimate || "",
           'isProblemWithEmurgis': isProblemWithEmurgis,
           fyiProblem: fyiProblem,
           images: images
