@@ -38,12 +38,6 @@ If Meteor starts but you get a white screen:
 meteor npm install --save core-js
 ```
 
-#### Insert the database if running locally (never for production)
-While meteor is running, in a new shell from *outside* of the Emurgis directory run:
-```
-wget https://fixme.fixme/static/dump.tar.gz && tar -xvf dump.tar.gz && mongorestore -h 127.0.0.1 --port 3001 -d meteor dump/meteor
-```   
-(You will need [Mongo](https://docs.mongodb.com/manual/installation/) to be installed on your system).
 
 If you already have the database but want to update it to the latest version, do a `meteor reset` before running the above.
 
