@@ -72,6 +72,10 @@ describe('Problem page', function () {
             browser.pause(3000)
             browser.click('.swal-button--confirm')
             browser.pause(3000)
+            browser.setValue('.swal-content__input', 60)
+            browser.pause(2000)
+            browser.click('.swal-button--confirm')
+            browser.pause(3000)
 
             assert(browser.execute(() => $('.unclaimProblem').length === 1).value, true)
         }
