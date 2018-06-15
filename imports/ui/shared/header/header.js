@@ -1,6 +1,7 @@
 import { FlowRouter } from "meteor/kadira:flow-router"
 import { Notifications } from '/imports/api/notifications/both/notificationsCollection'
 import { Problems } from '/imports/api/documents/both/problemCollection'
+import { notify } from "/imports/modules/notifier"
 
 import './header.html'
 
@@ -25,7 +26,7 @@ Template.header.events({
     
         Meteor.loginWithGoogle({}, (err) => {
             if (err) { 
-                notify("Invalid login", "error")
+                notify(err.message, "error")
             return 
             }
             var redirectTo = window.last || '/'
