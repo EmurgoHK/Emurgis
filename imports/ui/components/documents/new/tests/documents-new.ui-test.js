@@ -4,7 +4,15 @@ const baseUrl = 'http://localhost:3000/new'
 describe('New problem page', function () {
     before(() => {
         browser.url(`http://localhost:3000/`)
-        browser.pause(5000)
+        browser.pause(10000)
+
+        browser.execute(() => {
+            Meteor.call('generateTestProblems', (err, data) => {})
+
+            return 'ok'
+        })
+
+        browser.pause(1000)
 
         browser.execute(() => {
             Meteor.call('generateTestUser', (err, data) => {})
@@ -20,7 +28,7 @@ describe('New problem page', function () {
 
         browser.url(`${baseUrl}`)
 
-        browser.pause(5000)
+        browser.pause(10000)
     })
 
     it('It should render the documents-new template', function () {
@@ -64,7 +72,7 @@ describe('New problem page', function () {
 
     it ('user can edit the created problem', function() {
         browser.url(`http://localhost:3000/${browser.execute(() => FlowRouter.current().params.documentId).value}/edit`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         assert(browser.getValue('#description') === 'T', true)
         assert(browser.getValue('#summary') === 'T', true)
@@ -111,9 +119,9 @@ describe('New problem page', function () {
     it ('dependencies can be added on the form', function() {
         browser.url(`${baseUrl}`)
 
-        browser.pause(5000)
+        browser.pause(10000)
 
-        browser.setValue('#dependency', 'T')
+        browser.setValue('#dependency', 'd')
         browser.pause(2000)
         browser.click('.dependency')
 
@@ -131,7 +139,7 @@ describe('New problem page', function () {
     })
 
     it ('inverse dependencies can be added on the form', function() {
-        browser.setValue('#invDependency', 'T')
+        browser.setValue('#invDependency', 'd')
         browser.pause(2000)
         browser.click('.invDependency')
 

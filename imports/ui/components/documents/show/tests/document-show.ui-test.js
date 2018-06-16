@@ -5,7 +5,7 @@ const baseUrl = 'http://localhost:3000' // baseUrl of the app we are testing, it
 describe('Problem page', function () {
     before(() => {
         browser.url(`${baseUrl}/`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         browser.execute(() => {
             Meteor.call('generateTestProblems', (err, data) => {})
