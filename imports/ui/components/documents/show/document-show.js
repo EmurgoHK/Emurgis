@@ -70,9 +70,9 @@ Template.documentShow.helpers({
             }).fetch()
         }
     },
-    blocking: () => Dependencies.find({
+    dependencies: () => Dependencies.find({
         dependencyId: Template.instance().getDocumentId()
-    }).count(),
+    }),
     rejected: () => {
         let problem = Problems.findOne({
             _id: Template.instance().getDocumentId()
@@ -200,7 +200,7 @@ Template.documentShow.helpers({
             _id: Meteor.userId()
         }) || {}
 
-        return problem.createdBy === Meteor.userId() || user.moderator 
+        return problem.createdBy === Meteor.userId() || user.moderator
     }
 })
 
