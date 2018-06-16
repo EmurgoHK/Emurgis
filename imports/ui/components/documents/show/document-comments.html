@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 {{/if}}
-               <strong>{{comment.createdByName}}</strong> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
+               <a href="{{pathFor 'profile' userId=comment.createdBy }}"><strong>{{comment.createdByName}}</strong></a> commented {{showTimeAgoTimestamp comment.createdAt}} <br />
                {{#if editMode}}
                <textarea class="form-control" id="js-comment">{{{comment.comment}}}</textarea>
                <br />

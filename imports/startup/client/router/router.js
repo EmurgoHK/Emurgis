@@ -10,4 +10,5 @@ import "./filter-config.js"
 import './stats-routes.js'
 import './notifications-routes.js'
 import "./document-routes.js"
-import './mod-routes'
+import './mod-routes.js'
+import './profile-routes.js'
