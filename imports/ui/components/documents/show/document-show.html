@@ -1,17 +1,10 @@
 <template name="documentShow">
 
   <div class="document-show">
-    {{#if dependencies.count}}
+    {{#if blocking}}
     <div class="card bg-warning">
       <div class="card-body">
-        This problem is blocking the following problems from being completed.
-        <ul>
-          {{#each dependencies}}
-            <li>
-              <a href="{{pathFor 'documentShow' documentId=dependencyId}}">{{getSummaryById dependencyId}}</a>
-            </li>
-          {{/each}}
-        </ul>
+        This problem is blocking {{pluralize blocking "other problem"}} from being completed.
       </div>
     </div>
     {{/if}}
@@ -59,9 +52,9 @@
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
           {{#if problem.claimed}}
-            <strong>{{problem.claimedFullname}}</strong> claimed this {{showTimeAgoTimestamp problem.claimedDateTime}}
-            {{#if isProblemOwner problem.createdBy}}
-              <button id="removeClaimer" class="btn btn-sm btn-ghost-danger" style="cursor: pointer;"> <i class="icon-close"></i> remove </button>
+            <strong>{{problem.claimedFullname}}</strong> claimed this {{showTimeAgoTimestamp problem.claimedDateTime}} 
+            {{#if isProblemOwner problem.createdBy}} 
+              <button id="removeClaimer" class="btn btn-sm btn-ghost-danger" style="cursor: pointer;"> <i class="icon-close"></i> remove </button>  
             {{/if}} <br />
           {{/if}}
           {{#if problem.resolved}}
@@ -115,7 +108,7 @@
     {{#each solution in problem.rejectedSolutions}}
       {{> rejectedSolutions solution=solution}}
     {{/each}}
-
+    
     {{#each comment in comments}}
       {{> documentComments comment=comment}}
     {{/each}}
