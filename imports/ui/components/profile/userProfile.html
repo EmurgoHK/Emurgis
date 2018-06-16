@@ -1,0 +1,67 @@
+<template name="userProfile">
+  <div class="card">
+    <div class="card-body">
+      <h4>{{user.profile.name}}'s Activity</h4>
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-solved-tab" data-toggle="tab" href="#nav-solved" role="tab" aria-controls="nav-solved" aria-selected="true">Solved Problems</a>
+          <a class="nav-item nav-link" id="nav-claimed-tab" data-toggle="tab" href="#nav-claimed" role="tab" aria-controls="nav-claimed" aria-selected="true">Claimed Problems</a>
+          <a class="nav-item nav-link" id="nav-logged-tab" data-toggle="tab" href="#nav-logged" role="tab" aria-controls="nav-logged" aria-selected="true">Logged Problems</a>
+          <a class="nav-item nav-link" id="nav-closed-tab" data-toggle="tab" href="#nav-closed" role="tab" aria-controls="nav-closed" aria-selected="true">Closed Problems</a>
+
+          <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#nav-comments" role="tab" aria-controls="nav-comments" aria-selected="false">Comments</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-solved" role="tabpanel" aria-labelledby="nav-solved-tab">
+          {{#each solvedProblems}}
+          <div class="card">
+            <div class="card-body">
+              {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="tab-pane fade show" id="nav-claimed" role="tabpanel" aria-labelledby="nav-claimed-tab">
+          {{#each claimedProblems}}
+          <div class="card">
+            <div class="card-body">
+              {{user.profile.name}} claimed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp claimedDateTime}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="tab-pane fade show" id="nav-logged" role="tabpanel" aria-labelledby="nav-logged-tab">
+          {{#each loggedProblems}}
+          <div class="card">
+            <div class="card-body">
+              {{user.profile.name}} logged the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp createdAt}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="tab-pane fade show" id="nav-closed" role="tabpanel" aria-labelledby="nav-closed-tab">
+          {{#each closedProblems}}
+          <div class="card">
+            <div class="card-body">
+              {{user.profile.name}} closed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
+          <h5>Recent comments</h5>
+          {{#each comments}}
+          <div class="card">
+            <div class="card-body">
+              {{user.profile.name}} commented on <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById problemId}} </a> {{showTimeAgoTimestamp createdAt}}
+              <br/>
+              {{comment}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
