@@ -76,7 +76,7 @@ describe('New problem page', function () {
         browser.pause(2000)
 
         browser.click('.newproblem')
-        browser.pause(3000)
+        browser.pause(6000)
 
         assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentShow', true)
         assert(browser.execute(() => !!FlowRouter.current().params.documentId).value, true)
