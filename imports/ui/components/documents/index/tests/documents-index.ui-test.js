@@ -9,7 +9,7 @@ const checkStatus = status => {
 describe('Problems page', function () {
     before(() => {
         browser.url(`${baseUrl}/`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         browser.execute(() => {
             Meteor.call('generateTestProblems', (err, data) => {})
@@ -17,7 +17,7 @@ describe('Problems page', function () {
             return 'ok'
         })
 
-        browser.pause(3000)
+        browser.pause(5000)
 
         browser.execute(() => {
             Meteor.call('generateTestUser', (err, data) => {})
@@ -29,7 +29,7 @@ describe('Problems page', function () {
 
         browser.execute(() => Meteor.loginWithPassword('testing', 'testing'))
 
-        browser.pause(5000)
+        browser.pause(10000)
     })
 
     it('It should render the documents-index template', function () {
@@ -58,7 +58,7 @@ describe('Problems page', function () {
 
     it('my rejected problems page shows only rejected problems', () => {
         browser.url(`${baseUrl}/rejected`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
 
@@ -71,7 +71,7 @@ describe('Problems page', function () {
 
     it('resolved problems page shows only resolved problems', () => {
         browser.url(`${baseUrl}/resolved`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
 
@@ -84,7 +84,7 @@ describe('Problems page', function () {
 
     it('my logged problems shows only problems created by the current user', () => {
         browser.url(`${baseUrl}/logged`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         browser.click('#checkboxClosed')
         browser.pause(2000)
@@ -98,7 +98,7 @@ describe('Problems page', function () {
 
     it('my claimed problems shows only problems that the user has claimed', () => {
         browser.url(`${baseUrl}/claimed`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         browser.click('#checkboxClosed')
         browser.pause(2000)

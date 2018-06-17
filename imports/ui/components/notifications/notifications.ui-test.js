@@ -4,7 +4,7 @@ const baseUrl = 'http://localhost:3000/notifications'
 describe('Notifications page', function () {
     before(() => {
         browser.url(`http://localhost:3000/`)
-        browser.pause(5000)
+        browser.pause(10000)
 
         browser.execute(() => {
             Meteor.call('generateTestUser', (err, data) => {})
@@ -20,7 +20,7 @@ describe('Notifications page', function () {
 
         browser.url(`${baseUrl}`)
 
-        browser.pause(5000)
+        browser.pause(10000)
     })
 
     it('renders the page properly', () => {
