@@ -20,6 +20,8 @@
               {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
             </div>
           </div>
+          {{else}}
+            No data available
           {{/each}}
         </div>
         <div class="tab-pane fade show" id="nav-claimed" role="tabpanel" aria-labelledby="nav-claimed-tab">
@@ -29,6 +31,8 @@
               {{user.profile.name}} claimed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp claimedDateTime}}
             </div>
           </div>
+          {{else}}
+            No data available
           {{/each}}
         </div>
         <div class="tab-pane fade show" id="nav-logged" role="tabpanel" aria-labelledby="nav-logged-tab">
@@ -38,6 +42,8 @@
               {{user.profile.name}} logged the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp createdAt}}
             </div>
           </div>
+          {{else}}
+            No data available
           {{/each}}
         </div>
         <div class="tab-pane fade show" id="nav-closed" role="tabpanel" aria-labelledby="nav-closed-tab">
@@ -47,10 +53,12 @@
               {{user.profile.name}} closed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
             </div>
           </div>
+          {{else}}
+            No data available
           {{/each}}
         </div>
         <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
-          <h5>Recent comments</h5>
+          {{#if comments.count}}<h5>Recent comments</h5>{{/if}}
           {{#each comments}}
           <div class="card">
             <div class="card-body">
@@ -59,6 +67,8 @@
               {{comment}}
             </div>
           </div>
+          {{else}}
+            No data available
           {{/each}}
         </div>
       </div>

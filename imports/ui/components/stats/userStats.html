@@ -29,7 +29,7 @@
               <tbody>
                 {{#with currentUser}}
                 <tr class="stats-item" style="background-color: #e4e5e6;"> <!-- feel free to change the color -->
-                  <td>{{profile.name}}</td>
+                  <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
                   {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
                   <td>{{nullify rejectedProblems.length}}</td>
@@ -42,7 +42,7 @@
 
                 {{#each users}}
                 <tr class="stats-item">
-                  <td>{{profile.name}}</td>
+                  <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
                   {{#with stats}}
                   <td scope="row">{{nullify loggedProblems.length}}</td>
                   <td>{{nullify rejectedProblems.length}}</td>
