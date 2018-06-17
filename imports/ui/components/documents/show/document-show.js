@@ -27,6 +27,8 @@ import './reject-solution-modal.js'
 import './rejected-solutions.html'
 import './rejected-solutions.js'
 
+import './blockElement'
+
 Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
@@ -34,7 +36,7 @@ Template.documentShow.onCreated(function() {
     this.subscribe('users')
     this.subscribe("problems", this.getDocumentId())
     this.subscribe("comments", this.getDocumentId())
-    this.subscribe("dependenciesProblem", this.getDocumentId())
+    this.subscribe('dependencies')
   })
 
   this.commentInvalidMessage = new ReactiveVar("")
@@ -60,7 +62,7 @@ Template.documentShow.helpers({
 
             return Problems.find({
                 _id: {
-                    $nin: _.union(invDep.map(i => i.dependencyId), dep.map(i => i.problemId)) // dont show already added problems
+                    $nin: _.union(invDep.map(i => i.dependencyId), dep.map(i => i.problemId), [Template.instance().getDocumentId()]) // dont show already added problems
                 },
                 $or: [{
                     summary: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
@@ -70,9 +72,31 @@ Template.documentShow.helpers({
             }).fetch()
         }
     },
-    blocking: () => Dependencies.find({
-        dependencyId: Template.instance().getDocumentId()
-    }),
+    blocking: () => {
+        let deps = Dependencies.find({
+            dependencyId: Template.instance().getDocumentId()
+        }).fetch()
+
+        let tmpDeps = deps.map(i => _.extend(i, {
+            indent: 0
+        }))
+
+        let depth = 0
+
+        while (tmpDeps.length && depth++ < 25) { // if there happen to be cycles in the dependency tree from old code, limit the depth to prevent stack overflow
+            tmpDeps.forEach(i => {
+                i.parents = Dependencies.find({
+                    dependencyId: i.problemId
+                }).fetch().map(j => _.extend(j, {
+                    indent: i.indent + 20
+                }))
+            })
+
+            tmpDeps = _.flatten(tmpDeps.map(i => i.parents))
+        }
+
+        return deps
+    },
     rejected: () => {
         let problem = Problems.findOne({
             _id: Template.instance().getDocumentId()
@@ -224,7 +248,7 @@ Template.documentShow.events({
 
                 window.scroll({ top: 0 })
             } else {
-                console.log(err)
+                notify(err.reason || err.message, 'error')
             }
         })
     },
@@ -241,7 +265,7 @@ Template.documentShow.events({
 
                 window.scroll({ top: 0 })
             } else {
-                console.log(err)
+                notify(err.reason || err.message, 'error')
             }
         })
     },
