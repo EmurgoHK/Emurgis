@@ -16,7 +16,7 @@
               <tbody>
                 {{#each users}}
                 <tr class="user-item">
-                  <td>{{profile.name}}</td>
+                  <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
                   <td><a href="#" class="btn btn-sm btn-primary reset">Reset</a></td>
                 </tr>
                 {{/each}}

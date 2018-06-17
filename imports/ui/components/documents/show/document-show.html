@@ -59,7 +59,7 @@
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
             {{/if}}
           {{#if problem.claimed}}
-            <strong>{{problem.claimedFullname}}</strong> claimed this {{showTimeAgoTimestamp problem.claimedDateTime}}
+            <a href="{{pathFor 'profile' userId=problem.claimedBy }}"><strong>{{problem.claimedFullname}}</strong></a> claimed this {{showTimeAgoTimestamp problem.claimedDateTime}}
             {{#if isProblemOwner problem.createdBy}}
               <button id="removeClaimer" class="btn btn-sm btn-ghost-danger" style="cursor: pointer;"> <i class="icon-close"></i> remove </button>
             {{/if}} <br />
@@ -97,7 +97,7 @@
         <hr>
 
         <span class="pre">{{problem.resolveSteps}}</span><br>
-        <small><strong>{{problem.claimedFullname}}</strong> | {{showTimeAgoTimestamp problem.resolvedDateTime}} <br /></small>
+        <small><a href="{{pathFor 'profile' userId=problem.claimedBy }}"><strong>{{problem.claimedFullname}}</strong></a> | {{showTimeAgoTimestamp problem.resolvedDateTime}} <br /></small>
         {{{ acceptSolution problem }}}
       </div>
     </div>
