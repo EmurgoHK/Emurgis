@@ -23,7 +23,6 @@ describe('page header', function () {
 
     it('should have a github link', () => {
         assert(browser.isExisting('.github'), true)
-        assert(browser.isVisible('.github'), true)
     })
 
     it('should have a searchbar', () => {
