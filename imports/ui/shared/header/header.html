@@ -4,19 +4,14 @@
       <button class="navbar-toggler sidebar-toggler d-block" type="button" style="border: none;">
         <span class="navbar-toggler-white-icon"></span>
       </button>
-      <a class="navbar-brand" href="{{pathFor '/'}}"><img src="/img/emurgis.png" height="30px" /></a>
+      <a class="navbar-brand" href="{{pathFor '/'}}"><img class="d-none d-sm-block" src="/img/emurgis.png" height="30px" /></a>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="navbar-nav" id="navbarSupportedContent">
           <form class="form-inline">
             <div class="input-group">
                 <input class="form-control mr-sm-2" type="search" id="searchFilterHeader" placeholder="Search for a problem" aria-label="Search" style="margin-right: 0 !important;">
                 <div class="input-group-append">
-                  <div class="input-group-text">
+                  <div class="input-group-text d-none d-sm-block">
                     <i class="nav-icon icon-magnifier"></i>
                   </div>
                 </div>
@@ -43,14 +38,18 @@
 {{/if}}
 </a>
 </li>
-          <li class="nav-item">
+          <li class="nav-item d-none">
             <a class="nav-link github" href="https://github.com/emurgohk/emurgis" target="_blank">Github</a>
           </li>
 
           <li class="nav-item dropdown">
             {{#if currentUser}}
-              <a href="" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{currentUser.profile.name}}
+              <a href="" class="nav-link dropdown-toggle d-none d-sm-block" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{currentUser.profile.name}}
+
+              </a>
+             <a href="" class="nav-link dropdown-toggle d-block d-sm-none" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user"></i>
               </a>
               <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <div class="dropdown-header text-center">
