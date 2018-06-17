@@ -1,0 +1,8 @@
+<template name="blockElement">
+	<li style="text-indent: {{indent}}px">
+    	<a href="{{pathFor 'documentShow' documentId=problemId}}">{{getSummaryById problemId}}</a>
+    </li>
+    {{#each parents}}
+    	{{> blockElement}}
+    {{/each}}
+</template>

@@ -1,15 +1,13 @@
 <template name="documentShow">
 
   <div class="document-show">
-    {{#if blocking.count}}
+    {{#if blocking.length}}
     <div class="card bg-warning">
       <div class="card-body">
         This problem is blocking the following problems from being completed.
-        <ul>
+        <ul style="list-style-type: none;">
           {{#each blocking}}
-          <li>
-            <a href="{{pathFor 'documentShow' documentId=problemId}}">{{getSummaryById problemId}}</a>
-          </li>
+            {{> blockElement}}
           {{/each}}
         </ul>
       </div>
