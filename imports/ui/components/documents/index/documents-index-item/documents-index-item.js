@@ -45,4 +45,10 @@ Template.documentsIndexItem.helpers({
 })
 
 Template.documentsIndexItem.events({
+      'click .documents-index-item': function(event) {
+    event.preventDefault();
+
+     FlowRouter.go('/'+this.document._id);
+
+  },
 })

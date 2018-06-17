@@ -44,8 +44,20 @@ Template.header.events({
         // toggle "sidebar-show" class to show/hide sidebar
         $('body').toggleClass("sidebar-lg-show")
     },
+    'click .nav-link': function() {
+        //close the sidebar you you click certain header icons
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            $('body').removeClass('sidebar-lg-show')
+        }
+    },
+
     'keyup #searchFilterHeader': function (event) {
         event.preventDefault();
+        //close the sidebar if you start typing on a mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            $('body').removeClass('sidebar-lg-show')
+        }
+
         let query = $('#searchFilterHeader').val();
         let documentsIndex = $("div.documents-index")
         
