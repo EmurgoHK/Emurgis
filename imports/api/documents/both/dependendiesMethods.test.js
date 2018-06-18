@@ -61,6 +61,23 @@ describe('dependency methods', () => {
       })
     });
 
+    it('user can\'t add a circular dependency', () => {
+      let dependencies = Dependencies.findOne({})
+      assert.ok(dependencies)
+
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      return callWithPromise('addDependency', {
+          pId: dependencies._id,
+          dId: problem._id
+      }).then(data => {
+          assert.equal(data, undefined)
+      }).catch(err => {
+          assert.include(err.message, 'Dependency tree can\'t contain cycles.')
+      })
+    });
+
     after(function() {
         Dependencies.remove({})
         Problems.remove({})
