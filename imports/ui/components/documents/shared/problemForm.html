@@ -65,8 +65,8 @@
     </ul>
 
     {{#each dependencies}}
-      <div >
-        <a href="#">{{getSummaryById dependencyId}}</a><a href="#" class="remove-dep"><sup>X</sup></a>
+      <div class="mt-2">
+        <a href="#">{{getSummaryById dependencyId}}</a> &nbsp; <a class="btn btn-sm btn-danger remove-dep" style="height: 15px;font-size: 10px;padding: 0px 5px 0px 5px;" href="#" role="button">X</a>
       </div>
     {{/each}}
 
@@ -86,8 +86,8 @@
     </ul>
 
     {{#each invDependencies}}
-      <div >
-        <a href="#">{{getSummaryById problemId}}</a><a href="#" class="remove-dep-inv"><sup>X</sup></a>
+      <div class="mt-2">
+        <a href="#">{{getSummaryById problemId}}</a> &nbsp;<a href="#" class="btn btn-sm btn-danger remove-dep-inv" style="height: 15px;font-size: 10px;padding: 0px 5px 0px 5px;">X</a>
       </div>
     {{/each}}
     {{/if}}
