@@ -39,6 +39,7 @@
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
     <small><a class="far fa-question-circle" data-id="summary" style="display: none"></a> <i id="summary-chars" class="text-muted"></i></small>
+    {{#unless onNewProblem}}
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
         <div class="input-group-text">Estimate <i> (Minutes)</i>:</div>
@@ -47,6 +48,7 @@
       <input type="number" class="form-control" id="estimate" value="{{problem.estimate}}">
       <div id="estimateError" class="invalid-feedback"></div>
     </div>
+    {{/unless}}
     {{#if onNewProblem}}
     <div class="input-group" style="padding-top:8px;">
       <div class="input-group-prepend">
