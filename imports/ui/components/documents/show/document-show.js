@@ -33,10 +33,10 @@ Template.documentShow.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
 
   this.autorun(() => {
-    this.subscribe('users')
-    this.subscribe("problems", this.getDocumentId())
-    this.subscribe("comments", this.getDocumentId())
-    this.subscribe('dependencies')
+    SubsCache.subscribe('users')
+    SubsCache.subscribe("problems", this.getDocumentId())
+    SubsCache.subscribe("comments", this.getDocumentId())
+    SubsCache.subscribe('dependencies')
   })
 
   this.commentInvalidMessage = new ReactiveVar("")

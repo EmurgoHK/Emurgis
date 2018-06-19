@@ -8,7 +8,7 @@ import './documents-index-item/documents-index-item'
 
 Template.documentsResolved.onCreated(function() {
     this.autorun(() => {
-        this.subscribe('problems')
+        SubsCache.subscribe('problems')
     })
 })
 

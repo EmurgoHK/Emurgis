@@ -9,10 +9,10 @@ Template.header.onCreated(function() {
     this.searchFilter = new ReactiveVar(undefined);
 
 	this.autorun(() => {
-        this.subscribe('problems')
+        SubsCache.subscribe('problems')
 
 		if (Meteor.userId()) {
-			this.subscribe('notifications')
+			SubsCache.subscribe('notifications')
         }
 
         let searchFilter = Template.instance().searchFilter.get();

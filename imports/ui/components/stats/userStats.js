@@ -9,8 +9,8 @@ import './userStats.html'
 
 Template.userStats.onCreated(function() {
     this.autorun(() => {
-        this.subscribe('users')
-        this.subscribe('userStats')
+        SubsCache.subscribe('users')
+        SubsCache.subscribe('userStats')
     })
 })
 

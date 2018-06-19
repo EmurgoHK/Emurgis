@@ -25,3 +25,5 @@ $(window).resize(function(evt) {
         $('body').addClass("sidebar-lg-show")
     }
 });
+
+SubsCache = new SubsCache(5, 10)

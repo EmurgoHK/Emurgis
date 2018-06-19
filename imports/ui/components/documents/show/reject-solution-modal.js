@@ -8,7 +8,7 @@ Template.rejectSolutionModal.onCreated(function() {
     this.getProblemId = () => FlowRouter.getParam("documentId")
   
     this.autorun(() => {
-      this.subscribe("problems", this.getProblemId())
+      SubsCache.subscribe("problems", this.getProblemId())
     })
 })
 

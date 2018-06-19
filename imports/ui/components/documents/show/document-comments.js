@@ -14,7 +14,7 @@ Template.documentComments.onCreated(function() {
   this.editMode = new ReactiveVar(false)
 
   this.autorun(() => {
-    this.subscribe("comments")
+    SubsCache.subscribe("comments")
   })
 })
 

@@ -42,3 +42,4 @@ reactive-dict
 cfs:graphicsmagick
 accounts-password
 dburles:factory
+blockrazor:subscache-c4

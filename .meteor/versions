@@ -17,6 +17,7 @@ binary-heap@1.0.10
 blaze@2.3.2
 blaze-html-templates@1.1.2
 blaze-tools@1.0.10
+blockrazor:subscache-c4@2.0.2
 boilerplate-generator@1.4.0
 caching-compiler@1.1.11
 caching-html-compiler@1.1.2

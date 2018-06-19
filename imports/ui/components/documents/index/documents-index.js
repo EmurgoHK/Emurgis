@@ -17,8 +17,8 @@ Template.documentsIndex.onCreated(function() {
     this.searchFilter = new ReactiveVar('');
 
     this.autorun(() => {
-        this.subscribe('problems')
-        this.subscribe('comments')
+        SubsCache.subscribe('problems')
+        SubsCache.subscribe('comments')
 
         //reactive variable to query mongoDB based on the status type
         let projectStatusTypes = Template.instance().projectStatusTypes.get();

@@ -10,7 +10,7 @@ Template.notifications.onCreated(function() {
     this.unread = new ReactiveVar([])
 
     this.autorun(() => {
-        this.subscribe('notifications')
+        SubsCache.subscribe('notifications')
 
         let notifications = Notifications.find({
             userId: Meteor.userId(),
