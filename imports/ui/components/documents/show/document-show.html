@@ -51,7 +51,8 @@
           <p class="text-muted float-left" style="margin:0">
             <a href="{{pathFor 'profile' userId=problem.createdBy }}"><strong>{{getNameById problem.createdBy}}</strong></a> created this {{showTimeAgoTimestamp problem.createdAt}} <br/>
             {{#if problem.estimate}}
-            Its estimated that this problem will take <strong>{{problem.estimate}}</strong> minutes to resolve<br/>
+
+            <strong>Estimated workload: </strong> {{problem.estimate}} minutes<br/>
             {{/if}}
             {{#if problem.updatedAt}}
               Updated: {{showTimeAgoTimestamp problem.updatedAt}}<br>
