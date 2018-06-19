@@ -17,7 +17,7 @@
           {{#each solvedProblems}}
           <div class="card">
             <div class="card-body">
-              {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
+              {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a>
             </div>
           </div>
           {{else}}

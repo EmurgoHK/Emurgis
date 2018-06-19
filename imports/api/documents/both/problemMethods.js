@@ -553,6 +553,9 @@ export const removeClaimer = new ValidatedMethod({
         Stats.upsert({ userId: currentClaimerId }, {
             $addToSet: {
                 unclaimedProblems: problemId // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
+            },
+            $pull: {
+              claimedProblems: problemId // Need to pull the claimed problem as the problem can't be claimed & unclaimed at the same time
             }
         })
 

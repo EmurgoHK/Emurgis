@@ -20,6 +20,13 @@ Template.userStats.onRendered(function() {
         type: 'bar',
         data: {},
         options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+              }]
+            },
             responsive: true,
             legend: {
                 display: false,
