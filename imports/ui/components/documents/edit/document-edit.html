@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h2>Edit problem</h2>
-				{{#if Template.subscriptionsReady}}
+				{{#if SubsCacheReady}}
 					{{> problemForm problem=problem dependencies=dependencies invDependencies=invDependencies images=images}}
 				{{else}}
 					{{> loader}}

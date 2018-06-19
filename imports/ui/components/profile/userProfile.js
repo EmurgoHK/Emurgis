@@ -13,9 +13,9 @@ Template.userProfile.onCreated(function() {
   this.getUserId = () => FlowRouter.getParam("userId")
 
   this.autorun(() => {
-    this.subscribe("problems")
-    this.subscribe("users")
-    this.subscribe("comments")
+    SubsCache.subscribe("problems")
+    SubsCache.subscribe("users")
+    SubsCache.subscribe("comments")
   })
 })
 

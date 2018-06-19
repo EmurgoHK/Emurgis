@@ -7,7 +7,6 @@ import { addProblem } from "/imports/api/documents/both/problemMethods.js"
 import { getImages } from '/imports/ui/components/uploader/imageUploader'
 
 import "./document-new.html"
-import "./document-new-hooks.js"
 import "/imports/ui/components/documents/shared/problemForm.html"
 
 var formData = (eventTarget) => {
@@ -49,7 +48,7 @@ Template.documentNew.onCreated(function() {
   this.invDependency = new ReactiveVar([])
 
   this.autorun(() => {
-    this.subscribe("problems")
+    SubsCache.subscribe("problems")
   })
 })
 

@@ -4,7 +4,7 @@ Template.rejectedSolutions.onCreated(function() {
     this.getDocumentId = () => FlowRouter.getParam("documentId")
   
     this.autorun(() => {
-      this.subscribe('users')
+      SubsCache.subscribe('users')
     })
 })
 

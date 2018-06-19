@@ -39,8 +39,8 @@ Template.documentEdit.onCreated(function() {
 	this.problemId = () => FlowRouter.getParam("documentId")
 
 	this.autorun(() => {
-		this.subscribe("problems", this.problemId())
-		this.subscribe('dependenciesProblem', this.problemId())
+		SubsCache.subscribe('problems', this.problemId())
+		SubsCache.subscribe('dependenciesProblem', this.problemId())
     })
 })
 Template.documentEdit.onRendered(function() {})

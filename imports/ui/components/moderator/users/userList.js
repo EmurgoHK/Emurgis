@@ -8,7 +8,7 @@ import { notify } from '/imports/modules/notifier'
 
 Template.userList.onCreated(function() {
     this.autorun(() => {
-        this.subscribe('users')
+        SubsCache.subscribe('users')
     })
 })
 

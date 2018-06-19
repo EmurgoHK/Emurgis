@@ -15,9 +15,9 @@ Template.documentsIndexItem.onCreated(function() {
   this.getDocumentId = () => this.data.document._id
 
   this.autorun(() => {
-  	this.subscribe('dependenciesProblem', this.getDocumentId())
-    this.subscribe("comments", this.getDocumentId())
-    this.subscribe('problems')
+  	SubsCache.subscribe('dependenciesProblem', this.getDocumentId())
+    SubsCache.subscribe("comments", this.getDocumentId())
+    SubsCache.subscribe('problems')
   })
 })
 

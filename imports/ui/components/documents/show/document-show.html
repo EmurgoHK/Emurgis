@@ -15,7 +15,7 @@
     {{/if}}
     <div class="card {{#if problem.isProblemWithEmurgis}}border-info{{/if}}">
       <div class="card-body">
-        {{#if Template.subscriptionsReady}}
+        {{#if SubsCacheReady}}
           <h3>{{{md problem.summary}}}</h3>
           <div class="card-subtitle">
               {{#if problem.isProblemWithEmurgis}}
@@ -138,7 +138,7 @@
             <p class="take-action-button pl-4 pt-1 mr-4 float-left">
               Take an action
             </p>
-            {{#if Template.subscriptionsReady}}
+            {{#if SubsCacheReady}}
             <span class="problem-action-buttons float-right">
               {{{claimButton problem}}}
               {{{watchButton problem}}}

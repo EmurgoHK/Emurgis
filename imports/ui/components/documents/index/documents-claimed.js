@@ -12,7 +12,7 @@ Template.documentsClaimed.onCreated(function() {
     this.filter = new ReactiveVar({})
 
     this.autorun(() => {
-        this.subscribe('problems')
+        SubsCache.subscribe('problems')
 
         this.filter.set({
             status: {
