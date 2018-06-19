@@ -7,3 +7,14 @@
         box-shadow: 0 10px 25px 0 rgba(46, 61, 73, 0.5);
     }
 }
+
+//Added side bar for all styles in sidebar. 
+//Reduced font size to fit everything in one line
+
+.sidebar {
+    & .sidebar-nav{
+        & .nav-item {
+            font-size: 14px;
+        }
+    }
+}
