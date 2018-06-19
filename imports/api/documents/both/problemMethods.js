@@ -352,7 +352,31 @@ export const deleteProblem = new ValidatedMethod({
   		}
 
       if (problem.createdBy === Meteor.userId()) {
+          // remove the context of the problem from the user stats for owner
+          Stats.upsert({
+              userId: problem.createdBy
+          }, {
+              $pull: {
+                  loggedProblems: problem._id
+              }
+          })
+
+          // remove the context of the problem from the user stats for claimer
+          if (problem.claimedBy) {
+            Stats.upsert({
+                userId: problem.claimedBy
+            }, {
+                $pull: {
+                    completedProblems: problem._id,
+                    claimedProblems: problem._id,
+                    unclaimProblems: problem._id
+                }
+            })
+          }
+
+          // delete the problem
           Problems.remove({'_id' : id})
+
       } else if (isModerator(Meteor.userId())) {
           Problems.update({
             _id: id
@@ -553,9 +577,6 @@ export const removeClaimer = new ValidatedMethod({
         Stats.upsert({ userId: currentClaimerId }, {
             $addToSet: {
                 unclaimedProblems: problemId // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
-            },
-            $pull: {
-              claimedProblems: problemId // Need to pull the claimed problem as the problem can't be claimed & unclaimed at the same time
             }
         })
 

@@ -74,10 +74,10 @@
           <div class="float-right">
             {{#if isProblemOwner problem.createdBy}}
             <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
-        		<a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Delete</a>
+        		{{#unless problem.resolved}} <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Oops, I thought this was a problem but it's actually not a problem</a> {{/unless}}
             {{else}}
             {{#if isModerator}}
-            <button data-toggle="modal" data-target="#rejectModal" class="btn btn-sm btn-danger" role="button">Delete</button>
+            <button data-toggle="modal" data-target="#rejectModal" class="btn btn-sm btn-danger" role="button">Reject Problem</button>
             {{/if}}
             {{/if}}
           </div>
