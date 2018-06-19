@@ -52,6 +52,20 @@ If you do a `git pull` and Meteor doesn't start, the first thing to do is run `m
 </p>
 </details>    
 
+###Authentication
+To enable Authentication either configure OAuth or copy the following code in the browser console to create a test user: 
+<code>
+    Accounts.createUser({
+      username: 'testing',
+      password: 'testing',
+      email: 'testing@testing.test',
+      profile: {
+       	name: 'Tester'
+      }
+    })
+</code>
+Now you will be logged in as a Test user.
+
 
 ## Contributing to Emurgis    
 A cardinal sin that many open source developers make is to place themselves above others. "I founded this project thus my intellect is superior to that of others". It's immodest and rude, and usually inaccurate. The contribution policy we use at Emurgis applies equally to everyone, without distinction.    
