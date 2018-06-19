@@ -3,6 +3,15 @@ import moment from "moment"
 // ***************************************************************
 // Helpers
 // ***************************************************************
+// Get output of basic inline calculations
+
+// truncate text
+export const truncate = (word) => {
+       if (word.length > 200)
+      return word.substring(0,200)+'...';
+   else
+      return word;
+}
 
 // Cheap pluralization
 export const pluralize = (count, word) => {

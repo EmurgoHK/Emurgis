@@ -13,6 +13,11 @@ Template.registerHelper("pluralize", (count, word) => {
   return helpers.pluralize(count, word)
 })
 
+
+Template.registerHelper("truncate", (word) => {
+	return helpers.truncate(word)
+})
+
 // Outputs e.g. 12 days ago or 2 hours ago
 Template.registerHelper("showTimeAgo", date => {
   return helpers.showTimeAgo(date)

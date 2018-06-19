@@ -66,6 +66,11 @@ Template.documentsIndex.helpers({
 })
 
 Template.documentsIndex.events({
+  'click .mobileProblemCard': function(event) {
+    event.preventDefault();
+    let problemId = event.target.id;
+    FlowRouter.go('/'+problemId);
+  },
   'click #new-problem': function(event) {
     event.preventDefault();
 
