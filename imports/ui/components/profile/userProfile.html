@@ -17,7 +17,7 @@
           {{#each solvedProblems}}
           <div class="card">
             <div class="card-body">
-              {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a>
+              {{user.profile.name}} solved the problem <a href="{{pathFor 'documentShow' documentId=_id}}"> {{getSummaryById _id}} </a>
             </div>
           </div>
           {{else}}
@@ -28,7 +28,7 @@
           {{#each claimedProblems}}
           <div class="card">
             <div class="card-body">
-              {{user.profile.name}} claimed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp claimedDateTime}}
+              {{user.profile.name}} claimed the problem <a href="{{pathFor 'documentShow' documentId=_id}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp claimedDateTime}}
             </div>
           </div>
           {{else}}
@@ -39,7 +39,7 @@
           {{#each loggedProblems}}
           <div class="card">
             <div class="card-body">
-              {{user.profile.name}} logged the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp createdAt}}
+              {{user.profile.name}} logged the problem <a href="{{pathFor 'documentShow' documentId=_id}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp createdAt}}
             </div>
           </div>
           {{else}}
@@ -50,7 +50,7 @@
           {{#each closedProblems}}
           <div class="card">
             <div class="card-body">
-              {{user.profile.name}} closed the problem <a href="{{pathFor 'documentShow' documentId=problemId}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
+              {{user.profile.name}} closed the problem <a href="{{pathFor 'documentShow' documentId=_id}}"> {{getSummaryById _id}} </a> {{showTimeAgoTimestamp resolvedDateTime}}
             </div>
           </div>
           {{else}}
