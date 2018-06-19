@@ -488,11 +488,11 @@ Template.documentShow.events({
 
                          if (Meteor.userId()) {
                              swal({
-                                 text: 'Estimate how long this problem will take!',
+                                 text: 'How many minutes do you think you need to spend working on this problem?',
                                  content: {
                                      element: "input",
                                      attributes: {
-                                         placeholder: "Estimated workload and not time to completion",
+                                         placeholder: "Enter the estimated workload (in minutes)",
                                          type: "number",
                                      }
                                  },
