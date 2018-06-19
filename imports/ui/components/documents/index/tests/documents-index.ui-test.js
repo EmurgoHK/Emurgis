@@ -9,10 +9,10 @@ const checkStatus = status => {
 describe('Problems page', function () {
     before(() => {
         browser.url(`${baseUrl}/`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.execute(() => {
-            Meteor.call('generateTestProblems', (err, data) => {})
+            Meteor.call('generateTestProblems', 'problems', (err, data) => {})
 
             return 'ok'
         })
@@ -58,7 +58,7 @@ describe('Problems page', function () {
 
     it('my rejected problems page shows only rejected problems', () => {
         browser.url(`${baseUrl}/rejected`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
 
@@ -71,7 +71,7 @@ describe('Problems page', function () {
 
     it('resolved problems page shows only resolved problems', () => {
         browser.url(`${baseUrl}/resolved`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         let rejected = browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('.badge').html()))).value
 
@@ -84,7 +84,7 @@ describe('Problems page', function () {
 
     it('my logged problems shows only problems created by the current user', () => {
         browser.url(`${baseUrl}/logged`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.click('#checkboxClosed')
         browser.pause(2000)
@@ -98,7 +98,7 @@ describe('Problems page', function () {
 
     it('my claimed problems shows only problems that the user has claimed', () => {
         browser.url(`${baseUrl}/claimed`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.click('#checkboxClosed')
         browser.pause(2000)
@@ -109,6 +109,16 @@ describe('Problems page', function () {
             assert(browser.execute((id) => (testingProblems.findOne({
                 _id: id
             }) || {}).claimedBy === Meteor.userId(), i).value, true)
+        })
+    })
+
+    after(() => {
+        browser.pause(3000)
+
+        browser.execute(() => {
+            Meteor.call('removeTestProblems', 'problems', (err, data) => {})
+
+            return 'ok'
         })
     })
 })

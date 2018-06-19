@@ -5,10 +5,10 @@ const baseUrl = 'http://localhost:3000' // baseUrl of the app we are testing, it
 describe('Problem page', function () {
     before(() => {
         browser.url(`${baseUrl}/`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.execute(() => {
-            Meteor.call('generateTestProblems', (err, data) => {})
+            Meteor.call('generateTestProblems', 'problem', (err, data) => {})
 
             return 'ok'
         })
@@ -138,5 +138,15 @@ describe('Problem page', function () {
         browser.pause(4000)
 
         assert(browser.execute(() => $('.card.bg-warning').text().trim().includes('blocking')).value, true)
+    })
+
+    after(() => {
+        browser.pause(3000)
+
+        browser.execute(() => {
+            Meteor.call('removeTestProblems', 'problem', (err, data) => {})
+
+            return 'ok'
+        })
     })
 })

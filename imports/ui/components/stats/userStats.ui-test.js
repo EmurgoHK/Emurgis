@@ -4,7 +4,7 @@ const baseUrl = 'http://localhost:3000/stats'
 describe('Stats page', function () {
     before(() => {
         browser.url(`http://localhost:3000/`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.execute(() => {
             Meteor.call('generateTestUser', (err, data) => {})

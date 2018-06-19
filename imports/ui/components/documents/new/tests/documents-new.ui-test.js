@@ -4,10 +4,10 @@ const baseUrl = 'http://localhost:3000/new'
 describe('New problem page', function () {
     before(() => {
         browser.url(`http://localhost:3000/`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.execute(() => {
-            Meteor.call('generateTestProblems', (err, data) => {})
+            Meteor.call('generateTestProblems', 'new-problem', (err, data) => {})
 
             return 'ok'
         })
@@ -72,7 +72,7 @@ describe('New problem page', function () {
 
     it ('user can edit the created problem', function() {
         browser.url(`http://localhost:3000/${browser.execute(() => FlowRouter.current().params.documentId).value}/edit`)
-        browser.pause(10000)
+        browser.pause(5000)
 
         assert(browser.getValue('#description') === 'T', true)
         assert(browser.getValue('#summary') === 'T', true)
@@ -119,7 +119,7 @@ describe('New problem page', function () {
     it ('dependencies can be added on the form', function() {
         browser.url(`${baseUrl}`)
 
-        browser.pause(10000)
+        browser.pause(5000)
 
         browser.setValue('#dependency', 'd')
         browser.pause(2000)
@@ -162,5 +162,15 @@ describe('New problem page', function () {
         browser.pause(4000)
 
         assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentsIndex', true)
+    })
+
+    after(() => {
+        browser.pause(3000)
+
+        browser.execute(() => {
+            Meteor.call('removeTestProblems', 'new-problem', (err, data) => {})
+
+            return 'ok'
+        })
     })
 })
