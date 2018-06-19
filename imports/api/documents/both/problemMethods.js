@@ -638,7 +638,9 @@ export const rejectSolution = new ValidatedMethod({
 
 if (Meteor.isDevelopment) {
     Meteor.methods({
-        generateTestProblems: () => {
+        generateTestProblems: (context) => {
+            context = context || 'all'
+
             for (let i = 0; i < 10; i++) {
                 Problems.insert({
                     summary: "Derp",
@@ -646,13 +648,17 @@ if (Meteor.isDevelopment) {
                     solution: "Lorem ipsum, herp derp durr.",
                     createdAt: new Date().getTime(),
                     createdBy: '',
-                    status: 'open'
+                    status: 'open',
+                    testContext: context
                 })
             }
         },
-        removeTestProblems: () => {
+        removeTestProblems: (context) => {
+            context = context || 'all'
+            
             Problems.remove({
-                summary: 'Derp'
+                summary: 'Derp',
+                testContext: context
             })
         }
     })

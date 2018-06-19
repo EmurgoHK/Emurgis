@@ -8,7 +8,7 @@ describe('page header', function () {
         browser.pause(5000) // let it load, wait for 2 seconds
 
         browser.execute(() => {
-            Meteor.call('generateTestProblems', (err, data) => {})
+            Meteor.call('generateTestProblems', 'header', (err, data) => {})
 
             return 'ok'
         })
@@ -44,5 +44,15 @@ describe('page header', function () {
         assert(browser.execute(() => FlowRouter.current().route.name).value === 'documentsIndex', true)
 
         assert(browser.execute(() => Array.from($('.documents-index-item').map((ind, el) => $(el).find('a').html())).some(i => /derp/ig.test(i))).value, true)
+    })
+
+    after(() => {
+        browser.pause(3000)
+
+        browser.execute(() => {
+            Meteor.call('removeTestProblems', 'header', (err, data) => {})
+
+            return 'ok'
+        })
     })
 })
