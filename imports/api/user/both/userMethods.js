@@ -11,6 +11,31 @@ export const isModerator = userId => {
     return user && user.moderator
 }
 
+export const provideDob = new ValidatedMethod({
+    name: 'provideDob',
+    validate: new SimpleSchema({
+        dob: {
+            type: Date,
+            optional: false
+        }
+    }).validator({
+        clean: true
+    }),
+    run({ dob }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        return Meteor.users.update({
+            _id: Meteor.userId()
+        }, {
+            $set: {
+                'profile.dob': new Date(dob).getTime()
+            }
+        })
+    }
+})
+
 export const hideHelpModal = new ValidatedMethod({
     name: 'hideHelpModal',
     validate: new SimpleSchema({
