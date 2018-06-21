@@ -1,0 +1,26 @@
+<template name="dobModal">
+    <div class="modal fade" id="dobModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">What is your date of birth?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Please enter your date of birth. This will be used as part of the account recovery process if anything goes wrong.</label>
+                            <input type="date" class="form-control" id="dob" placeholder="Date of Birth">
+                        </div>
+                        <div style="padding-top:8px;">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

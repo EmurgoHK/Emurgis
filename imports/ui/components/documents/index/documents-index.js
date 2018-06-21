@@ -8,6 +8,7 @@ import { Comments } from '/imports/api/documents/both/commentsCollection'
 
 import "./documents-index.html"
 import "./documents-index-item/documents-index-item.js"
+import "./documents-dobModal.js"
 
 Template.documentsIndex.onCreated(function() {
 
@@ -17,6 +18,11 @@ Template.documentsIndex.onCreated(function() {
     this.searchFilter = new ReactiveVar('');
 
     this.autorun(() => {
+
+      //open a modal if the user does not have a date of birth set.
+      if (Meteor.user() && !Meteor.user().profile.dob) {
+         $('#dobModal').modal('show')
+     }
         SubsCache.subscribe('problems')
         SubsCache.subscribe('comments')
 
@@ -45,7 +51,6 @@ Template.documentsIndex.onCreated(function() {
     });
 });
 
-Template.documentsIndex.onRendered(function() {})
 
 Template.documentsIndex.onDestroyed(function() {})
 
