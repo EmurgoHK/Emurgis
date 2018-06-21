@@ -29,19 +29,3 @@ Meteor.startup(() => {
     })
   }
 })
-
-
-
-ServiceConfiguration.configurations.remove({
-  service: 'google'
-})
-ServiceConfiguration.configurations.insert({
-  service: 'google',
-  clientId: '674768501370-e5i2mj3q5anso3tk30di9hpbo4f9sisg.apps.googleusercontent.com',
-  secret: '4QfQW9v9Ol4okzmKzdjs7s_X'
-})
-
-// googleAuth : {
-  //   'clientID'      : '', // your App ID
-  //   'clientSecret'  : '4QfQW9v9Ol4okzmKzdjs7s_X', // your App Secret
-  //   'callbackURL'   : 'http://localhost:8000/auth/google/callback'
