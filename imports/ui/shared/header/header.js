@@ -22,22 +22,27 @@ Template.header.onCreated(function() {
 Template.header.events({
     'click .sign-in': function(event) {
         event.preventDefault();
-        console.log("called")
-    
-        Meteor.loginWithGoogle({}, (err) => {
-            if (err) { 
-                notify(err.message, "error")
-            return 
-            }
-            var redirectTo = window.last || '/'
-            FlowRouter.go(redirectTo)
-        })
+
+        if (process.env && process.env.NODE_ENV == 'development') {
+          $('#signInModal').modal('show')
+        } else {
+          console.log("called")
+          
+          Meteor.loginWithGoogle({}, (err) => {
+              if (err) {
+                  notify(err.message, "error")
+              return
+              }
+              var redirectTo = window.last || '/'
+              FlowRouter.go(redirectTo)
+          })
+        }
     },
     'click .sign-out': (event) => {
         event.preventDefault()
 
         if (Meteor.userId()) {
-            Meteor.logout()   
+            Meteor.logout()
         }
     },
     'click .sidebar-toggler': function() {
@@ -60,18 +65,18 @@ Template.header.events({
 
         let query = $('#searchFilterHeader').val();
         let documentsIndex = $("div.documents-index")
-        
+
         if (documentsIndex.length === 0) {
             let queryParam = { query: query }
             let path = FlowRouter.path('/', {}, queryParam)
             FlowRouter.go(path)
         }
-    
+
         //clear filter if no value in search bar
         if (query.length < 1) {
             Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set('')
         }
-        
+
         if (query) {
             Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set(query)
         }

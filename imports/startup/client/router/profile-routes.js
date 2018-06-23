@@ -3,6 +3,7 @@ import { BlazeLayout } from 'meteor/kadira:blaze-layout'
 import { appRoutes } from './group-config'
 
 import '/imports/ui/components/profile/userProfile'
+import '/imports/ui/components/profile/signInModal'
 
 appRoutes.route('/profile/:userId', {
     action: () => {
