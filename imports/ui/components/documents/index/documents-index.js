@@ -18,11 +18,14 @@ Template.documentsIndex.onCreated(function() {
     this.searchFilter = new ReactiveVar('');
 
     this.autorun(() => {
-
-      //open a modal if the user does not have a date of birth set.
-      if (Meteor.user() && !Meteor.user().profile.dob) {
-         $('#dobModal').modal('show')
-     }
+        console.log(Meteor.user())
+      
+        
+        // open a modal if the user has a profile but does not have a date of birth set.
+        if (Meteor.user() && (Meteor.user().profile && !Meteor.user().profile.dob)) {
+          $('#dobModal').modal('show')
+        }
+        
         SubsCache.subscribe('problems')
         SubsCache.subscribe('comments')
 
