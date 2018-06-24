@@ -470,7 +470,6 @@ Template.documentShow.events({
                 }
             });
     },
-
     "click .claimProblem" (event, instance) {
      event.preventDefault()
 
@@ -486,22 +485,23 @@ Template.documentShow.events({
              .then(confirmed => {
                      if (confirmed) {
 
-                         if (Meteor.userId()) {
-                             swal({
-                                 text: 'How many minutes do you think you need to spend working on this problem?',
-                                 content: {
-                                     element: "input",
-                                     attributes: {
-                                         placeholder: "Enter the estimated workload (in minutes)",
-                                         type: "number",
-                                     }
-                                 },
-                                 button: {
-                                     text: "Estimate",
-                                     closeModal: true,
-                                 },
-                             }).then(estimate => {
-
+                        if (Meteor.userId()) {
+                            instance.inEstimate = true
+                            swal({
+                                text: 'How many minutes do you think you need to spend working on this problem?',
+                                content: {
+                                    element: "input",
+                                    attributes: {
+                                        placeholder: "Enter the estimated workload (in minutes)",
+                                        type: "number",
+                                    }
+                                },
+                                button: {
+                                    text: "Estimate",
+                                    closeModal: true,
+                                },
+                            }).then(estimate => {
+                                instance.inEstimate = false
                                  if (!estimate) throw null;
 
                                  claimProblem.call({
@@ -516,9 +516,34 @@ Template.documentShow.events({
                                          }
                                      }
                                  })
-
                              })
 
+                            $('.swal-content__input').on('keyup', (event) => { // meteor events won't pickup this element as it's dynamically created, so we have to use jquery events
+                                if (instance.inEstimate) {
+                                    let text = 'How many minutes do you think you need to spend working on this problem?'
+                                    if (Number($(event.currentTarget).val()) > 0) {
+                                        let user = Meteor.users.findOne({
+                                            _id: Meteor.userId()
+                                        })
+
+                                        if (user && user.profile) {
+                                            let age = (new Date().getTime() - user.profile.dob) / 31556926000
+
+                                            let usableTime = (65 - age) * 48 * 5 * 6 * 60 * 0.7
+
+                                            if (usableTime < 0) { // in an off case that somebody is older than 65 :)
+                                                usableTime = 0
+                                            }
+
+                                            $('.swal-text').html(`${text}<br><br>${user.profile.name}, you have approximately ${Math.round(usableTime / 60)} productive hours remaining in your life. This means you can only solve ${Math.round(usableTime / Number($(event.currentTarget).val()))} problems like this. Every minute counts.`)
+                                        } else {
+                                            $('.swal-text').html(text)
+                                        }
+                                    } else {
+                                        $('.swal-text').html(text)
+                                    }
+                                }
+                            })
                         }
                     }
                 });
