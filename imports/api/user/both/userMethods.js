@@ -102,7 +102,8 @@ if (Meteor.isDevelopment) {
                 password: 'testing',
                 email: 'testing@testing.test',
                 profile: {
-                	name: 'Tester'
+                	name: 'Tester',
+                	dob: 787536000000.0
                 }
             })
         }
