@@ -21,14 +21,41 @@ const {
     Domain
 } = RegEx
 
-export const addToSubscribers = (problemId, userId) => {
-  Problems.update({
-    _id: problemId
-  }, {
-    $addToSet: {
-      subscribers: userId
+export const staleStatus = (problem) => {
+    if (problem && problem.status === 'stale') {
+        return {
+            status: problem.oldStatus
+        }
     }
-  })
+
+    return {}
+}
+
+export const updateLastAction = (problemId) => {
+    Problems.update({
+        _id: problemId
+    }, {
+        $set: _.extend({
+            lastActionTime: new Date().getTime()
+        }, staleStatus(Problems.findOne(problemId)))
+    })
+}
+
+export const addToSubscribers = (problemId, userId) => {
+    let problem = Problems.findOne({
+        _id: problemId
+    })
+
+    Problems.update({
+        _id: problemId
+    }, {
+        $set: _.extend({
+            lastActionTime: new Date().getTime()
+        }, staleStatus(problem)),
+        $addToSet: {
+          subscribers: userId
+        }
+    })
 }
 
 export const sendToSubscribers = (problemId, authorId, message) => {
@@ -85,7 +112,8 @@ export const addProblem = new ValidatedMethod({
       'isProblemWithEmurgis': isProblemWithEmurgis,
       fyiProblem: fyiProblem,
       subscribers: [Meteor.userId()],
-      images: images
+      images: images,
+      lastActionTime: new Date().getTime()
     })
 
     dependencies.forEach(i => insertDependency(pId, i))
@@ -140,6 +168,9 @@ export const removeProblemImage = new ValidatedMethod({
       Problems.update({
         _id: _id
       }, {
+        $set: _.extend({
+            lastActionTime: new Date().getTime()
+        }, staleStatus(problem)),
         $pull: {
           images: image
         }
@@ -162,9 +193,16 @@ export const unwatchProblem = new ValidatedMethod({
       throw new Meteor.Error('Error.', 'You have to be logged in.')
     }
 
+    let problem = Problems.findOne({
+        _id: _id
+    })
+
     Problems.update({
       _id: _id
     }, {
+        $set: _.extend({
+            lastActionTime: new Date().getTime()
+        }, staleStatus(problem)),
       $pull: {
         subscribers: Meteor.userId()
       }
@@ -190,6 +228,7 @@ export const unclaimProblem = new ValidatedMethod({
               }, {
                   $set: {
                     status: 'open',
+                    lastActionTime: new Date().getTime()
                   },
                   $unset: {
                       estimate: true,
@@ -248,7 +287,8 @@ export const claimProblem = new ValidatedMethod({
                         claimedBy: Meteor.userId(),
                         claimed: true,
                         claimedDateTime: new Date().getTime(),
-                        claimedFullname: getName
+                        claimedFullname: getName,
+                        lastActionTime: new Date().getTime()
                     }
                 })
 
@@ -284,9 +324,16 @@ export const readFYIProblem = new ValidatedMethod({
     }).validator(),
     run({ _id }) {
         if (Meteor.userId()) {
+            let problem = Problems.findOne({
+                _id: _id
+            })
+
             Problems.update({
                 _id: _id
             }, {
+                $set: _.extend({
+                    lastActionTime: new Date().getTime()
+                }, staleStatus(problem)),
                 $addToSet: {
                     read: Meteor.userId()
                 }
@@ -321,14 +368,16 @@ export const editProblem = new ValidatedMethod({
     let problem = Problems.findOne({_id: id});
 
     if (problem.createdBy === Meteor.userId()) {
-        Problems.update({'_id' : id}, { $set : {
+        Problems.update({'_id' : id}, { $set : _.extend({
           'summary': summary,
           'description': description || "",
           'solution': solution || "",
           'isProblemWithEmurgis': isProblemWithEmurgis,
           fyiProblem: fyiProblem,
-          images: images
-            }})
+          images: images,
+          lastActionTime: new Date().getTime(),
+        }, staleStatus(problem))
+    })
     } else {
         throw new Meteor.Error('Error.', 'You cannot edit a problem you did not create')
     }
@@ -385,7 +434,8 @@ export const deleteProblem = new ValidatedMethod({
               status: 'rejected',
               rejectionReason: reason,
               rejectedAt: new Date().getTime(),
-              rejectedBy: Meteor.userId()
+              rejectedBy: Meteor.userId(),
+              lastActionTime: new Date().getTime()
             }
           })
 
@@ -426,7 +476,8 @@ export const markAsResolved = new ValidatedMethod({
                   'status' : 'ready for review',
                   'resolveSteps': resolutionSummary,
                   'hasAcceptedSolution': false,
-                  'resolvedDateTime': new Date().getTime()
+                  'resolvedDateTime': new Date().getTime(),
+                  lastActionTime: new Date().getTime()
               }
           })
         } else {
@@ -437,7 +488,8 @@ export const markAsResolved = new ValidatedMethod({
                   'hasAcceptedSolution': true,
                   'resolvedDateTime': new Date().getTime(),
                   resolved: true,
-                  resolvedBy: claimerId
+                  resolvedBy: claimerId,
+                  lastActionTime: new Date().getTime()
               }
           })
 
@@ -470,7 +522,8 @@ export const markAsUnSolved = new ValidatedMethod({
 
         Problems.update({ '_id' : problemId }, {
             $set : {
-                'status' : 'in progress'
+                'status' : 'in progress',
+                lastActionTime: new Date().getTime()
             },
             $unset: {
                   resolvedDateTime:1,
@@ -507,7 +560,9 @@ export const updateStatus = new ValidatedMethod({
           throw new Meteor.Error('Error.', 'You are not allowed to open or close this problem')
         }
 
-        let updateData = {}
+        let updateData = {
+            lastActionTime: new Date().getTime()
+        }
         updateData.status = status
 
         // if problem is being marked as close and its current is `ready for review`
@@ -566,7 +621,10 @@ export const removeClaimer = new ValidatedMethod({
         }
 
         Problems.update({ _id: problemId }, {
-            $set: { status: 'open' },
+            $set: {
+                status: 'open',
+                lastActionTime: new Date().getTime()
+            },
             $unset: {
                 claimedBy: true,
                 claimed: true,
@@ -612,7 +670,10 @@ export const rejectSolution = new ValidatedMethod({
 
 
         Problems.update({ _id : problemId }, {
-            $set: {status :  'open'},
+            $set: {
+                status :  'open',
+                lastActionTime: new Date().getTime()
+            },
             $unset : {
                 resolveSteps: true,
                 hasAcceptedSolution: true,
@@ -634,6 +695,27 @@ export const rejectSolution = new ValidatedMethod({
     }
 })
 // end
+
+export const checkForStaleProblems = new ValidatedMethod({
+    name: 'checkForStaleProblems',
+    validate: new SimpleSchema({}).validator(),
+    run ({}) {
+        Problems.find({}).fetch().filter(i => {
+            return (i.status !== 'stale' && i.lastActionTime) ? ((new Date().getTime() - i.lastActionTime) > (10 * 24 * 60 * 60 * 1000)) : false
+        }).forEach(i => {
+            Problems.update({
+                _id: i._id
+            }, {
+                $set: {
+                    status: 'stale',
+                    oldStatus: i.status || 'open' // save the old status so we can return it if some activity happens
+                }
+            })
+
+            sendNotification(i.createdBy, 'Your problem has been marked as \'Stale\' as it had no activity in the last 10 days. Check it out.', 'System', `/${i._id}`) // notify the user that his/her problem has became stale
+        })
+    }
+})
 
 
 if (Meteor.isDevelopment) {

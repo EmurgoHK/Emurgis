@@ -5,7 +5,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method"
 import { Comments } from "./commentsCollection.js"
 import { Problems } from './problemCollection'
 
-import { addToSubscribers, sendToSubscribers } from './problemMethods'
+import { addToSubscribers, sendToSubscribers, updateLastAction } from './problemMethods'
 
 //we need to move this to a global file and manage once
 const {
@@ -43,6 +43,8 @@ export const postComment = new ValidatedMethod({
                     images: images
                 })
 
+                updateLastAction(problemId)
+
                 sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
 
                 addToSubscribers(problemId, this.userId)
@@ -66,6 +68,8 @@ export const deleteComment = new ValidatedMethod({
         }
 
         Comments.remove({ _id : comment._id })
+
+        updateLastAction(comment.problemId)
     }
 })
 
@@ -93,6 +97,8 @@ export const editComment = new ValidatedMethod({
                 comment: comment
             }
         })
+
+        updateLastAction(c.problemId)
     }
 })
 
@@ -122,5 +128,7 @@ export const removeCommentImage = new ValidatedMethod({
                 images: image
             }
         })
+
+        updateLastAction(c.problemId)
     }
 })
