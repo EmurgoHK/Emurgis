@@ -9,10 +9,10 @@ import { Dependencies } from "/imports/api/documents/both/dependenciesCollection
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
+import { sendNotification } from "/imports/api/notifications/both/notificationsMethods.js"
 
 import { getImages } from '/imports/ui/components/uploader/imageUploader'
 import '/imports/ui/components/uploader/imageUploader'
-
 
 import "./document-show.html"
 import "./document-comments.html"
@@ -39,10 +39,12 @@ Template.documentShow.onCreated(function() {
     SubsCache.subscribe('dependencies')
   })
 
-  this.commentInvalidMessage = new ReactiveVar("")
+  this.commentInvalidMessage = new ReactiveVar('')
 
   this.filter = new ReactiveVar('')
   this.invFilter = new ReactiveVar('')
+  this.userTag = new ReactiveVar('')
+  this.notifiyMentions = new ReactiveVar([]);
 })
 
 Template.documentShow.onRendered(function() {})
@@ -225,6 +227,13 @@ Template.documentShow.helpers({
         }) || {}
 
         return problem.createdBy === Meteor.userId() || user.moderator
+    },
+    userTags() {
+      if (Template.instance().userTag.get() != '') {
+        return Meteor.users.find({ _id: { $ne: Meteor.userId() }, 'profile.tags': new RegExp(Template.instance().userTag.get(), 'ig') });
+      }
+
+      return [];
     }
 })
 
@@ -232,9 +241,35 @@ Template.documentShow.events({
     'keyup #dependency' (event) {
         Template.instance().filter.set(event.target.value)
     },
+
     'keyup #invDependency' (event) {
         Template.instance().invFilter.set(event.target.value)
     },
+
+    'keyup #comments' (event) {
+        const text = event.target.value;
+        const textArray = text.split(' ');
+        if (textArray[textArray.length -1] != "" && textArray[textArray.length -1] != " ") {
+          if (textArray[textArray.length -1].includes('@')) {
+            Template.instance().userTag.set(textArray[textArray.length -1].substring(1));
+          } else {
+            Template.instance().userTag.set(textArray[textArray.length -1]);
+          }
+        }
+    },
+
+    'click .usertags' (event) {
+        let comment = $('#comments').val();
+        if (comment.lastIndexOf(' ') == -1) {
+          $('#comments').val(event.target.innerHTML)
+        } else {
+          $('#comments').val(comment.substring(0, comment.lastIndexOf(' ') + 1) + event.target.innerHTML)
+        }
+
+        Template.instance().notifiyMentions.get().push(event.target.id)
+        Template.instance().userTag.set('');
+    },
+
     'click .dependency' (event) {
         event.preventDefault()
 
@@ -409,6 +444,7 @@ Template.documentShow.events({
 
         if (Meteor.userId()){
                 let problemId = Template.instance().getDocumentId()
+                let mentions = Array.from(new Set(Template.instance().notifiyMentions.get()).values());
                 var commentValue = $('#comments').val();
 
                 if (commentValue.length == 0) {
@@ -419,12 +455,14 @@ Template.documentShow.events({
                     Template.instance().commentInvalidMessage.set("The comment is too long")
                 } else {
                     Template.instance().commentInvalidMessage.set("")
+                    Template.instance().notifiyMentions.set([]);
 
                     postComment.call({
                         problemId: problemId,
                         comment: commentValue,
+                        mentions: mentions,
                         images: getImages(true)
-                    }, (error, result) => {
+                    }, function(error, result) {
                         if (error) {
                             if (error.details) {
                                 console.error(error.details)

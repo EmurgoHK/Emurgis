@@ -6,6 +6,7 @@ import { Comments } from "./commentsCollection.js"
 import { Problems } from './problemCollection'
 
 import { addToSubscribers, sendToSubscribers, updateLastAction } from './problemMethods'
+import { sendNotification } from '/imports/api/notifications/both/notificationsMethods'
 
 //we need to move this to a global file and manage once
 const {
@@ -24,10 +25,12 @@ export const postComment = new ValidatedMethod({
             validate: new SimpleSchema({
                 'problemId': { type: String, optional: false},
                 'comment': { type: String, max: 500, optional: false },
+                mentions: { type: Array, optional: true },
+                "mentions.$": {type: String, optional: true},
                 images: { type: Array, optional: true },
                 'images.$': { type: String, optional: true }
             }).validator(),
-            run({ problemId, comment, images }) {
+            run({ problemId, comment, mentions, images }) {
                 if (!Meteor.userId()) {
                     throw new Meteor.Error('Error.', 'You have to be logged in.')
                 }
@@ -47,6 +50,15 @@ export const postComment = new ValidatedMethod({
 
                 sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
 
+                let subs = sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
+
+                // send a notification to non subs who are mentioned in the comment
+                mentions.forEach(user => {
+                  if (!subs.includes(user)) {
+                    sendNotification(user, `${getName} mentioned you in a comment on a problem.`, '', `/${problemId}`)
+                  }
+                })
+
                 addToSubscribers(problemId, this.userId)
             }
 })
@@ -61,7 +73,7 @@ export const deleteComment = new ValidatedMethod({
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
 
-        let comment = Comments.findOne({ _id : commentId }) 
+        let comment = Comments.findOne({ _id : commentId })
 
         if (comment.createdBy !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to delete this comment.')
@@ -84,7 +96,7 @@ export const editComment = new ValidatedMethod({
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
 
-        let c = Comments.findOne({ _id : commentId }) 
+        let c = Comments.findOne({ _id : commentId })
 
         if (c.createdBy !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to edit this comment.')
@@ -115,7 +127,7 @@ export const removeCommentImage = new ValidatedMethod({
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
 
-        let c = Comments.findOne({ _id : commentId }) 
+        let c = Comments.findOne({ _id : commentId })
 
         if (c.createdBy !== Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You are not allowed to edit this comment.')
