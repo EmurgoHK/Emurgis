@@ -1,6 +1,7 @@
 Meteor.publish('users', () => Meteor.users.find({}, {
 	fields: {
 		'profile.name': 1,
+		'profile.tags': 1,
 		_id: 1
 	}
 }))

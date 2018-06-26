@@ -50,7 +50,7 @@ export const hideHelpModal = new ValidatedMethod({
         if (!Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
-        
+
         return Meteor.users.update({
         	_id: Meteor.userId()
         }, {
@@ -83,7 +83,7 @@ export const resetHiddenModals = new ValidatedMethod({
         if (!curUser || !curUser.moderator) {
         	throw new Meteor.Error('Error.', 'You have to be a moderator in order to do this.')
         }
-        
+
         return Meteor.users.update({
         	_id: userId
         }, {
@@ -92,6 +92,53 @@ export const resetHiddenModals = new ValidatedMethod({
         	}
         })
     }
+})
+
+export const addTag = new ValidatedMethod({
+		name: 'addTag',
+		validate: new SimpleSchema({
+			userId: { type: String, optional: false },
+			tag: { type: String, optional: false }
+		}).validator({
+			clean: true
+		}),
+		run({ userId, tag }) {
+				if (!Meteor.userId()) {
+						throw new Meteor.Error('Error.', 'You have to be logged in.')
+				}
+
+				return Meteor.users.update({
+						_id: userId
+				}, {
+						$addToSet: {
+								'profile.tags': tag // Save the new tag in the list of tags
+						}
+				})
+		}
+})
+
+export const removeTag = new ValidatedMethod({
+	name: 'removeTag',
+	validate: new SimpleSchema({
+		userId: { type: String, optional: false },
+		tag: { type: String, optional: false }
+	}).validator({
+		clean: true
+	}),
+	run({ userId, tag }) {
+			if (!Meteor.userId()) {
+					throw new Meteor.Error('Error.', 'You have to be logged in.')
+			}
+
+			return Meteor.users.update({
+					_id: userId
+			}, {
+					$pull: {
+							'profile.tags': tag // remove the tag in the list of tags
+					}
+			})
+
+	}
 })
 
 if (Meteor.isDevelopment) {

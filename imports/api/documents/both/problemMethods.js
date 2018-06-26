@@ -58,7 +58,7 @@ export const addToSubscribers = (problemId, userId) => {
     })
 }
 
-export const sendToSubscribers = (problemId, authorId, message) => {
+export const sendToSubscribers = (problemId, authorId, message, isCommentMention = false) => {
   let problem = Problems.findOne({
     _id: problemId
   })
@@ -70,6 +70,7 @@ export const sendToSubscribers = (problemId, authorId, message) => {
       }
     })
   }
+  return problem.subscribers;
 }
 
 //Define a ValidatedMethod which can be called from both the client and server
@@ -737,7 +738,7 @@ if (Meteor.isDevelopment) {
         },
         removeTestProblems: (context) => {
             context = context || 'all'
-            
+
             Problems.remove({
                 summary: 'Derp',
                 testContext: context

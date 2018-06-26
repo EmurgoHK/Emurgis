@@ -26,8 +26,6 @@ Template.header.events({
         if (process.env && process.env.NODE_ENV == 'development') {
           $('#signInModal').modal('show')
         } else {
-          console.log("called")
-          
           Meteor.loginWithGoogle({}, (err) => {
               if (err) {
                   notify(err.message, "error")
@@ -44,6 +42,12 @@ Template.header.events({
         if (Meteor.userId()) {
             Meteor.logout()
         }
+    },
+    'click .add-username': (event) => {
+      event.preventDefault();
+      if (Meteor.userId())  {
+        $('#usernameModal').modal('show')
+      }
     },
     'click .sidebar-toggler': function() {
         // toggle "sidebar-show" class to show/hide sidebar

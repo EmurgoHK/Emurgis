@@ -124,10 +124,20 @@
           <div class="form-group">
               <textarea class="form-control" id="comments" name="comment" rows="3" required></textarea>
           </div>
+          <ul class="list-group">
+            {{#each user in userTags}}
+              <li class="list-group-item usertags" id="{{user._id}}">{{user.profile.name}}</li>
+            {{/each}}
+          </ul>
           <p class="text-danger">{{ commentInvalidMessage }}</p>
-          {{> imageUploader}}
-          <br />
-          <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
+          <div class="btn-group" role="group">
+            <div class="btn-group mr-2" role="group">
+              {{> imageUploader}}
+            </div>
+            <div class="btn-group mr-2" role="group">
+              <button type="submit" class="btn btn-primary mb-2 documentCommentBtn">Comment</button>
+            </div>
+          </div>
       </div>
     </div>
 

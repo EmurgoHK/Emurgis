@@ -4,6 +4,7 @@ import { appRoutes } from './group-config'
 
 import '/imports/ui/components/profile/userProfile'
 import '/imports/ui/components/profile/signInModal'
+import '/imports/ui/components/profile/usernameModal'
 
 appRoutes.route('/profile/:userId', {
     action: () => {
