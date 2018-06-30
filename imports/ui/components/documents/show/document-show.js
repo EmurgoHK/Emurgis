@@ -540,20 +540,26 @@ Template.documentShow.events({
                                 },
                             }).then(estimate => {
                                 instance.inEstimate = false
-                                 if (!estimate) throw null;
+                                if (!estimate) {
+                                    notify('Invalid time estimate provided.', 'error')
+
+                                    return
+                                }
 
                                  claimProblem.call({
                                      _id: problemId,
                                      estimate: Number(estimate)
                                  }, (error, result) => {
-                                     if (error) {
-                                         if (error.details) {
-                                             console.error(error.details)
-                                         } else {
-                                             notify('Problem claimed successfully', 'success');
-                                         }
-                                     }
-                                 })
+                                    if (error) {
+                                        if (error.details) {
+                                            notify(error.details, 'error')
+                                        } else {
+                                            notify(error.message || error.reason, 'error')
+                                        }
+                                    } else {
+                                        notify('Problem claimed successfully.', 'success');
+                                    }
+                                })
                              })
 
                             $('.swal-content__input').on('keyup', (event) => { // meteor events won't pickup this element as it's dynamically created, so we have to use jquery events
