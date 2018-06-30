@@ -56,6 +56,17 @@ describe('Problems page', function () {
         })
     })
 
+    it('pub/sub for problems is working correctly', () => {
+        browser.execute(() => Meteor.subscribe('problems'))
+        browser.pause(3000)
+
+        assert(browser.execute(() => {
+            let probs = testingProblems.find({}).fetch()
+
+            return probs.length > 0
+        }).value, true)
+    })
+
     it('my rejected problems page shows only rejected problems', () => {
         browser.url(`${baseUrl}/rejected`)
         browser.pause(5000)

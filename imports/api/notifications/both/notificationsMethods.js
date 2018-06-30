@@ -70,3 +70,25 @@ export const markAllAsRead = new ValidatedMethod({
         })
     }
 })
+
+if (Meteor.isDevelopment) {
+    Meteor.methods({
+        generateTestNotifications: () => {
+            for (let i = 0; i < 10; i++) {
+                Notifications.insert({
+			        userId: Meteor.userId(),
+			        from: 'System',
+			        href: '',
+			        message: 'Test notification',
+			        createdAt: new Date().getTime(),
+			        read: false
+			    })
+            }
+        },
+        removeTestNotifications: () => {
+            Notifications.remove({
+                message: 'Test notification'
+            })
+        }
+    })
+}
