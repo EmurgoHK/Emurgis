@@ -141,6 +141,31 @@ export const removeTag = new ValidatedMethod({
 	}
 })
 
+export const defaultTagAddedFlag = new ValidatedMethod({
+    name: 'defaultTagAddedFlag',
+    validate: new SimpleSchema({
+        defaultTagAdded: {
+            type: Boolean,
+            optional: false
+        }
+    }).validator({
+        clean: true
+    }),
+    run({ defaultTagAdded }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        return Meteor.users.update({
+            _id: Meteor.userId()
+        }, {
+            $set: {
+                'profile.defaultTagAdded': defaultTagAdded
+            }
+        })
+    }
+})
+
 if (Meteor.isDevelopment) {
     Meteor.methods({
         generateTestUser: () => {
