@@ -59,7 +59,7 @@ Template.header.events({
             $('body').removeClass('sidebar-lg-show')
         }
     },
-
+    'submit .form-inline': (event, templateInstance) => event.preventDefault(),
     'keyup #searchFilterHeader': function (event) {
         event.preventDefault();
         //close the sidebar if you start typing on a mobile
@@ -79,15 +79,20 @@ Template.header.events({
         //clear filter if no value in search bar
         if (query.length < 1) {
             Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set('')
+
+            history.replaceState(null, '', `/`)
         }
 
         if (query) {
             Blaze.getView($("div.documents-index")[0])._templateInstance.searchFilter.set(query)
+
+            history.replaceState(null, '', `?query=${query}`)
         }
     }
 })
 
 Template.header.helpers({
+	searchVal: () => FlowRouter.current().queryParams.query || '',
 	notificationsCount: () => Notifications.find({
     	userId: Meteor.userId(),
     	read: false

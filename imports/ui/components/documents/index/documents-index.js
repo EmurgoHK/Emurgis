@@ -15,7 +15,7 @@ Template.documentsIndex.onCreated(function() {
     //Reactive Vars
     this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my', 'isProblemWithEmurgis'])
     this.filter = new ReactiveVar({})
-    this.searchFilter = new ReactiveVar('');
+    this.searchFilter = new ReactiveVar(FlowRouter.current().queryParams.query || '')
 
     this.autorun(() => {
         
