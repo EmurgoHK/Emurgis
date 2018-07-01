@@ -515,7 +515,7 @@ Template.documentShow.events({
          let problemId = Template.instance().getDocumentId()
          swal({
                  text: "Are you sure you want to claim this problem?",
-                 icon: "success",
+                 icon: "warning",
                  buttons: true,
                  dangerMode: true,
                  showCancelButton: true
