@@ -34,4 +34,25 @@ describe('Stats page', function () {
 
         assert(browser.execute(() => $('.stats-item').length >= 1).value, true)
     })
+
+    it('pub/sub for stats is working correctly', () => {
+        browser.execute(() => Meteor.subscribe('userStats'))
+        browser.pause(3000)
+
+        assert(browser.execute(() => {
+            let stats = testingStats.find({}).fetch()
+
+            return !!stats
+        }).value, true)
+    })
+
+    it('data on the chart and in the table is correctly populated', () => {
+        assert(browser.execute(() => {
+            let users = Meteor.users.find({}).fetch()
+
+            let dataset = Blaze.getView($('#js-chart')[0])._templateInstance.barChart.data.datasets[0].data
+
+            return $('.stats-item').length === dataset.length && dataset.length === users.length
+        }).value, true)
+    })
 })
