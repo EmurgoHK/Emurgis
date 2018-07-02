@@ -128,6 +128,18 @@ export const addProblem = new ValidatedMethod({
       }
     })
 
+    if (fyiProblem) {
+        let user = Meteor.users.findOne({
+            _id: Meteor.userId()
+        }) || {}
+
+        Meteor.users.find({}).fetch().forEach(i => {
+            if (i._id !== Meteor.userId()) { // don't notify the user that has added the problem
+                sendNotification(i._id, `${(user.profile || {}).name} has added a new FYI. Check it out.`, 'System', `/${pId}`)
+            }
+        })
+    }
+
 		return pId
   }
 });
