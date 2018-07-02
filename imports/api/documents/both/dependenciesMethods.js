@@ -5,6 +5,8 @@ import { ValidatedMethod } from "meteor/mdg:validated-method"
 import { Dependencies } from './dependenciesCollection'
 import { Problems } from './problemCollection'
 
+import { updateLastAction } from './problemMethods'
+
 const {
     RegEx
 } = SimpleSchema
@@ -79,7 +81,10 @@ export const insertDependency = (pId, dId) => {
       dependencyId: dId,
       'createdAt': new Date().getTime(),
       'createdBy': Meteor.userId() || ""
-    });
+    })
+
+    updateLastAction(pId)
+    updateLastAction(dId)
   }
 }
 
@@ -122,6 +127,9 @@ export const deleteDependency = new ValidatedMethod({
 
       if (problem.createdBy === Meteor.userId() || user.moderator) {
           Dependencies.remove({'_id' : id})
+
+          updateLastAction(dependency.dependencyId)
+          updateLastAction(dependency.problemId)
       } else {
           throw new Meteor.Error('Error.', 'You cannot delete the problems you did not create')
       }

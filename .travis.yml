@@ -17,6 +17,8 @@ before_install:
   - npm install selenium-standalone@latest -g
   - selenium-standalone install
   - selenium-standalone start &
+  - sudo mkdir -p /var/www/static/images # for the image upload
+  - sudo chmod -R 777 /var/www/static/images
 
 cache:
   directories:

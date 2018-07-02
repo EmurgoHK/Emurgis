@@ -43,3 +43,6 @@ cfs:graphicsmagick
 accounts-password
 dburles:factory
 blockrazor:subscache-c4
+percolate:synced-cron
+nimble:restivus
+socialize:user-presence@1.0.1

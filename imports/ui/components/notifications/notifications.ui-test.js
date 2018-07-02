@@ -18,6 +18,10 @@ describe('Notifications page', function () {
 
         browser.pause(5000)
 
+        browser.execute(() => Meteor.call('generateTestNotifications'))
+
+        browser.pause(5000)
+
         browser.url(`${baseUrl}`)
 
         browser.pause(10000)
@@ -30,5 +34,22 @@ describe('Notifications page', function () {
         assert(browser.execute(() => $('.notification-item').length === testingNotifications.find({
             userId: Meteor.userId()
         }).count()).value, true)
+    })
+
+    it('pub/sub for notifications is working correctly', () => {
+        browser.execute(() => Meteor.subscribe('notifications'))
+        browser.pause(3000)
+
+        assert(browser.execute(() => {
+            let nots = testingNotifications.find({}).fetch()
+
+            return nots.length > 0 && nots.every(i => i.userId === Meteor.userId())
+        }).value, true)
+    })
+
+    after(() => {
+        browser.pause(1000)
+        browser.execute(() => Meteor.call('removeTestNotifications'))
+        browser.pause(3000)
     })
 })

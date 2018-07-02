@@ -34,6 +34,8 @@ Template.registerHelper('statusText', status => {
         return '<span class="badge badge-primary">Ready for review</span>'
     } else if (status && status === 'rejected') {
         return '<span class="badge badge-danger">Rejected</span>'
+    } else if (status && status === 'stale') {
+        return '<span class="badge badge-warning">Stale</span>'
     } else {
         return '-'
     }

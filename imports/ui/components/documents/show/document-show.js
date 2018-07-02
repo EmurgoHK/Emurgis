@@ -9,10 +9,10 @@ import { Dependencies } from "/imports/api/documents/both/dependenciesCollection
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
+import { sendNotification } from "/imports/api/notifications/both/notificationsMethods.js"
 
 import { getImages } from '/imports/ui/components/uploader/imageUploader'
 import '/imports/ui/components/uploader/imageUploader'
-
 
 import "./document-show.html"
 import "./document-comments.html"
@@ -39,10 +39,12 @@ Template.documentShow.onCreated(function() {
     SubsCache.subscribe('dependencies')
   })
 
-  this.commentInvalidMessage = new ReactiveVar("")
+  this.commentInvalidMessage = new ReactiveVar('')
 
   this.filter = new ReactiveVar('')
   this.invFilter = new ReactiveVar('')
+  this.userTag = new ReactiveVar('')
+  this.notifiyMentions = new ReactiveVar([]);
 })
 
 Template.documentShow.onRendered(function() {})
@@ -225,6 +227,13 @@ Template.documentShow.helpers({
         }) || {}
 
         return problem.createdBy === Meteor.userId() || user.moderator
+    },
+    userTags() {
+      if (Template.instance().userTag.get() != '') {
+        return Meteor.users.find({ _id: { $ne: Meteor.userId() }, 'profile.tags': new RegExp(Template.instance().userTag.get(), 'ig') });
+      }
+
+      return [];
     }
 })
 
@@ -232,9 +241,35 @@ Template.documentShow.events({
     'keyup #dependency' (event) {
         Template.instance().filter.set(event.target.value)
     },
+
     'keyup #invDependency' (event) {
         Template.instance().invFilter.set(event.target.value)
     },
+
+    'keyup #comments' (event) {
+        const text = event.target.value;
+        const textArray = text.split(' ');
+        if (textArray[textArray.length -1] != "" && textArray[textArray.length -1] != " ") {
+          if (textArray[textArray.length -1].includes('@')) {
+            Template.instance().userTag.set(textArray[textArray.length -1].substring(1));
+          } else {
+            Template.instance().userTag.set(textArray[textArray.length -1]);
+          }
+        }
+    },
+
+    'click .usertags' (event) {
+        let comment = $('#comments').val();
+        if (comment.lastIndexOf(' ') == -1) {
+          $('#comments').val(event.target.innerHTML)
+        } else {
+          $('#comments').val(comment.substring(0, comment.lastIndexOf(' ') + 1) + event.target.innerHTML)
+        }
+
+        Template.instance().notifiyMentions.get().push(event.target.id)
+        Template.instance().userTag.set('');
+    },
+
     'click .dependency' (event) {
         event.preventDefault()
 
@@ -409,6 +444,7 @@ Template.documentShow.events({
 
         if (Meteor.userId()){
                 let problemId = Template.instance().getDocumentId()
+                let mentions = Array.from(new Set(Template.instance().notifiyMentions.get()).values());
                 var commentValue = $('#comments').val();
 
                 if (commentValue.length == 0) {
@@ -419,12 +455,14 @@ Template.documentShow.events({
                     Template.instance().commentInvalidMessage.set("The comment is too long")
                 } else {
                     Template.instance().commentInvalidMessage.set("")
+                    Template.instance().notifiyMentions.set([]);
 
                     postComment.call({
                         problemId: problemId,
                         comment: commentValue,
+                        mentions: mentions,
                         images: getImages(true)
-                    }, (error, result) => {
+                    }, function(error, result) {
                         if (error) {
                             if (error.details) {
                                 console.error(error.details)
@@ -470,7 +508,6 @@ Template.documentShow.events({
                 }
             });
     },
-
     "click .claimProblem" (event, instance) {
      event.preventDefault()
 
@@ -478,7 +515,7 @@ Template.documentShow.events({
          let problemId = Template.instance().getDocumentId()
          swal({
                  text: "Are you sure you want to claim this problem?",
-                 icon: "success",
+                 icon: "warning",
                  buttons: true,
                  dangerMode: true,
                  showCancelButton: true
@@ -486,39 +523,71 @@ Template.documentShow.events({
              .then(confirmed => {
                      if (confirmed) {
 
-                         if (Meteor.userId()) {
-                             swal({
-                                 text: 'How many minutes do you think you need to spend working on this problem?',
-                                 content: {
-                                     element: "input",
-                                     attributes: {
-                                         placeholder: "Enter the estimated workload (in minutes)",
-                                         type: "number",
-                                     }
-                                 },
-                                 button: {
-                                     text: "Estimate",
-                                     closeModal: true,
-                                 },
-                             }).then(estimate => {
+                        if (Meteor.userId()) {
+                            instance.inEstimate = true
+                            swal({
+                                text: 'How many minutes do you think you need to spend working on this problem?',
+                                content: {
+                                    element: "input",
+                                    attributes: {
+                                        placeholder: "Enter the estimated workload (in minutes)",
+                                        type: "number",
+                                    }
+                                },
+                                button: {
+                                    text: "Estimate",
+                                    closeModal: true,
+                                },
+                            }).then(estimate => {
+                                instance.inEstimate = false
+                                if (!estimate) {
+                                    notify('Invalid time estimate provided.', 'error')
 
-                                 if (!estimate) throw null;
+                                    return
+                                }
 
                                  claimProblem.call({
                                      _id: problemId,
                                      estimate: Number(estimate)
                                  }, (error, result) => {
-                                     if (error) {
-                                         if (error.details) {
-                                             console.error(error.details)
-                                         } else {
-                                             notify('Problem claimed successfully', 'success');
-                                         }
-                                     }
-                                 })
-
+                                    if (error) {
+                                        if (error.details) {
+                                            notify(error.details, 'error')
+                                        } else {
+                                            notify(error.message || error.reason, 'error')
+                                        }
+                                    } else {
+                                        notify('Problem claimed successfully.', 'success');
+                                    }
+                                })
                              })
 
+                            $('.swal-content__input').on('keyup', (event) => { // meteor events won't pickup this element as it's dynamically created, so we have to use jquery events
+                                if (instance.inEstimate) {
+                                    let text = 'How many minutes do you think you need to spend working on this problem?'
+                                    if (Number($(event.currentTarget).val()) > 0) {
+                                        let user = Meteor.users.findOne({
+                                            _id: Meteor.userId()
+                                        })
+
+                                        if (user && user.profile) {
+                                            let age = (new Date().getTime() - user.profile.dob) / 31556926000
+
+                                            let usableTime = (65 - age) * 48 * 5 * 6 * 60 * 0.7
+
+                                            if (usableTime < 0) { // in an off case that somebody is older than 65 :)
+                                                usableTime = 0
+                                            }
+
+                                            $('.swal-text').html(`${text}<br><br>${user.profile.name}, you have approximately ${Math.round(usableTime / 60)} productive hours remaining in your life. This means you can only solve ${Math.round(usableTime / Number($(event.currentTarget).val()))} problems like this. Every minute counts.`)
+                                        } else {
+                                            $('.swal-text').html(text)
+                                        }
+                                    } else {
+                                        $('.swal-text').html(text)
+                                    }
+                                }
+                            })
                         }
                     }
                 });

@@ -9,7 +9,7 @@
       <div class="navbar-nav" id="navbarSupportedContent">
           <form class="form-inline">
             <div class="input-group">
-                <input class="form-control mr-sm-2" type="search" id="searchFilterHeader" placeholder="Search for a problem" aria-label="Search" style="margin-right: 0 !important;">
+                <input class="form-control mr-sm-2" value="{{searchVal}}" type="search" id="searchFilterHeader" placeholder="Search for a problem" aria-label="Search" style="margin-right: 0 !important;">
                 <div class="input-group-append">
                   <div class="input-group-text d-none d-sm-block">
                     <i class="nav-icon icon-magnifier"></i>
@@ -56,6 +56,7 @@
                   <strong>Account</strong>
                 </div>
                 <a class="dropdown-item" href="{{pathFor 'profile' userId=currentUser._id }}" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> My Profile</a>
+                <a class="dropdown-item add-username" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> Add Usernames</a>
                 <a class="dropdown-item" href="/stats" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> Stats</a>
                 <div class="dropdown-header text-center">
                   <strong>Settings</strong>
@@ -74,4 +75,5 @@
 
   </header>
   {{ > signInModal}}
+  {{ > usernameModal}}
 </template>
