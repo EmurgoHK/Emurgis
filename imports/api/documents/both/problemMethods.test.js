@@ -4,10 +4,26 @@ import { Problems } from "./problemCollection.js"
 import { callWithPromise } from '/imports/api/utilities'
 import './problemMethods.js'
 
+import { Notifications } from '/imports/api/notifications/both/notificationsCollection'
 
 Meteor.userId = () => 'test-user' // override the meteor userId, so we can test methods that require a user
 Meteor.users.findOne = () => ({ profile: { name: 'Test User'} }) // stub user data as well
 Meteor.user = () => ({ profile: { name: 'Test User'} })
+/*Meteor.users.find = () => ({
+  fetch: () => {
+    return [{
+      _id: 'test1',
+      profile: {
+        name: 'Test User'
+      }
+    }, {
+      _id: 'test2',
+      profile: {
+        name: 'Test User 2'
+      }
+    }]
+  }
+})*/
 
 describe('problem methods', () => {
     beforeEach(() => {
@@ -333,6 +349,29 @@ describe('problem methods', () => {
         })
 
         assert.equal(p.subscribers.indexOf(Meteor.userId()), -1)
+      })
+    })
+
+    it ('users are notified if it\'s a fyi problem', () => {
+      return callWithPromise('addProblem', {
+        summary: 'test summary',
+        fyiProblem: true,
+        dependencies: [],
+        invDependencies: []
+      }).then(data => {
+        assert.ok(data)
+
+        let problem = Problems.findOne({
+          _id: data
+        })
+
+        assert.ok(problem)
+
+        let notifications = Notifications.find({
+          href: `/${problem._id}`
+        }).fetch()
+
+        assert.ok(notifications.length === Meteor.users.find({}).fetch().length)
       })
     })
 
