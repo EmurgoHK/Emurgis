@@ -9,7 +9,7 @@
                 <li class="nav-item"><a href="/new" class="nav-link">
                     <i class="nav-icon icon-doc"></i> New problem</a>
                 </li>
-                
+
                 <li class="nav-item"><a href="/stats" class="nav-link">
                     <i class="nav-icon icon-chart"></i> Statistics</a>
                 </li>
@@ -34,14 +34,16 @@
                 {{/if}}
             </ul>
         </nav>
-        <div class="online-users" style="padding: 10px;font-size: 12px">
-            <h6>Online users</h6>
-            {{#each onlineUsers}}
-            <span class="online-item"><i class="fas fa-circle" style="color: green"></i> <a style="text-decoration: none !important;" href="/profile/{{_id}}">{{profile.name}}</a></span><br />
-            {{else}}
-            <span>No online users.</span>
-            {{/each}}
-        </div>
+        {{#if currentUser}}
+          <div class="online-users" style="padding: 10px;font-size: 12px">
+              <h6>Online users</h6>
+              {{#each onlineUsers}}
+              <span class="online-item"><i class="fas fa-circle" style="color: green"></i> <a style="text-decoration: none !important;" href="/profile/{{_id}}">{{profile.name}}</a></span><br />
+              {{else}}
+              <span>No online users.</span>
+              {{/each}}
+          </div>
+        {{/if}}
         <button class="sidebar-minimizer" type="button"></button>
     </div>
 </template>
