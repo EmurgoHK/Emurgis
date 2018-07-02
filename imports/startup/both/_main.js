@@ -19,3 +19,6 @@ import '/imports/api/stats/both/statsCollection.js'
 //notifications
 import '/imports/api/notifications/both/notificationsMethods.js'
 import '/imports/api/notifications/both/notificationsCollection.js'
+
+// user stats
+import '/imports/api/user/both/userStatsCollection.js'
