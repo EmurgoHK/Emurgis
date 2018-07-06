@@ -337,6 +337,36 @@ describe('problem methods', () => {
       })
     })
 
+    it ('users can +1 a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      return callWithPromise('problemApproval', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.notEqual(p.approvals.indexOf(Meteor.userId()), -1)
+      })
+    })
+
+    it ('users can -1 a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      return callWithPromise('problemApproval', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.equal(p.approvals.indexOf(Meteor.userId()), -1)
+      })
+    })
+
     it ('users can unsubscribe from a problem', () => {
       let problem = Problems.findOne({})
       assert.ok(problem)

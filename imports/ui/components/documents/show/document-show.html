@@ -69,6 +69,9 @@
           {{#if problem.fyiProblem}}
             Read and understood by {{#if fyi.firstFive}}{{{fyi.firstFive}}}{{else}}no one{{/if}} {{#if fyi.more.count}}and <span title="{{fyi.more.usernames}}">{{pluralize fyi.more.count "other"}}</span>{{/if}}
           {{/if}}
+          {{#if approval.firstFive}}
+            Has approval by {{{approval.firstFive}}} {{#if approval.more.count}}and <span title="{{approval.more.usernames}}">{{pluralize approval.more.count "other"}}</span>{{/if}}
+          {{/if}}
 
           </p>
           {{#unless rejected}}
@@ -151,6 +154,9 @@
             </p>
             {{#if SubsCacheReady}}
             <span class="problem-action-buttons float-right">
+              {{#unless isOwner problem}}
+              <a class="btn btn-sm btn-primary problemApproval" href="#" role="button">{{#if alreadyApproved}}-{{else}}+{{/if}}1</a>
+              {{/unless}}
               {{{claimButton problem}}}
               {{{watchButton problem}}}
               {{#if problem.claimed}}
