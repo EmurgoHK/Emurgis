@@ -4,7 +4,7 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage, problemApproval } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage, forceUnclaim, problemApproval } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
@@ -361,6 +361,27 @@ Template.documentShow.events({
       }
     })
   },
+    'click .forceUnclaim': function (event, templateInstance) {
+        event.preventDefault()
+
+        swal({
+            text: `Are you sure you want to forcefully remove the current claimer?`,
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+            showCancelButton: true
+        }).then(confirmed => {
+            if (confirmed) {
+                forceUnclaim.call({
+                    _id: templateInstance.getDocumentId()
+                }, (err, data) => {
+                    if (err) {
+                        notify(err.reason || err.message, 'error')
+                    }
+                })
+            }
+        })
+    },
   'click .remove-dep': function (event, templateInstance) {
     event.preventDefault()
 

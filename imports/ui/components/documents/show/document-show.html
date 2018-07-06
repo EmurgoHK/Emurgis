@@ -82,6 +82,7 @@
             {{else}}
             {{#if isModerator}}
             <button data-toggle="modal" data-target="#rejectModal" class="btn btn-sm btn-danger" role="button">Reject Problem</button>
+            {{#if problem.claimed}}<button class="btn btn-sm btn-danger forceUnclaim" role="button">Force unclaim</button>{{/if}}
             {{/if}}
             {{/if}}
           </div>
