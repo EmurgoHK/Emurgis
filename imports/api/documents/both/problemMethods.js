@@ -339,7 +339,7 @@ export const readFYIProblem = new ValidatedMethod({
         if (Meteor.userId()) {
             let problem = Problems.findOne({
                 _id: _id
-            })
+            }) || {}
 
             Problems.update({
                 _id: _id
@@ -353,6 +353,42 @@ export const readFYIProblem = new ValidatedMethod({
             })
 
             return _id;
+        } else {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+    }
+})
+
+export const problemApproval = new ValidatedMethod({
+    name: 'problemApproval',
+    validate: new SimpleSchema({
+        _id: {
+            type: RegEx,
+            optional: false
+        }
+    }).validator(),
+    run({ _id }) {
+        if (Meteor.userId()) {
+            let problem = Problems.findOne({
+                _id: _id
+            }) || {}
+
+            if (problem.createdBy !== Meteor.userId()) {
+                Problems.update({
+                    _id: _id
+                }, {
+                    $set: _.extend({
+                        lastActionTime: new Date().getTime()
+                    }, staleStatus(problem)),
+                    [!~(problem.approvals || []).indexOf(Meteor.userId()) ? '$addToSet' : '$pull']: {
+                        approvals: Meteor.userId()
+                    }
+                })
+            } else {
+                throw new Meteor.Error('Error.', 'You can\'t +1 your own problem.')
+            }
+
+            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
