@@ -4,12 +4,14 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage, problemApproval } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 import { sendNotification } from "/imports/api/notifications/both/notificationsMethods.js"
+
+import { hideHelpModal } from '/imports/api/user/both/userMethods'
 
 import { getImages } from '/imports/ui/components/uploader/imageUploader'
 import '/imports/ui/components/uploader/imageUploader'
@@ -148,6 +150,46 @@ Template.documentShow.helpers({
             }
         }
     },
+    alreadyApproved: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return ~(problem.approvals || []).indexOf(Meteor.userId())
+    },
+    approval: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        problem.approvals = problem.approvals || []
+
+        return {
+            firstFive: Meteor.users.find({
+                _id: {
+                    $in: problem.approvals
+                }
+            }, {
+                limit: 5,
+                sort: {
+                    'profile.name': -1
+                }
+            }).fetch().map(i => `<a href="#">${i.profile.name}</a>`).toString().replace(/,/ig, ', '),
+            more: {
+                count: problem.approvals.length > 5 ? problem.approvals.length - 5 : 0,
+                usernames: Meteor.users.find({
+                    _id: {
+                        $in: problem.approvals
+                    }
+                }, {
+                    skip: 5,
+                    sort: {
+                        'profile.name': -1
+                    }
+                }).fetch().map(i => i.profile.name).toString().replace(/,/ig, ', ')
+            }
+        }
+    },
     problem() {
         return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
     },
@@ -220,6 +262,9 @@ Template.documentShow.helpers({
                 <a id="rejectSolution" data-toggle="modal" data-target="#rejectSolutionModal" class="btn btn-sm btn-danger" role="button" href> reject this solution</a>
             `
         }
+    },
+    isOwner: problem => {
+        return problem.createdBy === Meteor.userId()
     },
     canDeleteDep: problem => {
         let user = Meteor.users.findOne({
@@ -392,12 +437,59 @@ Template.documentShow.events({
             })
         }
     },
+    'click .problemApproval': (event, templateInstance) => {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            let problem = Problems.findOne({
+                _id: Template.instance().getDocumentId()
+            }) || {}
+
+            if (!~(Meteor.users.findOne({ _id: Meteor.userId() }).hidden || []).indexOf('+1modal')) {
+                let username = ((Meteor.users.findOne({
+                    _id: problem.createdBy
+                }) || {}).profile || {}).name
+
+                swal({
+                    text: `This is to let you show ${username} that you agree this is a problem worth solving.`,
+                    showCancelButton: true,
+                    buttons: true
+                }).then(value => {
+                    if (value) {
+                        hideHelpModal.call({
+                            helpModalId: '+1modal'
+                        }, (err, data) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        })
+
+                        problemApproval.call({
+                            _id: templateInstance.getDocumentId()
+                        }, (error, response) => {
+                            if (error) { 
+                                notify(error.details, 'error')
+                            }
+                        })
+                    }
+                })
+            } else {
+                problemApproval.call({
+                    _id: templateInstance.getDocumentId()
+                }, (error, response) => {
+                    if (error) { 
+                        notify(error.details, 'error')
+                    }
+                })
+            }
+        }
+    },
     'click .readProblem': (event, templateInstance) => {
         if (Meteor.userId()) {
             readFYIProblem.call({
                 _id: templateInstance.getDocumentId()
             }, (error, response) => {
-                if(error) { console.log(error.details) }
+                if(error) { notify(error.details, 'error') }
             })
         }
     },
