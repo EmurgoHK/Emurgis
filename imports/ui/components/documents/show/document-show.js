@@ -26,6 +26,8 @@ import './reject-modal'
 
 import './reject-solution-modal.html'
 import './reject-solution-modal.js'
+import './reopen-problem-modal.html'
+import './reopen-problem-modal'
 import './rejected-solutions.html'
 import './rejected-solutions.js'
 
@@ -54,6 +56,16 @@ Template.documentShow.onRendered(function() {})
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    resolver: function() {
+        return ((Meteor.users.findOne({
+            _id: this.resolvedBy
+        }) || {}).profile || {}).name
+    },
+    reopener: function() {
+        return ((Meteor.users.findOne({
+            _id: this.reopener
+        }) || {}).profile || {}).name
+    },
     problems: (inverse) => {
         if (Template.instance()[inverse ? 'invFilter' : 'filter'].get()) {
             let dep = Dependencies.find({
@@ -236,8 +248,10 @@ Template.documentShow.helpers({
         }
     },
     statusButton(problem) {
-        if (problem.status === 'closed') {
+        if (problem.status === 'closed' && problem.createdBy === Meteor.userId()) {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
+        } else if (problem.status === 'closed') {
+            return '<a class="btn btn-sm btn-success" data-toggle="modal" data-target="#reopenProblemModal" role="button" href>Reopen</a>'
         }
     },
     resolvedByUser(problem) {

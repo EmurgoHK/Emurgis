@@ -704,6 +704,72 @@ export const updateStatus = new ValidatedMethod({
 });
 //end
 
+export const reopenProblem = new ValidatedMethod({
+    name: 'reopenProblem',
+    validate: new SimpleSchema({
+        problemId: {
+            type: String,
+            optional: false
+        },
+        reason: {
+            type: String,
+            optional: false
+        }
+    }).validator(),
+    run({ problemId, reason }) {
+        let problem = Problems.findOne({
+            _id: problemId
+        })
+
+        if (problem.createdBy === Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You can\'t reopen your own problem.')
+        }
+
+        if (problem.status !== 'closed') {
+            throw new Meteor.Error('Error.', 'You can\'t reopen a problem that\'s not closed.')
+        }
+
+        Problems.update({
+            _id: problemId 
+        }, {
+            $set: {
+                status: 'open',
+                resolved: false,
+                hasAcceptedSolution: false,
+                resolvedBy: '',
+                resolveSteps: '',
+                claimedBy: '',
+                claimed: false,
+                claimedFullname: '',
+                claimedDateTime: '',
+                createdBy: Meteor.userId(), //take ownership
+                lastActionTime: new Date().getTime()
+            },
+            $push: {
+                previousSolutions: {
+                    resolveSteps: problem.resolveSteps,
+                    resolvedBy: problem.resolvedBy,
+                    resolvedDateTime: problem.resolvedDateTime,
+                    reopener: Meteor.userId(),
+                    reason: reason,
+                    date: new Date().getTime()
+                }
+            }
+        })
+
+        Stats.upsert({
+            userId: problem.resolvedBy
+        }, {
+            $pull: {
+                completedProblems: problemId
+            }
+        })
+
+        sendToSubscribers(problemId, Meteor.userId(), `${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} reopened a problem you\'re watching.`)
+
+        return problemId
+    }
+})
 
 // allow problem owners to kick out claimer
 export const removeClaimer = new ValidatedMethod({
