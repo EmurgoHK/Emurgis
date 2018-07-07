@@ -105,6 +105,18 @@
       </div>
     </div>
     {{/if}}
+    {{#each problem.previousSolutions}}
+    <div class="card border-warning">
+      <div class="card-body">
+        <h5 class="card-subtitle">Previously accepted solution</h5>
+        <hr>
+
+        <span class="pre">{{resolveSteps}}</span><br>
+        <small><a href="{{pathFor 'profile' userId=claimedBy }}"><strong>{{resolver}}</strong></a> | {{showTimeAgoTimestamp resolvedDateTime}} <br /></small>
+        <br /><span>Reopened by {{reopener}} because: <i>{{reason}}</i></span>
+      </div>
+    </div>
+    {{/each}}
     {{#if rejected}}
     <div class="document-show my-2">
         <div class="card">
@@ -205,5 +217,6 @@
     {{> resolvedModal }}
     {{> rejectModal }}
     {{> rejectSolutionModal }}
+    {{> reopenProblemModal }}
   </div>
 </template>

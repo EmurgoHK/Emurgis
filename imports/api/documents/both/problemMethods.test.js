@@ -183,6 +183,44 @@ describe('problem methods', () => {
 
     })
 
+    it('can reopen a problem and take ownership', () => {
+        let problem = Problems.findOne({
+            status: 'closed'
+        })
+        assert.ok(problem)
+
+        Problems.update({
+            _id: problem._id
+        }, {
+            $set: {
+                createdBy: 'someone-else'
+            }
+        })
+
+        return callWithPromise('reopenProblem', {
+            problemId: problem._id,
+            reason: 'I don\'t know.'
+        }).then(problemId => {
+            let problem = Problems.findOne({
+                _id: problemId
+            })
+
+            assert.ok(problem)
+
+            assert.equal(problem.status, 'open')
+            assert.equal(problem.resolved, false)
+            assert.equal(problem.hasAcceptedSolution, false)
+            assert.equal(problem.resolvedBy, '')
+            assert.equal(problem.resolveSteps, '')
+            assert.equal(problem.claimedBy, '')
+            assert.equal(problem.claimed, false)
+            assert.equal(problem.claimedFullname, '')
+            assert.equal(problem.claimedDateTime, '')
+            assert.equal(problem.createdBy, Meteor.userId())
+            assert.ok((problem.previousSolutions || []).length > 0)
+        })
+    })
+
     it('can claim the problem if available', () => {
         let problem = Problems.findOne({})
         assert.ok(problem)
