@@ -54,9 +54,9 @@ export const postComment = new ValidatedMethod({
 
                 // send a notification to non subs who are mentioned in the comment
                 mentions.forEach(user => {
-                  if (!subs.includes(user)) {
-                    sendNotification(user, `${getName} mentioned you in a comment on a problem.`, '', `/${problemId}`)
-                  }
+                  //if (!subs.includes(user)) {
+                    sendNotification(user, `${getName} mentioned you in a comment: ${comment.substr(0, 100) + (comment.length > 100 ? '&hellip;' : '')}`, '', `/${problemId}`, 'mention') // save this special notification for everyone
+                  //}
                 })
 
                 addToSubscribers(problemId, this.userId)

@@ -13,6 +13,7 @@ Template.header.onCreated(function() {
 
 		if (Meteor.userId()) {
 			SubsCache.subscribe('notifications')
+			SubsCache.subscribe('mentions')
         }
 
         let searchFilter = Template.instance().searchFilter.get();
@@ -95,7 +96,19 @@ Template.header.helpers({
 	searchVal: () => FlowRouter.current().queryParams.query || '',
 	notificationsCount: () => Notifications.find({
     	userId: Meteor.userId(),
-    	read: false
+    	read: false,
+    	$or: [{
+            type: 'notification'
+        }, {
+            type: {
+                $exists: false
+            }
+        }]
+    }).count(),
+    mentionsCount: () => Notifications.find({
+    	userId: Meteor.userId(),
+    	read: false,
+    	type: 'mention'
     }).count(),
     resolvedProblemsCount: () => Problems.find({
         createdBy: Meteor.userId(),

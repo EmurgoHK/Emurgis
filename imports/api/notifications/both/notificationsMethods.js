@@ -4,12 +4,14 @@ import SimpleSchema from 'simpl-schema'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
 
 import { Notifications } from './notificationsCollection.js'
+import { Problems } from '/imports/api/documents/both/problemCollection'
 
-export const sendNotification = (userId, message, from, href) => {
+export const sendNotification = (userId, message, from, href, type) => {
     Notifications.insert({
         userId: userId,
         from: from || 'System',
         href: href || '',
+        type: type || 'notification',
         message: message,
         createdAt: new Date().getTime(),
         read: false
@@ -48,18 +50,29 @@ export const markAllAsRead = new ValidatedMethod({
     	userId: {
     		type: String,
     		optional: false
+    	},
+    	type: {
+    		type: String,
+    		optional: true
     	}
     }).validator({
     	clean: true
     }),
-    run({ userId }) {
+    run({ userId, type }) {
         if (!Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
 
         return Notifications.update({
         	userId: userId,
-          read: false
+          	read: false,
+          	$or: [{
+          		type: type || 'notification'
+          	}, {
+          		type: {
+          			$exists: false
+          		}
+          	}]
         }, {
         	$set: {
         		read: true,
@@ -81,13 +94,34 @@ if (Meteor.isDevelopment) {
 			        href: '',
 			        message: 'Test notification',
 			        createdAt: new Date().getTime(),
-			        read: false
+			        read: false,
+			        type: 'notification'
 			    })
             }
         },
         removeTestNotifications: () => {
             Notifications.remove({
                 message: 'Test notification'
+            })
+        },
+        generateTestMentions: () => {
+            for (let i = 0; i < 10; i++) {
+                Notifications.insert({
+			        userId: Meteor.userId(),
+			        from: 'System',
+			        href: `/${(Problems.findOne({
+			        	testContext: 'mentions'
+			        }) || {})._id}`,
+			        message: 'Test mention for you',
+			        createdAt: new Date().getTime(),
+			        read: false,
+			        type: 'mention'
+			    })
+            }
+        },
+        removeTestNotifications: () => {
+            Notifications.remove({
+                message: 'Test mention for you'
             })
         }
     })
