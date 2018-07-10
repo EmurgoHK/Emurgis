@@ -8,6 +8,12 @@ import * as helpers from "/imports/modules/helpers.js"
 
 import { isModerator } from '/imports/api/user/both/userMethods'
 
+// converts array to a comma seperated sentence, 
+// replaces comma with `and` before the last element
+Template.registerHelper("to_sentence", (arr) => {
+  return helpers.to_sentence(arr)
+})
+
 // Cheap pluralization
 Template.registerHelper("pluralize", (count, word) => {
   return helpers.pluralize(count, word)

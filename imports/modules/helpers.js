@@ -1,4 +1,5 @@
 import moment from "moment"
+import Pluralize from 'pluralize'
 
 // ***************************************************************
 // Helpers
@@ -15,7 +16,8 @@ export const truncate = (word) => {
 
 // Cheap pluralization
 export const pluralize = (count, word) => {
-  return count === 1 ? "1 " + word : count + " " + word + "s"
+  // return count === 1 ? "1 " + word : count + " " + word + "s"
+  return Pluralize(word, count)
 }
 
 // Outputs e.g. 12 days ago or 2 hours ago
@@ -66,4 +68,12 @@ export const math = () => {
       return isNaN(a - b) ? 0 : a - b
     },
   }
+}
+
+// converts array to a comma seperated sentence, 
+// replaces comma with `and` before the last element
+export const to_sentence = (arr) => {
+  return arr.reduce((prev, curr, i) => { 
+    return prev + curr + ( (i===arr.length-2) ? ' and ' : ', ' )
+  }, '').slice(0, -2);
 }
