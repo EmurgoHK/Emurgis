@@ -1,5 +1,5 @@
 <template name="documentComments">
-    <div class="document-show my-2">
+    <div class="document-comments my-2">
         <div class="card">
             <div class="card-body">
                 {{#if isCommentOwner comment}}
@@ -29,6 +29,15 @@
                    {{#each comment.images}}
                         <img src="{{this}}" height="300" />
                    {{/each}}
+               </div>
+               <div>
+                    <span class="like-comment {{#if isLiked comment}} liked {{/if}}" data-comment-id="{{comment._id}}">
+                       <i class="fas fa-thumbs-up"></i>
+                    </span> 
+                    &nbsp;
+                    <a href class="like-count" data-comment-id="{{comment._id}}">
+                        liked by {{ likeCount comment }}
+                    </a>
                </div>
                {{/if}}
             </div>

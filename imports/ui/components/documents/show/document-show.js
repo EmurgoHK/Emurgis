@@ -24,6 +24,8 @@ import "./resolved-modal.js"
 import './reject-modal.html'
 import './reject-modal'
 
+import './comment-likes'
+
 import './reject-solution-modal.html'
 import './reject-solution-modal.js'
 import './reopen-problem-modal.html'

@@ -144,3 +144,36 @@ export const removeCommentImage = new ValidatedMethod({
         updateLastAction(c.problemId)
     }
 })
+
+export const likeComment = new ValidatedMethod({
+    name: 'likeComment',
+    validate: new SimpleSchema({
+        commentId: { 
+            type: String, 
+            optional: false 
+        },
+    }).validator(),
+    run({ commentId }) {
+        if (!Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+
+        let comment = Comments.findOne(
+            { _id : commentId, likes : Meteor.userId() } 
+        )
+
+        if (comment) {
+            Comments.update({ _id : commentId }, {
+                $pull : { likes : Meteor.userId() }
+            })
+
+            return commentId
+        }
+
+        Comments.update({ _id : commentId }, {
+            $addToSet : { likes : Meteor.userId() }
+        })
+
+        return commentId
+    }
+})

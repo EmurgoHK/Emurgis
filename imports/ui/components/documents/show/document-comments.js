@@ -3,11 +3,13 @@ import { FlowRouter } from "meteor/kadira:flow-router"
 import { notify } from "/imports/modules/notifier"
 
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
-import { deleteComment, editComment, removeCommentImage } from "/imports/api/documents/both/commentsMethods.js"
+import { deleteComment, editComment, removeCommentImage, likeComment } from "/imports/api/documents/both/commentsMethods.js"
 
 import swal from 'sweetalert'
+import pluralize from 'pluralize'
 
 import "./document-comments.html"
+import { Meteor } from "meteor/meteor";
 
 Template.documentComments.onCreated(function() {
   this.getDocumentId = () => FlowRouter.getParam("documentId")
@@ -26,10 +28,79 @@ Template.documentComments.helpers({
   isCommentOwner (comment) {
     return (comment.createdBy === Meteor.userId())
   },
+  isLiked (comment) {
+    if (comment.likes && comment.likes.includes(Meteor.userId())) {
+      return true
+    }
+  },
+  likeCount (comment) {
+    let count = 0
+
+    if (comment.likes) 
+      count = comment.likes.length
+      
+    return pluralize('person', count, true)
+  },
+  commentLikes (comment) {
+    if (comment.likes) { 
+      let users = comment.likes.map((userId, _idx) => {
+        return Meteor.users.findOne({ _id : userId }).profile.name
+      }) 
+
+      console.log(typeof(users))
+      return users
+    }
+
+    return []
+  },
   editMode: () => Template.instance().editMode.get()
 })
 
 Template.documentComments.events({
+  'click .like-count': (event) => {
+    event.preventDefault()
+
+    let commentId = $(event.currentTarget).data('comment-id');
+    let comment = Comments.findOne({ _id : commentId });
+    let modalBody = $('#commentLikes').find('.modal-body')
+
+    // clear body text and set likes count to 0
+    modalBody.html(' ')
+    $('.likes-count').html(0)
+
+    if (comment.likes) {
+      // if comment has likes we update likes count text
+      // and attach an unordered html list to modal body
+      $('.likes-count').html(comment.likes.length)
+      modalBody.html('<ul class="list-unstyled"></ul>');
+      
+      for (let i = 0; i < comment.likes.length; i++) {
+        // loop through likes and find user by id
+        let user = Meteor.users.findOne({ _id : comment.likes[i] })
+
+        // append li element to list with the user's name
+        modalBody.find('ul.list-unstyled').append('<li>' + user.profile.name + '</li>')
+      }
+    }
+
+    // show modal
+    $('#commentLikes').modal('show')
+  },
+  'click .like-comment': (event) => {
+    event.preventDefault();
+    let commentId = $(event.currentTarget).data('comment-id');
+
+    likeComment.call({
+      commentId: commentId
+    }, (err, _data) => {
+      if (err) {
+        console.log(err)
+        return
+      }
+
+      console.log("this one has been liked")
+    })
+  },
   'click .edit-mode': (event, templateInstance) => {
     event.preventDefault()
 
