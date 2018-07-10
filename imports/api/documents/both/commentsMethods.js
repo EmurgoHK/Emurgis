@@ -50,8 +50,6 @@ export const postComment = new ValidatedMethod({
 
                 sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
 
-                let subs = sendToSubscribers(problemId, this.userId, `${getName} commented on a problem you\'re watching: ${comment}.`) // including a comment here looks kinda ugly, but it's more informative
-
                 // send a notification to non subs who are mentioned in the comment
                 mentions.forEach(user => {
                   //if (!subs.includes(user)) {
@@ -148,9 +146,9 @@ export const removeCommentImage = new ValidatedMethod({
 export const likeComment = new ValidatedMethod({
     name: 'likeComment',
     validate: new SimpleSchema({
-        commentId: { 
-            type: String, 
-            optional: false 
+        commentId: {
+            type: String,
+            optional: false
         },
     }).validator(),
     run({ commentId }) {
@@ -159,7 +157,7 @@ export const likeComment = new ValidatedMethod({
         }
 
         let comment = Comments.findOne(
-            { _id : commentId, likes : Meteor.userId() } 
+            { _id : commentId, likes : Meteor.userId() }
         )
 
         if (comment) {
