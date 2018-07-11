@@ -25,13 +25,13 @@ Template.registerHelper('md', content => {
 
 Template.registerHelper('statusText', status => {
     if (status && status === 'open') {
-        return '<span class="badge badge-success">Open</span>'
+        return '<span class="badge badge-success problem-status-text">Open</span>'
     } else if (status && status === 'closed') {
         return '<span class="badge badge-danger">Fixed/solved</span>'
     } else if (status && status === 'in progress') {
-        return '<span class="badge badge-secondary">In progress</span>'
+        return '<span class="badge badge-secondary problem-status-text">In progress</span>'
     } else if (status && status === 'ready for review') {
-        return '<span class="badge badge-primary">Ready for review</span>'
+        return '<span class="badge badge-primary problem-status-text">Ready for review</span>'
     } else if (status && status === 'rejected') {
         return '<span class="badge badge-danger">Rejected</span>'
     } else if (status && status === 'stale') {

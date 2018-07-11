@@ -53,7 +53,9 @@ Template.documentShow.onCreated(function() {
   this.notifiyMentions = new ReactiveVar([]);
 })
 
-Template.documentShow.onRendered(function() {})
+Template.documentShow.onRendered(function() {
+  $("body").tooltip({ selector: '[data-toggle="tooltip"]' });
+})
 
 Template.documentShow.onDestroyed(function() {})
 
@@ -241,7 +243,12 @@ Template.documentShow.helpers({
     },
     markAsResolved(problem) {
         if (problem.status !== 'ready for review' && problem.status !== 'closed') {
-            return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
+            let unResolvedProblem = $('.problem-status-text');
+            if (unResolvedProblem.length > 1) {
+              return '<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="In order to mark this problem as resolved all the dependencies must be resolved"><button class="btn btn-sm btn-success" style="pointer-events: none;" type="button" disabled>I have solved this problem</button></span>'
+            } else {
+              return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
+            }
         }
     },
     unsolve(problem) {
@@ -504,7 +511,7 @@ Template.documentShow.events({
                         problemApproval.call({
                             _id: templateInstance.getDocumentId()
                         }, (error, response) => {
-                            if (error) { 
+                            if (error) {
                                 notify(error.details, 'error')
                             }
                         })
@@ -514,7 +521,7 @@ Template.documentShow.events({
                 problemApproval.call({
                     _id: templateInstance.getDocumentId()
                 }, (error, response) => {
-                    if (error) { 
+                    if (error) {
                         notify(error.details, 'error')
                     }
                 })
