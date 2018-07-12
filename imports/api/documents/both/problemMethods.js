@@ -128,6 +128,18 @@ export const addProblem = new ValidatedMethod({
       }
     })
 
+    if (fyiProblem) {
+        let user = Meteor.users.findOne({
+            _id: Meteor.userId()
+        }) || {}
+
+        Meteor.users.find({}).fetch().forEach(i => {
+            if (i._id !== Meteor.userId()) { // don't notify the user that has added the problem
+                sendNotification(i._id, `${(user.profile || {}).name} has added a new FYI. Check it out.`, 'System', `/${pId}`)
+            }
+        })
+    }
+
 		return pId
   }
 });
@@ -262,6 +274,56 @@ export const unclaimProblem = new ValidatedMethod({
     }
 });
 
+export const forceUnclaim = new ValidatedMethod({
+    name: 'forceUnclaim',
+    validate: new SimpleSchema({
+        _id: { type: RegEx, optional: false },
+    }).validator(),
+    run({ _id }) {
+        if (Meteor.userId()) {
+            let user = Meteor.users.findOne({
+                _id: Meteor.userId()
+            }) || {}
+
+            if (user.moderator) {
+                let problem = Problems.findOne({_id: _id})
+
+                Problems.update({
+                    _id: _id
+                }, {
+                    $set: {
+                        status: 'open',
+                        lastActionTime: new Date().getTime()
+                    },
+                    $unset: {
+                        estimate: true,
+                        claimedBy: true,
+                        claimed: true,
+                        claimedFullname: true
+                    }
+                })
+
+                Stats.upsert({
+                    userId: problem.claimedBy
+                }, {
+                    $addToSet: {
+                      unclaimedProblems: _id // save a separate list of unclaimed problems so we can see how many problems the user has claimed and then abandoned
+                    }
+                })
+
+                sendToSubscribers(_id, Meteor.userId(), `Moderator ${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} forcefully unclaimed a problem you\'re watching.`)
+                addToSubscribers(_id, Meteor.userId())
+
+                return _id
+            } else {
+                throw new Meteor.Error('Error.', 'You cannot forcefullu unclaim a problem if you\'re not a moderator')
+            }
+        } else {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+    }
+})
+
 //allow a user to claim a problem
 export const claimProblem = new ValidatedMethod({
     name: 'claimProblem',
@@ -327,7 +389,7 @@ export const readFYIProblem = new ValidatedMethod({
         if (Meteor.userId()) {
             let problem = Problems.findOne({
                 _id: _id
-            })
+            }) || {}
 
             Problems.update({
                 _id: _id
@@ -341,6 +403,42 @@ export const readFYIProblem = new ValidatedMethod({
             })
 
             return _id;
+        } else {
+            throw new Meteor.Error('Error.', 'You have to be logged in.')
+        }
+    }
+})
+
+export const problemApproval = new ValidatedMethod({
+    name: 'problemApproval',
+    validate: new SimpleSchema({
+        _id: {
+            type: RegEx,
+            optional: false
+        }
+    }).validator(),
+    run({ _id }) {
+        if (Meteor.userId()) {
+            let problem = Problems.findOne({
+                _id: _id
+            }) || {}
+
+            if (problem.createdBy !== Meteor.userId()) {
+                Problems.update({
+                    _id: _id
+                }, {
+                    $set: _.extend({
+                        lastActionTime: new Date().getTime()
+                    }, staleStatus(problem)),
+                    [!~(problem.approvals || []).indexOf(Meteor.userId()) ? '$addToSet' : '$pull']: {
+                        approvals: Meteor.userId()
+                    }
+                })
+            } else {
+                throw new Meteor.Error('Error.', 'You can\'t +1 your own problem.')
+            }
+
+            return _id
         } else {
             throw new Meteor.Error('Error.', 'You have to be logged in.')
         }
@@ -606,6 +704,72 @@ export const updateStatus = new ValidatedMethod({
 });
 //end
 
+export const reopenProblem = new ValidatedMethod({
+    name: 'reopenProblem',
+    validate: new SimpleSchema({
+        problemId: {
+            type: String,
+            optional: false
+        },
+        reason: {
+            type: String,
+            optional: false
+        }
+    }).validator(),
+    run({ problemId, reason }) {
+        let problem = Problems.findOne({
+            _id: problemId
+        })
+
+        if (problem.createdBy === Meteor.userId()) {
+            throw new Meteor.Error('Error.', 'You can\'t reopen your own problem.')
+        }
+
+        if (problem.status !== 'closed') {
+            throw new Meteor.Error('Error.', 'You can\'t reopen a problem that\'s not closed.')
+        }
+
+        Problems.update({
+            _id: problemId 
+        }, {
+            $set: {
+                status: 'open',
+                resolved: false,
+                hasAcceptedSolution: false,
+                resolvedBy: '',
+                resolveSteps: '',
+                claimedBy: '',
+                claimed: false,
+                claimedFullname: '',
+                claimedDateTime: '',
+                createdBy: Meteor.userId(), //take ownership
+                lastActionTime: new Date().getTime()
+            },
+            $push: {
+                previousSolutions: {
+                    resolveSteps: problem.resolveSteps,
+                    resolvedBy: problem.resolvedBy,
+                    resolvedDateTime: problem.resolvedDateTime,
+                    reopener: Meteor.userId(),
+                    reason: reason,
+                    date: new Date().getTime()
+                }
+            }
+        })
+
+        Stats.upsert({
+            userId: problem.resolvedBy
+        }, {
+            $pull: {
+                completedProblems: problemId
+            }
+        })
+
+        sendToSubscribers(problemId, Meteor.userId(), `${(Meteor.users.findOne(Meteor.userId()).profile || {}).name} reopened a problem you\'re watching.`)
+
+        return problemId
+    }
+})
 
 // allow problem owners to kick out claimer
 export const removeClaimer = new ValidatedMethod({

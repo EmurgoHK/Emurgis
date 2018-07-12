@@ -3,6 +3,7 @@ import { BlazeLayout } from 'meteor/kadira:blaze-layout'
 import { appRoutes } from './group-config'
 
 import '/imports/ui/components/notifications/notifications'
+import '/imports/ui/components/mentions/mentions'
 
 appRoutes.route('/notifications', {
     action: () => {
@@ -13,4 +14,15 @@ appRoutes.route('/notifications', {
         })
     },
     name: 'notifications'
+})
+
+appRoutes.route('/mentions', {
+    action: () => {
+        BlazeLayout.render('layout', {
+          main: 'mentions',
+          footer: 'footer',
+          header: 'header'
+        })
+    },
+    name: 'mentions'
 })

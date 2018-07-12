@@ -69,6 +69,9 @@
           {{#if problem.fyiProblem}}
             Read and understood by {{#if fyi.firstFive}}{{{fyi.firstFive}}}{{else}}no one{{/if}} {{#if fyi.more.count}}and <span title="{{fyi.more.usernames}}">{{pluralize fyi.more.count "other"}}</span>{{/if}}
           {{/if}}
+          {{#if approval.firstFive}}
+            Has approval by {{{approval.firstFive}}} {{#if approval.more.count}}and <span title="{{approval.more.usernames}}">{{pluralize approval.more.count "other"}}</span>{{/if}}
+          {{/if}}
 
           </p>
           {{#unless rejected}}
@@ -79,6 +82,7 @@
             {{else}}
             {{#if isModerator}}
             <button data-toggle="modal" data-target="#rejectModal" class="btn btn-sm btn-danger" role="button">Reject Problem</button>
+            {{#if problem.claimed}}<button class="btn btn-sm btn-danger forceUnclaim" role="button">Force unclaim</button>{{/if}}
             {{/if}}
             {{/if}}
           </div>
@@ -101,6 +105,18 @@
       </div>
     </div>
     {{/if}}
+    {{#each problem.previousSolutions}}
+    <div class="card border-warning">
+      <div class="card-body">
+        <h5 class="card-subtitle">Previously accepted solution</h5>
+        <hr>
+
+        <span class="pre">{{resolveSteps}}</span><br>
+        <small><a href="{{pathFor 'profile' userId=claimedBy }}"><strong>{{resolver}}</strong></a> | {{showTimeAgoTimestamp resolvedDateTime}} <br /></small>
+        <br /><span>Reopened by {{reopener}} because: <i>{{reason}}</i></span>
+      </div>
+    </div>
+    {{/each}}
     {{#if rejected}}
     <div class="document-show my-2">
         <div class="card">
@@ -150,6 +166,9 @@
             </p>
             {{#if SubsCacheReady}}
             <span class="problem-action-buttons float-right">
+              {{#unless isOwner problem}}
+              <a class="btn btn-sm btn-primary problemApproval" href="#" role="button">{{#if alreadyApproved}}-{{else}}+{{/if}}1</a>
+              {{/unless}}
               {{{claimButton problem}}}
               {{{watchButton problem}}}
               {{#if problem.claimed}}
@@ -198,5 +217,7 @@
     {{> resolvedModal }}
     {{> rejectModal }}
     {{> rejectSolutionModal }}
+    {{> reopenProblemModal }}
+    {{> commentLikesModal }}
   </div>
 </template>

@@ -1,0 +1,9 @@
+.document-comments {
+    .like-comment {
+        cursor: pointer;
+
+        &.liked {
+            color: #20a8d8;
+        }
+    }
+}

@@ -14,7 +14,14 @@ Template.notifications.onCreated(function() {
 
         let notifications = Notifications.find({
             userId: Meteor.userId(),
-            read: false
+            read: false,
+            $or: [{
+                type: 'notification'
+            }, {
+                type: {
+                    $exists: false
+                }
+            }]
         })
 
         if (notifications.count()) {
@@ -47,7 +54,14 @@ Template.notifications.events({
 
 Template.notifications.helpers({
     notifications: () => Notifications.find({
-        userId: Meteor.userId()
+        userId: Meteor.userId(),
+        $or: [{
+            type: 'notification'
+        }, {
+            type: {
+                $exists: false
+            }
+        }]
     }, {
         sort: {
             createdAt: -1

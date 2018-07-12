@@ -4,12 +4,14 @@ import { notify } from "/imports/modules/notifier"
 import swal from 'sweetalert'
 
 import { Problems } from "/imports/api/documents/both/problemCollection.js"
-import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage } from "/imports/api/documents/both/problemMethods.js"
+import { markAsUnSolved, markAsResolved, updateStatus, claimProblem, unclaimProblem, deleteProblem, watchProblem, unwatchProblem, readFYIProblem, removeClaimer, removeProblemImage, forceUnclaim, problemApproval } from "/imports/api/documents/both/problemMethods.js"
 import { Dependencies } from "/imports/api/documents/both/dependenciesCollection.js"
 import { deleteDependency, addDependency } from '/imports/api/documents/both/dependenciesMethods'
 import { Comments } from "/imports/api/documents/both/commentsCollection.js"
 import { postComment } from "/imports/api/documents/both/commentsMethods.js"
 import { sendNotification } from "/imports/api/notifications/both/notificationsMethods.js"
+
+import { hideHelpModal } from '/imports/api/user/both/userMethods'
 
 import { getImages } from '/imports/ui/components/uploader/imageUploader'
 import '/imports/ui/components/uploader/imageUploader'
@@ -22,8 +24,12 @@ import "./resolved-modal.js"
 import './reject-modal.html'
 import './reject-modal'
 
+import './comment-likes'
+
 import './reject-solution-modal.html'
 import './reject-solution-modal.js'
+import './reopen-problem-modal.html'
+import './reopen-problem-modal'
 import './rejected-solutions.html'
 import './rejected-solutions.js'
 
@@ -47,11 +53,23 @@ Template.documentShow.onCreated(function() {
   this.notifiyMentions = new ReactiveVar([]);
 })
 
-Template.documentShow.onRendered(function() {})
+Template.documentShow.onRendered(function() {
+  $("body").tooltip({ selector: '[data-toggle="tooltip"]' });
+})
 
 Template.documentShow.onDestroyed(function() {})
 
 Template.documentShow.helpers({
+    resolver: function() {
+        return ((Meteor.users.findOne({
+            _id: this.resolvedBy
+        }) || {}).profile || {}).name
+    },
+    reopener: function() {
+        return ((Meteor.users.findOne({
+            _id: this.reopener
+        }) || {}).profile || {}).name
+    },
     problems: (inverse) => {
         if (Template.instance()[inverse ? 'invFilter' : 'filter'].get()) {
             let dep = Dependencies.find({
@@ -148,6 +166,46 @@ Template.documentShow.helpers({
             }
         }
     },
+    alreadyApproved: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        return ~(problem.approvals || []).indexOf(Meteor.userId())
+    },
+    approval: () => {
+        let problem = Problems.findOne({
+            _id: Template.instance().getDocumentId()
+        }) || {}
+
+        problem.approvals = problem.approvals || []
+
+        return {
+            firstFive: Meteor.users.find({
+                _id: {
+                    $in: problem.approvals
+                }
+            }, {
+                limit: 5,
+                sort: {
+                    'profile.name': -1
+                }
+            }).fetch().map(i => `<a href="#">${i.profile.name}</a>`).toString().replace(/,/ig, ', '),
+            more: {
+                count: problem.approvals.length > 5 ? problem.approvals.length - 5 : 0,
+                usernames: Meteor.users.find({
+                    _id: {
+                        $in: problem.approvals
+                    }
+                }, {
+                    skip: 5,
+                    sort: {
+                        'profile.name': -1
+                    }
+                }).fetch().map(i => i.profile.name).toString().replace(/,/ig, ', ')
+            }
+        }
+    },
     problem() {
         return Problems.findOne({ _id: Template.instance().getDocumentId() }) || {}
     },
@@ -185,7 +243,12 @@ Template.documentShow.helpers({
     },
     markAsResolved(problem) {
         if (problem.status !== 'ready for review' && problem.status !== 'closed') {
-            return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
+            let unResolvedProblem = $('.problem-status-text');
+            if (unResolvedProblem.length > 1) {
+              return '<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="In order to mark this problem as resolved all the dependencies must be resolved"><button class="btn btn-sm btn-success" style="pointer-events: none;" type="button" disabled>I have solved this problem</button></span>'
+            } else {
+              return '<button data-toggle="modal" data-target="#markAsSolvedModal" class="btn btn-sm btn-success" role="button"> I have solved this problem </button>'
+            }
         }
     },
     unsolve(problem) {
@@ -194,8 +257,10 @@ Template.documentShow.helpers({
         }
     },
     statusButton(problem) {
-        if (problem.status === 'closed') {
+        if (problem.status === 'closed' && problem.createdBy === Meteor.userId()) {
           return '<a id="openProblem" class="btn btn-sm btn-success toggleProblem" role="button" href> Open </a>'
+        } else if (problem.status === 'closed') {
+            return '<a class="btn btn-sm btn-success" data-toggle="modal" data-target="#reopenProblemModal" role="button" href>Reopen</a>'
         }
     },
     resolvedByUser(problem) {
@@ -220,6 +285,9 @@ Template.documentShow.helpers({
                 <a id="rejectSolution" data-toggle="modal" data-target="#rejectSolutionModal" class="btn btn-sm btn-danger" role="button" href> reject this solution</a>
             `
         }
+    },
+    isOwner: problem => {
+        return problem.createdBy === Meteor.userId()
     },
     canDeleteDep: problem => {
         let user = Meteor.users.findOne({
@@ -316,6 +384,27 @@ Template.documentShow.events({
       }
     })
   },
+    'click .forceUnclaim': function (event, templateInstance) {
+        event.preventDefault()
+
+        swal({
+            text: `Are you sure you want to forcefully remove the current claimer?`,
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+            showCancelButton: true
+        }).then(confirmed => {
+            if (confirmed) {
+                forceUnclaim.call({
+                    _id: templateInstance.getDocumentId()
+                }, (err, data) => {
+                    if (err) {
+                        notify(err.reason || err.message, 'error')
+                    }
+                })
+            }
+        })
+    },
   'click .remove-dep': function (event, templateInstance) {
     event.preventDefault()
 
@@ -392,12 +481,59 @@ Template.documentShow.events({
             })
         }
     },
+    'click .problemApproval': (event, templateInstance) => {
+        event.preventDefault()
+
+        if (Meteor.userId()) {
+            let problem = Problems.findOne({
+                _id: Template.instance().getDocumentId()
+            }) || {}
+
+            if (!~(Meteor.users.findOne({ _id: Meteor.userId() }).hidden || []).indexOf('+1modal')) {
+                let username = ((Meteor.users.findOne({
+                    _id: problem.createdBy
+                }) || {}).profile || {}).name
+
+                swal({
+                    text: `This is to let you show ${username} that you agree this is a problem worth solving.`,
+                    showCancelButton: true,
+                    buttons: true
+                }).then(value => {
+                    if (value) {
+                        hideHelpModal.call({
+                            helpModalId: '+1modal'
+                        }, (err, data) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                        })
+
+                        problemApproval.call({
+                            _id: templateInstance.getDocumentId()
+                        }, (error, response) => {
+                            if (error) {
+                                notify(error.details, 'error')
+                            }
+                        })
+                    }
+                })
+            } else {
+                problemApproval.call({
+                    _id: templateInstance.getDocumentId()
+                }, (error, response) => {
+                    if (error) {
+                        notify(error.details, 'error')
+                    }
+                })
+            }
+        }
+    },
     'click .readProblem': (event, templateInstance) => {
         if (Meteor.userId()) {
             readFYIProblem.call({
                 _id: templateInstance.getDocumentId()
             }, (error, response) => {
-                if(error) { console.log(error.details) }
+                if(error) { notify(error.details, 'error') }
             })
         }
     },

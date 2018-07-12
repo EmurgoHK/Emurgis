@@ -29,7 +29,9 @@ describe('Problem page', function () {
     })
 
     it('should render properly', () => {
-        browser.execute(() => $('.documents-index-item a')[0].click()) // go to the first one
+        browser.execute(() => FlowRouter.go(`/${testingProblems.findOne({
+            testContext: 'problem'
+        })._id}`)) // go to the first one
 
         browser.pause(5000)
 
@@ -64,18 +66,39 @@ describe('Problem page', function () {
         assert(browser.execute(() => $('#comment-images').length).value === c - 1, true)
     })
 
+    it('user can +1 a problem', () => {
+        if (browser.isExisting('.problemApproval') && browser.isVisible('.problemApproval')) {
+            let old = browser.execute(() => $('.problemApproval').text()).value
+
+            browser.click('.problemApproval')
+
+            browser.pause(5000)
+
+            if (browser.isExisting('.swal-button--confirm') && browser.isVisible('.swal-button--confirm')) {
+                browser.click('.swal-button--confirm')
+                browser.pause(4000)
+            }
+
+            if (old === '+1') {
+                assert(browser.execute(() => $('.problemApproval').text()).value === '-1', true)
+            } else {
+                assert(browser.execute(() => $('.problemApproval').text()).value === '+1', true)
+            }
+        }
+    })
+
     it('user can claim a problem', () => {
         let isClaimed = browser.execute(() => $('.unclaimProblem').length === 1).value
 
         if (!isClaimed) {
             browser.click('.claimProblem')
-            browser.pause(3000)
+            browser.pause(5000)
             browser.click('.swal-button--confirm')
-            browser.pause(3000)
+            browser.pause(5000)
             browser.setValue('.swal-content__input', 60)
-            browser.pause(2000)
+            browser.pause(4000)
             browser.click('.swal-button--confirm')
-            browser.pause(3000)
+            browser.pause(5000)
 
             assert(browser.execute(() => $('.unclaimProblem').length === 1).value, true)
         }
@@ -86,9 +109,9 @@ describe('Problem page', function () {
 
         if (!isntClaimed) {
             browser.click('.claimProblem')
-            browser.pause(3000)
+            browser.pause(5000)
             browser.click('.swal-button--confirm')
-            browser.pause(3000)
+            browser.pause(5000)
 
             assert(browser.execute(() => $('.unclaimProblem').length === 1).value, true)
         }
@@ -101,7 +124,7 @@ describe('Problem page', function () {
             browser.click('.claimProblem')
             browser.pause(3000)
             browser.click('.swal-button--confirm')
-            browser.pause(3000)
+            browser.pause(4000)
 
             assert(browser.execute(() => $('.unclaimProblem').length === 1).value, true)
         }

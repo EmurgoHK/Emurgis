@@ -4,10 +4,26 @@ import { Problems } from "./problemCollection.js"
 import { callWithPromise } from '/imports/api/utilities'
 import './problemMethods.js'
 
+import { Notifications } from '/imports/api/notifications/both/notificationsCollection'
 
 Meteor.userId = () => 'test-user' // override the meteor userId, so we can test methods that require a user
 Meteor.users.findOne = () => ({ profile: { name: 'Test User'} }) // stub user data as well
 Meteor.user = () => ({ profile: { name: 'Test User'} })
+/*Meteor.users.find = () => ({
+  fetch: () => {
+    return [{
+      _id: 'test1',
+      profile: {
+        name: 'Test User'
+      }
+    }, {
+      _id: 'test2',
+      profile: {
+        name: 'Test User 2'
+      }
+    }]
+  }
+})*/
 
 describe('problem methods', () => {
     beforeEach(() => {
@@ -167,6 +183,44 @@ describe('problem methods', () => {
 
     })
 
+    it('can reopen a problem and take ownership', () => {
+        let problem = Problems.findOne({
+            status: 'closed'
+        })
+        assert.ok(problem)
+
+        Problems.update({
+            _id: problem._id
+        }, {
+            $set: {
+                createdBy: 'someone-else'
+            }
+        })
+
+        return callWithPromise('reopenProblem', {
+            problemId: problem._id,
+            reason: 'I don\'t know.'
+        }).then(problemId => {
+            let problem = Problems.findOne({
+                _id: problemId
+            })
+
+            assert.ok(problem)
+
+            assert.equal(problem.status, 'open')
+            assert.equal(problem.resolved, false)
+            assert.equal(problem.hasAcceptedSolution, false)
+            assert.equal(problem.resolvedBy, '')
+            assert.equal(problem.resolveSteps, '')
+            assert.equal(problem.claimedBy, '')
+            assert.equal(problem.claimed, false)
+            assert.equal(problem.claimedFullname, '')
+            assert.equal(problem.claimedDateTime, '')
+            assert.equal(problem.createdBy, Meteor.userId())
+            assert.ok((problem.previousSolutions || []).length > 0)
+        })
+    })
+
     it('can claim the problem if available', () => {
         let problem = Problems.findOne({})
         assert.ok(problem)
@@ -321,6 +375,36 @@ describe('problem methods', () => {
       })
     })
 
+    it ('users can +1 a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      return callWithPromise('problemApproval', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.notEqual(p.approvals.indexOf(Meteor.userId()), -1)
+      })
+    })
+
+    it ('users can -1 a problem', () => {
+      let problem = Problems.findOne({})
+      assert.ok(problem)
+
+      return callWithPromise('problemApproval', {
+        _id: problem._id
+      }).then(data => {
+        let p = Problems.findOne({
+          _id: problem._id
+        })
+
+        assert.equal(p.approvals.indexOf(Meteor.userId()), -1)
+      })
+    })
+
     it ('users can unsubscribe from a problem', () => {
       let problem = Problems.findOne({})
       assert.ok(problem)
@@ -333,6 +417,29 @@ describe('problem methods', () => {
         })
 
         assert.equal(p.subscribers.indexOf(Meteor.userId()), -1)
+      })
+    })
+
+    it ('users are notified if it\'s a fyi problem', () => {
+      return callWithPromise('addProblem', {
+        summary: 'test summary',
+        fyiProblem: true,
+        dependencies: [],
+        invDependencies: []
+      }).then(data => {
+        assert.ok(data)
+
+        let problem = Problems.findOne({
+          _id: data
+        })
+
+        assert.ok(problem)
+
+        let notifications = Notifications.find({
+          href: `/${problem._id}`
+        }).fetch()
+
+        assert.ok(notifications.length === Meteor.users.find({}).fetch().length)
       })
     })
 
