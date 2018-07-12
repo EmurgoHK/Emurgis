@@ -58,7 +58,7 @@
       <input type="text" class="form-control" id="dependency" value="" placeholder="Enter the name of the problem">
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
-    <ul class="list-group">
+    <ul class="list-group list-fix-scroll">
       {{#each problem in problems}}
         <li class="list-group-item dependency" id={{problem._id}}>{{problem.summary}}</li>
       {{/each}}
@@ -74,12 +74,12 @@
       <div class="input-group-prepend d-none d-sm-block">
         <div class="input-group-text">The following problems can't be completed until this problem is closed:</div>
       </div>
-            
+
       <input type="text" class="form-control" id="invDependency" value="" placeholder="Enter the name of the problem">
 
       <div id="summaryError" class="invalid-feedback"></div>
     </div>
-    <ul class="list-group">
+    <ul class="list-group list-fix-scroll">
       {{#each (problems true)}}
         <li class="list-group-item invDependency" id={{_id}}>{{summary}}</li>
       {{/each}}
