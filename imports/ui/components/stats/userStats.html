@@ -1,64 +1,93 @@
 <template name="userStats">
-  <div class="stats-index">
-    <div class="card">
-      <div class="card-header">
-        Completed problems chart
-      </div>
-      <div class="card-body">
-        <div class="chart-wrapper">
-          <canvas id="js-chart" style="height: 300px !important;"></canvas>
+    <div class="stats-index">
+        <div class="card">
+            <div class="card-header">
+                Completed problems chart
+            </div>
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="js-chart" style="height: 300px !important;"></canvas>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h1>Stats</h1>
+        <div class="card">
+            <div class="card-body">
+                <h3>Stats</h3>
+                {{#if SubsCacheReady}}
 
-        {{#if SubsCacheReady}}
-            <table class="table table-hover mt-3">
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Logged problems</th>
-                  <th>Rejected problems</th>
-                  <th>Claimed problems</th>
-                  <th>Abandoned problems</th>
-                  <th>Solved problems</th>
-                </tr>
-              </thead>
-              <tbody>
                 {{#with currentUser}}
-                <tr class="stats-item" style="background-color: #e4e5e6;"> <!-- feel free to change the color -->
-                  <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
-                  {{#with stats}}
-                  <td scope="row">{{nullify loggedProblems.length}}</td>
-                  <td>{{nullify rejectedProblems.length}}</td>
-                  <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
-                  <td>{{nullify unclaimedProblems.length}}</td>
-                  <td>{{nullify completedProblems.length}}</td>
-                  {{/with}}
-                </tr>
-                {{/with}} <!-- show the current user first -->
+                <div class="card d-block d-sm-none d-block d-sm-none">
+                    <div id="{{_id}}" class="card-body">
+                        <strong>{{profile.name}}</strong>
+                        <br />{{#with stats}} 
+                        Logged Problems: {{nullify loggedProblems.length}}
+                        <br /> Rejected Problems: {{nullify rejectedProblems.length}}
+                        <br /> Claimed Problems: {{math.sub claimedProblems.length unclaimedProblems.length}}
+                        <br /> Unclaimed Problems: {{nullify unclaimedProblems.length}}
+                        <br /> Completed Problems: {{nullify completedProblems.length}}
+                        <br /> {{/with}}
+                    </div>
+                </div>
+                {{/with}}
 
-                {{#each users}}
-                <tr class="stats-item">
-                  <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
-                  {{#with stats}}
-                  <td scope="row">{{nullify loggedProblems.length}}</td>
-                  <td>{{nullify rejectedProblems.length}}</td>
-                  <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
-                  <td>{{nullify unclaimedProblems.length}}</td>
-                  <td>{{nullify completedProblems.length}}</td>
-                  {{/with}}
-                </tr>
-                {{/each}}
-              </tbody>
-            </table>
-        {{else}}
-          {{> loader}}
-        {{/if}}
-      </div>
+                 {{#each users}}
+                <div class="card d-block d-sm-none d-block d-sm-none">
+                    <div id="{{_id}}" class="card-body">
+                        <strong>{{profile.name}}</strong>
+                        <br />{{#with stats}} 
+                        Logged Problems: {{nullify loggedProblems.length}}
+                        <br /> Rejected Problems: {{nullify rejectedProblems.length}}
+                        <br /> Claimed Problems: {{math.sub claimedProblems.length unclaimedProblems.length}}
+                        <br /> Unclaimed Problems: {{nullify unclaimedProblems.length}}
+                        <br /> Completed Problems: {{nullify completedProblems.length}}
+                        <br /> {{/with}}
+                    </div>
+                </div>
+
+                 {{/each}}
+                <!-- show the current user first -->
+                <table class="table-responsive table-hover mt-3 d-none d-sm-block">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Logged problems</th>
+                            <th>Rejected problems</th>
+                            <th>Claimed problems</th>
+                            <th>Abandoned problems</th>
+                            <th>Solved problems</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#with currentUser}}
+                        <tr class="stats-item" style="background-color: #e4e5e6;">
+                            <!-- feel free to change the color -->
+                            <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
+                            {{#with stats}}
+                            <td scope="row">{{nullify loggedProblems.length}}</td>
+                            <td>{{nullify rejectedProblems.length}}</td>
+                            <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
+                            <td>{{nullify unclaimedProblems.length}}</td>
+                            <td>{{nullify completedProblems.length}}</td>
+                            {{/with}}
+                        </tr>
+                        {{/with}}
+                        <!-- show the current user first -->
+                        {{#each users}}
+                        <tr class="stats-item">
+                            <td><a href="{{pathFor 'profile' userId=_id }}">{{profile.name}}</a></td>
+                            {{#with stats}}
+                            <td scope="row">{{nullify loggedProblems.length}}</td>
+                            <td>{{nullify rejectedProblems.length}}</td>
+                            <td>{{math.sub claimedProblems.length unclaimedProblems.length}}</td>
+                            <td>{{nullify unclaimedProblems.length}}</td>
+                            <td>{{nullify completedProblems.length}}</td>
+                            {{/with}}
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}} {{> loader}} {{/if}}
+            </div>
+        </div>
     </div>
-  </div>
-
 </template>
