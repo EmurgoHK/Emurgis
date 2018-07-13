@@ -29,8 +29,8 @@ describe('Stats page', function () {
     })
 
     it('renders the table properly', () => {
-        assert(browser.isExisting('.table'), true)
-        assert(browser.isVisible('.table'), true)
+        assert(browser.isExisting('.stats-index'), true)
+        assert(browser.isVisible('.stats-index'), true)
 
         assert(browser.execute(() => $('.stats-item').length >= 1).value, true)
     })
