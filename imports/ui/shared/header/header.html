@@ -9,7 +9,7 @@
       <div class="navbar-nav" id="navbarSupportedContent">
           <form class="form-inline">
             <div class="input-group">
-                <input class="form-control mr-sm-2" value="{{searchVal}}" type="search" id="searchFilterHeader" placeholder="Search for a problem" aria-label="Search" style="margin-right: 0 !important;">
+                <input class="form-control mr-sm-2" value="{{searchVal}}" type="search" id="searchFilterHeader" placeholder="Search..." aria-label="Search" style="margin-right: 0 !important;width:10em">
                 <div class="input-group-append">
                   <div class="input-group-text d-none d-sm-block">
                     <i class="nav-icon icon-magnifier"></i>
@@ -30,7 +30,7 @@
 {{/if}}
 </a>
 </li>
-<li class="nav-item">
+<li class="nav-item d-none d-xl-block">
     <a class="nav-link" href="/mentions" role="button">
 <i class="fas fa-comment-alt"></i>
 {{#if mentionsCount}}
