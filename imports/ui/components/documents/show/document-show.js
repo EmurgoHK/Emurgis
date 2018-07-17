@@ -306,6 +306,38 @@ Template.documentShow.helpers({
 })
 
 Template.documentShow.events({
+    'mouseup .card-body p, mouseup .card-body span': (event, templateInstance) => {
+        let selection = window.getSelection ? window.getSelection() : document.selection.createRange()
+
+        if (templateInstance.div) {
+            templateInstance.div.remove()
+        }
+        
+        if (selection.toString().trim() !== '') {
+            templateInstance.div = $('<div>').css({
+                position: 'absolute',
+                left: `${event.pageX}px`,
+                top: `${event.pageY}px`
+            }).append($('<a class="btn btn-sm btn-primary quoteText" href="#" role="button">Quote</a>')).appendTo(document.body)
+
+            $('.quoteText').on('click', event => {
+                event.preventDefault()
+
+                $('#comments').val(
+`${$('#comments').val()}
+> ${selection.toString()}
+
+`.replace(/^\s+/g, ''))
+                $('#comments').focus()
+                templateInstance.div.remove()
+            })
+        }
+    },
+    'mouseup': (event, templateInstance) => {
+        if (templateInstance.div) {
+            templateInstance.div.remove()
+        }
+    },
     'keyup #dependency' (event) {
         Template.instance().filter.set(event.target.value)
     },
