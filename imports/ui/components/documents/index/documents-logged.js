@@ -14,7 +14,7 @@ Template.documentsLogged.onCreated(function() {
 
         const rejectedOnly = (FlowRouter.current().route || {}).name === 'documentsRejected'
 
-        this.projectStatusTypes.set(rejectedOnly ? ['rejected'] : ['in progress', 'ready for review', 'open', 'rejected'])
+        this.projectStatusTypes.set(rejectedOnly ? ['rejected'] : ['in progress', 'ready for review', 'open', 'rejected', 'stale'])
     })
 
     this.filter = new ReactiveVar({})
@@ -50,7 +50,7 @@ Template.documentsLogged.events({
         let projectStatusTypes = templateInstance.$('.projectFiltersPanel input:checked').map(function() {
             return $(this).val()
         })
-        
+
         templateInstance.projectStatusTypes.set($.makeArray(projectStatusTypes))
     }
 })

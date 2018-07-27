@@ -7,7 +7,7 @@ import './documents-claimed.html'
 import './documents-index-item/documents-index-item'
 
 Template.documentsClaimed.onCreated(function() {
-    this.projectStatusTypes = new ReactiveVar(['in progress', 'ready for review'])
+    this.projectStatusTypes = new ReactiveVar(['in progress', 'ready for review', 'stale'])
 
     this.filter = new ReactiveVar({})
 
@@ -36,7 +36,7 @@ Template.documentsClaimed.events({
         let projectStatusTypes = templateInstance.$('.projectFiltersPanel input:checked').map(function() {
             return $(this).val()
         })
-        
+
         templateInstance.projectStatusTypes.set($.makeArray(projectStatusTypes))
     }
 })

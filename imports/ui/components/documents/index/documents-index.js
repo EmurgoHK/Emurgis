@@ -14,12 +14,12 @@ import "./documents-dobModal.js"
 Template.documentsIndex.onCreated(function() {
 
     //Reactive Vars
-    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my', 'isProblemWithEmurgis'])
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'stale', 'my', 'isProblemWithEmurgis'])
     this.filter = new ReactiveVar({})
     this.searchFilter = new ReactiveVar(FlowRouter.current().queryParams.query || '')
 
     this.autorun(() => {
-        
+
         // open a modal if the user has a profile but does not have a date of birth set.
         if (Meteor.user() && (Meteor.user().profile && !Meteor.user().profile.dob)) {
           $('#dobModal').modal('show')
