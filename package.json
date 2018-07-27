@@ -6,7 +6,7 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.38",
+    "@babel/runtime": "^7.0.0-beta.54",
     "@coreui/coreui": "2.0.0",
     "@coreui/icons": "^0.1.1",
     "assert": "^1.4.1",
@@ -31,8 +31,10 @@
     "popper.js": "1.14.3",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "semver": "^5.5.0",
     "simpl-schema": "^0.3.2",
     "simple-line-icons": "2.4.1",
+    "source-map-support": "^0.5.6",
     "sweetalert": "^2.1.0",
     "wdio-mocha-framework": "^0.5.13",
     "webdriverio": "^4.12.0"
