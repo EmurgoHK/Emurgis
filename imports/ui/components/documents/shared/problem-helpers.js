@@ -41,9 +41,7 @@ Template.registerHelper('statusText', status => {
     }
 })
 
-Template.registerHelper('getSummaryById', id => {
-    return  Problems.findOne({_id: id}).summary;
-})
+Template.registerHelper('getSummaryById', id => (Problems.findOne({ _id: id }) || {}).summary || '')
 
 Template.registerHelper('getStatusById', id => (Problems.findOne({
     _id: id
