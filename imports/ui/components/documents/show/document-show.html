@@ -75,7 +75,7 @@
 
           </p>
           {{#unless rejected}}
-          <div class="float-right">
+          <div class="float-right problem-actions">
             {{#if isProblemOwner problem.createdBy}}
             <a class="btn btn-sm btn-secondary" href="{{pathFor 'documentEdit' documentId=problem._id}}" role="button">Edit</a>
         		{{#unless problem.resolved}} <a class="btn btn-sm btn-danger js-delete-document" href="#" role="button">Oops, I thought this was a problem but it's actually not a problem</a> {{/unless}}

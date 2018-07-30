@@ -30,6 +30,13 @@ body {
   }
 }
 
+/* Responsive */
+@media (max-width: 991px) {
+  .problem-actions { width: 100%; margin-top: 10px; display: inline-flex; }
+  .problem-actions .js-delete-document { margin-left: 5px; }
+}
 @media (max-width: 640px) {
   .main .container-fluid { padding: 0px 15px; margin-top: 20px !important; }
+  .problem-actions .js-delete-document { max-width: 250px; word-wrap: break-word; white-space: normal; }
+  .problem-actions > a:first-child { padding: 12px 8px; }
 }
