@@ -28,4 +28,8 @@ body {
     background-color: darkgrey;
     outline: 1px solid slategrey;
   }
-} 
+}
+
+@media (max-width: 640px) {
+  .main .container-fluid { padding: 0px 15px; margin-top: 20px !important; }
+}
