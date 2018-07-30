@@ -882,6 +882,23 @@ export const checkForStaleProblems = new ValidatedMethod({
     }
 })
 
+export const fixStaleProblems = new ValidatedMethod({
+    name: 'fixStaleProblems',
+    validate: new SimpleSchema({}).validator(),
+    run ({}) {
+        Problems.find({}).fetch().filter(i => i.status === 'stale').forEach(i => {
+            if (i.oldStatus !== 'in progress' && i.oldStatus !== 'open') {
+                Problems.update({
+                    _id: i._id
+                }, {
+                    $set: {
+                        status: i.oldStatus
+                    }
+                })
+            }
+        })
+    }
+})
 
 if (Meteor.isDevelopment) {
     Meteor.methods({
