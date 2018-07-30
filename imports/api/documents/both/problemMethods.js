@@ -730,7 +730,7 @@ export const reopenProblem = new ValidatedMethod({
         }
 
         Problems.update({
-            _id: problemId 
+            _id: problemId
         }, {
             $set: {
                 status: 'open',
@@ -866,7 +866,7 @@ export const checkForStaleProblems = new ValidatedMethod({
     validate: new SimpleSchema({}).validator(),
     run ({}) {
         Problems.find({}).fetch().filter(i => {
-            return (i.status !== 'stale' && i.lastActionTime) ? ((new Date().getTime() - i.lastActionTime) > (10 * 24 * 60 * 60 * 1000)) : false
+            return (i.status !== 'stale' && (i.status === 'open' || i.status === 'in progress') && i.lastActionTime) ? ((new Date().getTime() - i.lastActionTime) > (10 * 24 * 60 * 60 * 1000)) : false
         }).forEach(i => {
             Problems.update({
                 _id: i._id
@@ -882,6 +882,23 @@ export const checkForStaleProblems = new ValidatedMethod({
     }
 })
 
+export const fixStaleProblems = new ValidatedMethod({
+    name: 'fixStaleProblems',
+    validate: new SimpleSchema({}).validator(),
+    run ({}) {
+        Problems.find({}).fetch().filter(i => i.status === 'stale').forEach(i => {
+            if (i.oldStatus !== 'in progress' && i.oldStatus !== 'open') {
+                Problems.update({
+                    _id: i._id
+                }, {
+                    $set: {
+                        status: i.oldStatus
+                    }
+                })
+            }
+        })
+    }
+})
 
 if (Meteor.isDevelopment) {
     Meteor.methods({

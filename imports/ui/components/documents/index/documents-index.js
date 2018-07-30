@@ -14,12 +14,12 @@ import "./documents-dobModal.js"
 Template.documentsIndex.onCreated(function() {
 
     //Reactive Vars
-    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'my', 'isProblemWithEmurgis'])
+    this.projectStatusTypes = new ReactiveVar(["in progress", "ready for review",'open', 'stale', 'my', 'isProblemWithEmurgis'])
     this.filter = new ReactiveVar({})
     this.searchFilter = new ReactiveVar(FlowRouter.current().queryParams.query || '')
 
     this.autorun(() => {
-        
+
         // open a modal if the user has a profile but does not have a date of birth set.
         if (Meteor.user() && (Meteor.user().profile && !Meteor.user().profile.dob)) {
           $('#dobModal').modal('show')
@@ -111,13 +111,26 @@ Template.documentsIndex.events({
     FlowRouter.go('/'+problemId);
   },
   'click #new-problem': function(event) {
-    event.preventDefault();
-
-    // make the check global later for checking if user is logged in
-    if (Meteor.userId()) {
-      FlowRouter.go('/new');
+    event.preventDefault()
+    
+    if (!Meteor.userId()) {
+        if (process.env && process.env.NODE_ENV == 'development') {
+            window.last = '/new'
+            
+            $('#signInModal').modal('show')
+        } else {
+            Meteor.loginWithGoogle({}, (err) => {
+                if (err) {
+                    notify(err.message, "error")
+                    
+                    return
+                }
+              
+                FlowRouter.go('/new')
+            })
+        }
     } else {
-      FlowRouter.go('/signin');
+        FlowRouter.go('/new')
     }
   },
   'click .projectFiltersPanel': function (event, template) {

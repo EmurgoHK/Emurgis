@@ -36,11 +36,20 @@ Template.problemForm.helpers({
         _id: {
             $nin: _.union(Template.instance().data.dependencies.map(i => i.dependencyId), Template.instance().data.invDependencies.map(i => i.problemId)) // dont show already added problems
         },
-        $or: [{
-            summary: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
-        }, {
-            description: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
-        }]
+        $and: [
+          {
+            $or: [{
+                summary: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+            }, {
+                description: new RegExp(Template.instance()[inverse ? 'invFilter' : 'filter'].get().replace(/ /g, '|').replace(/\|$/, ''), 'ig')
+            }]
+          },
+          {
+            status: {
+              $in: ['open', 'ready for review', 'in progress']
+            }
+          }
+        ]
       })
     }
   },
@@ -124,7 +133,7 @@ Template.problemForm.events({
         }
       }
 
-      
+
       console.log('clicked >>>', FlowRouter.current().route.name)
     }
 
