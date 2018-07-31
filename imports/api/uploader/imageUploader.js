@@ -74,6 +74,6 @@ export const uploadImage = new ValidatedMethod({
             }
         }
 
-        return `/images/${filename}`
+        return `/images/emurgis/${filename}`
     }
 })
