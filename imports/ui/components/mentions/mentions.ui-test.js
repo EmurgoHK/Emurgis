@@ -1,5 +1,5 @@
 const assert = require('assert')
-const baseUrl = 'http://localhost:3000/mentions' 
+const baseUrl = 'http://localhost:3000/mentions'
 
 describe('Mentions page', function () {
     before(() => {
@@ -39,7 +39,7 @@ describe('Mentions page', function () {
         assert(browser.isExisting('.mentions-index'), true)
         assert(browser.isVisible('.mentions-index'), true)
 
-        assert(browser.execute(() => $('.mention-item').length === testingNotifications.find({
+        assert(browser.execute(() => ($('.mention-item').length / 2) === testingNotifications.find({
             userId: Meteor.userId(),
             type: 'mention'
         }).count()).value, true)

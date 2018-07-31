@@ -19,19 +19,32 @@
               <div class="card-title">
                 <a href="/{{_id}}" style="text-decoration: none;"><h5>{{summary}}</h5></a>
               </div>
-            <table class="table table-hover mt-3">
-              <tbody>
-                  {{#each mentions}}
-                  <tr style="{{#unless read}}background-color: #e4e5e6{{/unless}}" class="mention-item">
-                    <a style="text-decoration: none;" href="{{href}}">
-                    <td scope="row" style="width: 85%">{{message}}</td>
-                    <td>{{from}}</td>
-                    <td style="width: 20%">{{showTimeAgoTimestamp createdAt}}</td>
+              <div class="d-block d-sm-none d-block d-sm-none">
+                {{#each mentions}}
+                  <div style="{{#unless read}}background-color: #e4e5e6{{/unless}}" class="mention-item border-top padding-5">
+                    <a style="text-decoration: none; display: block;" href="{{href}}">
+                      <span>{{message}}</span>
+                      <br />{{from}}
+                      <br />{{showTimeAgoTimestamp createdAt}}
                     </a>
-                  </tr>
-                  {{/each}}
-              </tbody>
-            </table>
+                  </div>
+                {{/each}}
+              </div>
+              <div class="d-none d-sm-block clearfix">
+                <table class="table table-hover mt-3">
+                  <tbody>
+                    {{#each mentions}}
+                      <tr style="{{#unless read}}background-color: #e4e5e6{{/unless}}" class="mention-item">
+                        <a style="text-decoration: none;" href="{{href}}">
+                        <td scope="row" style="width: 85%">{{message}}</td>
+                        <td>{{from}}</td>
+                        <td style="width: 20%">{{showTimeAgoTimestamp createdAt}}</td>
+                        </a>
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+              </div>
             </div>
         </div>
             {{/each}}
