@@ -22,7 +22,7 @@ describe('Image uploader API', () => {
             data: CryptoJS.enc.Base64.parse(imageb64).toString(CryptoJS.enc.Utf8),
             md5: imagemd5,
         }).then(data => {
-            assert.ok(fs.existsSync(`/home/gareth/static/static/images/emurgis/${data}`))
+            assert.ok(fs.existsSync(`/home/gareth/static/static${data}`))
         })
     })
 })
