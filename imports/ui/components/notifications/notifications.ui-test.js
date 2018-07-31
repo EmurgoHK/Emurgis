@@ -31,7 +31,7 @@ describe('Notifications page', function () {
         assert(browser.isExisting('.notifications-index'), true)
         assert(browser.isVisible('.notifications-index'), true)
 
-        assert(browser.execute(() => $('.notification-item').length === testingNotifications.find({
+        assert(browser.execute(() => ($('.notification-item').length / 2) === testingNotifications.find({
             userId: Meteor.userId(),
             $or: [{
                 type: 'notification'
