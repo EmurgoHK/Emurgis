@@ -175,3 +175,35 @@ export const likeComment = new ValidatedMethod({
         return commentId
     }
 })
+
+export const fixCommentImages = new ValidatedMethod({
+    name: 'fixCommentImages',
+    validate: new SimpleSchema({}).validator(),
+    run ({}) {
+        Comments.find({}).fetch().forEach(i => {
+            if (i.images && i.images.length) {
+                let found = false
+
+                let nImages = i.images.map(j => {
+                    if (!j.includes('emurgis')) {
+                        found = true
+
+                        return `/images/emurgis/${j.replace('/images/', '')}`
+                    }
+
+                    return j
+                })
+
+                if (found) {
+                    Comments.update({
+                        _id: i._id
+                    }, {
+                        $set: {
+                            images: nImages
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
