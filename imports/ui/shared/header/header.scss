@@ -32,3 +32,9 @@ header {
     }
 
 }
+header.app-header .navbar-nav { padding-left: 6px; }
+
+@media (max-width: 991px) {
+  header.app-header .navbar-nav { margin: 0px 5px; padding: 0px; }
+  header.app-header .nav-item { min-width: 40px; }
+}
