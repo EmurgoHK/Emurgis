@@ -900,6 +900,38 @@ export const fixStaleProblems = new ValidatedMethod({
     }
 })
 
+export const fixProblemImages = new ValidatedMethod({
+    name: 'fixProblemImages',
+    validate: new SimpleSchema({}).validator(),
+    run ({}) {
+        Problems.find({}).fetch().forEach(i => {
+            if (i.images && i.images.length) {
+                let found = false
+
+                let nImages = i.images.map(j => {
+                    if (!j.includes('emurgis')) {
+                        found = true
+
+                        return `/images/emurgis/${j.replace('/images/', '')}`
+                    }
+
+                    return j
+                })
+
+                if (found) {
+                    Problems.update({
+                        _id: i._id
+                    }, {
+                        $set: {
+                            images: nImages
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
+
 if (Meteor.isDevelopment) {
     Meteor.methods({
         generateTestProblems: (context) => {
