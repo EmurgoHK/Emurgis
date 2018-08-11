@@ -1,6 +1,6 @@
 FROM yodebu/emurgis:1.0.2
 MAINTAINER Debapriya Das (yodebu@gmail.com)
-
+RUN selenium-standalone start &
 EXPOSE 4444/tcp
 
 WORKDIR /root
