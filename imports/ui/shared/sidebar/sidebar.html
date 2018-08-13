@@ -35,13 +35,15 @@
             </ul>
         </nav>
         {{#if currentUser}}
-          <div class="online-users" style="padding: 10px;font-size: 12px">
+          <div class="online-users">
               <h6>Online users</h6>
-              {{#each onlineUsers}}
-              <span class="online-item"><i class="fas fa-circle" style="color: green"></i> <a style="text-decoration: none !important;" href="/profile/{{_id}}">{{profile.name}}</a></span><br />
-              {{else}}
-              <span>No online users.</span>
-              {{/each}}
+              <div class="online-users-list">
+                {{#each onlineUsers}}
+                  <span class="online-item"><i class="fas fa-circle" style="color: green"></i> <a style="text-decoration: none !important;" href="/profile/{{_id}}">{{profile.name}}</a></span><br />
+                {{else}}
+                  <span>No online users.</span>
+                {{/each}}
+              </div>
           </div>
         {{/if}}
         <button class="sidebar-minimizer" type="button"></button>
