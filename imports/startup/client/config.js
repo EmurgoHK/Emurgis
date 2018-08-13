@@ -16,7 +16,11 @@ marked.setOptions({
 
 // Theme configurations
 // One-time append required theme's classes to the document body
-$('body').addClass('app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show');
+if ($(window).width() < 991) {
+  $('body').addClass('app header-fixed sidebar-fixed aside-menu-fixed');
+} else {
+  $('body').addClass('app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show');
+}
 // listener to listen for window resize events, in order to display/hide navbar
 $(window).resize(function(evt) {
     if ($(window).width() < 991) {
