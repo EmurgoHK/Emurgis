@@ -24,7 +24,7 @@ export const uploadImage = new ValidatedMethod({
         clean: true
     }),
     run({ fileName, data, md5 }) {
-        const uploadDir = '/home/gareth/static/static/images/emurgis/'
+        const uploadDir = '/home/gareth/emurgis_assets/static/images/'
 
         if (!Meteor.userId()) {
             throw new Meteor.Error('Error.', 'You must be logged in.')
@@ -74,6 +74,6 @@ export const uploadImage = new ValidatedMethod({
             }
         }
 
-        return `/images/emurgis/${filename}`
+        return `/images/${filename}`
     }
 })

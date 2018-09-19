@@ -17,8 +17,8 @@ before_install:
   - npm install selenium-standalone@latest -g
   - selenium-standalone install
   - selenium-standalone start &
-  - sudo mkdir -p /home/gareth/static/static/images/emurgis # for the image upload
-  - sudo chmod -R 777 /home/gareth/static/static/images/emurgis
+  - sudo mkdir -p /home/gareth/emurgis_assets/static/images/ # for the image upload
+  - sudo chmod -R 777 /home/gareth/emurgis_assets/static/images/
 
 cache:
   directories:
