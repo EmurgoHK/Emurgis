@@ -25,11 +25,18 @@ Template.signInModal.events({
   'submit #signInForm' (event, instance) {
     event.preventDefault()
     const email = $('#email').val()
+    const fullName = $('#fullName').val()
+    const userName = $('#userName').val()
+    const userDob = $('#userDob').val()
     const password = $('#password').val()
     const status = instance.status.get()
     if (email && password) {
       if (status == 'signUp') {
-        const profile = { name: email }
+        const profile = {
+          name: fullName,
+          dob : new Date(userDob).getTime(),
+          tags : [userName]
+        } 
         Accounts.createUser({email, password, profile}, (error, result) => {
           if (error) notify(error.message, "error")
           else {
