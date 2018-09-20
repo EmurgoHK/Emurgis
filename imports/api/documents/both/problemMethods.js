@@ -909,10 +909,10 @@ export const fixProblemImages = new ValidatedMethod({
                 let found = false
 
                 let nImages = i.images.map(j => {
-                    if (!j.includes('emurgis')) {
+                    if (j.includes('emurgis')) {
                         found = true
 
-                        return `/images/emurgis/${j.replace('/images/', '')}`
+                        return `/images/${j.replace('/images/emurgis/', '')}`
                     }
 
                     return j
