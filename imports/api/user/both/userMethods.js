@@ -166,6 +166,25 @@ export const defaultTagAddedFlag = new ValidatedMethod({
     }
 })
 
+export const updateProfile = new ValidatedMethod({
+  name : 'updateProfile',
+  validate: null,
+  run(data){
+    if (!Meteor.userId()) {
+      throw new Meteor.Error('Error.', 'You have to be logged in.')
+    }
+
+    return Meteor.users.update({
+      _id: Meteor.userId()
+    }, {
+      $set: {
+        'emails.0.address': data.email,
+        'profile.name': data.name,
+      }
+    })
+  }
+})
+
 if (Meteor.isDevelopment) {
     Meteor.methods({
         generateTestUser: () => {
