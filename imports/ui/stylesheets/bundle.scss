@@ -20,11 +20,14 @@
 @import "{}/imports/ui/components/documents/new/document-new.scss";
 @import "{}/imports/ui/components/documents/show/document-comments.scss";
 
-// Override Boostrap variables
-@import "{}/node_modules/@coreui/coreui/scss/_bootstrap-variables";
 
 // Bootstrap SASS library
-@import "{}/imports/ui/stylesheets/bootstrap/_bootstrap.scss";
+@import "{}/imports/ui/stylesheets/theme/core_ui_variables.scss";
+@import "{}/imports/ui/stylesheets/bootstrap/bootstrap";
+
+// Override Boostrap variables
+// @import "{}/node_modules/@coreui/coreui/scss/variables";
+
 
 // Noty with custom theme
 @import "{}/node_modules/noty/src/noty.scss";
@@ -34,7 +37,7 @@
 @import "{}/imports/ui/stylesheets/theme/variables.scss";
 
 // Import Core UI variables and Mixins
-@import "{}/node_modules/@coreui/coreui/scss/_variables";
+// @import "{}/node_modules/@coreui/coreui/scss/_variables";
 @import "{}/node_modules/@coreui/coreui/scss/_mixins";
 @import "{}/node_modules/@coreui/coreui/scss/mixins/_buttons";
 @import "{}/node_modules/@coreui/coreui/scss/mixins/_list-group";
@@ -46,6 +49,7 @@
 @import "{}/node_modules/@coreui/coreui/scss/_vendors";
 
 // Import Core UI Components
+
 @import "{}/node_modules/@coreui/coreui/scss/_aside";
 @import "{}/node_modules/@coreui/coreui/scss/_avatars";
 @import "{}/node_modules/@coreui/coreui/scss/_badge";
