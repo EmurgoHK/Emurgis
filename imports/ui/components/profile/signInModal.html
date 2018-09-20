@@ -1,34 +1,48 @@
 <template name="signInModal">
-    <div class="modal fade" id="signInModal" tabindex="-1" role="dialog"  aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" >{{#if isRegister}}Sign Up{{else}}Sign In{{/if}}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form id="signInForm">
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="email" id="email" name="email" class="form-control" />
-                </div>
-                <div class="form-group">
-                  <label>Password</label>
-                  <input type="password" id="password" name="password" class="form-control" />
-                </div>
-                <div class="clearfix">
-                  <button type="submit" class="btn btn-primary">{{#if isRegister}}Sign up{{else}}Sign in{{/if}}</button>
-                </div>
-                {{#if isRegister}}
-                  <a href="#" class="login-link">Already account? Signin</a>
-                {{else}}
-                  <a href="#" class="register-link">Create Account</a>
-                {{/if}}
-              </form>
-            </div>
-          </div>
+  <div class="modal fade" id="signInModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{#if isRegister}}Sign Up{{else}}Sign In{{/if}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body">
+          <form id="signInForm">
+            {{#if isRegister}}
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="fullName" name="fullName" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label>User Name</label>
+              <input type="text" id="userName" name="userName" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label>Date of Birth</label>
+              <input type="date" class="form-control" id="userDob" placeholder="Date of Birth">
+            </div>
+            {{/if}}
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="email" name="email" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="password" name="password" class="form-control" />
+            </div>
+            <div class="clearfix">
+              <button type="submit" class="btn btn-primary">{{#if isRegister}}Sign up{{else}}Sign in{{/if}}</button>
+            </div>
+            {{#if isRegister}}
+            <a href="#" class="login-link">Already account? Signin</a>
+            {{else}}
+            <a href="#" class="register-link">Create Account</a>
+            {{/if}}
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
