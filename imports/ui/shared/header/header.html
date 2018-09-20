@@ -54,6 +54,7 @@
                   <strong>Account</strong>
                 </div>
                 <a class="dropdown-item" href="{{pathFor 'profile' userId=currentUser._id }}" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> My Profile</a>
+                <a class="dropdown-item" href="{{pathFor 'profile.edit' userId=currentUser._id }}" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> Edit Profile</a>
                 <a class="dropdown-item add-username" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> Add Usernames</a>
                 <a class="dropdown-item" href="/stats" style="cursor: pointer;"><i class="nav-icon icon-chart"></i> Stats</a>
                 <div class="dropdown-header text-center">
