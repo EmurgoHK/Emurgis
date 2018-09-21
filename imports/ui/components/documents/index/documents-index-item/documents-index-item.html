@@ -14,3 +14,18 @@
   </tr>
 
 </template>
+
+<template name="documentsItem">
+  <div class="document-item card card-body">
+    <div>
+      <a href="{{pathFor 'documentShow' documentId=document._id}}">{{document.summary}}</a> 
+      {{#if blocking}}<i title='This problem is blocking {{pluralize blocking "other problem"}} from being completed.' style="color: orange;" class="fas fa-exclamation-triangle"></i>{{/if}}
+      {{#if blocked }} <i class="fas fa-ban text-danger" data-toggle="tooltip" data-placement="right" title="This problem is being blocked" ></i> {{/if}}
+    </div>
+    <div>
+    {{showTimeAgoTimestamp document.createdAt}}
+    {{{statusText document.status}}}
+    <span class="badge badge-pill badge-primary">✉ {{numberOfComments document._id}}</span>
+    </div>
+  </div>
+</template>

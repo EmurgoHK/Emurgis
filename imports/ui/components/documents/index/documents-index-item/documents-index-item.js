@@ -52,3 +52,30 @@ Template.documentsIndexItem.events({
 
   },
 })
+
+Template.documentsItem.onCreated(function() {
+  this.getDocumentId = () => this.data.document._id
+
+  this.autorun(() => {
+  	SubsCache.subscribe('dependenciesProblem', this.getDocumentId())
+    SubsCache.subscribe("comments", this.getDocumentId())
+    SubsCache.subscribe('problems')
+  })
+})
+
+Template.documentsItem.helpers({
+  numberOfComments(problemId) {
+    return Comments.find({problemId:problemId}).count();
+  },
+  blocking: () => Dependencies.find({
+    dependencyId: Template.instance().getDocumentId()
+  }).count(),
+  blocked: () => !Dependencies.find({
+    problemId: Template.instance().getDocumentId()
+  }).fetch().every(i => {
+    let problem = Problems.findOne({
+      _id: i.dependencyId
+    }) || {}
+    return problem.status === 'closed' || problem.status === 'rejected'
+  })
+})
